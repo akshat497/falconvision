@@ -1,22 +1,24 @@
-const express = require('express')
-const app = express()
-require('./models')
+const express = require('express');
+const cors = require('cors');
+const app = express();
+require('./models');
 const { APP_PORT } = require('./config');
 const errorHandler = require('./middlewares/errorHandler');
 const router = require('./routes');
+app.use(express.json({ limit: "200mb" }));
+// System Middlewares
+app.use(cors()); // Enable CORS for all routes
 
-//System Middlewares
 app.use(express.json());
-app.use("/api", router)
+app.use("/api", router);
 
 app.get("/", (req, res) => {
-    res.send("hello server")
-})
+  res.send("hello server");
+});
 
-
-//Custom Middlewares
-app.use(errorHandler)
+// Custom Middlewares
+app.use(errorHandler);
 
 app.listen(APP_PORT, () => {
-    console.log('server started at ' + APP_PORT);
-})
+  console.log('Server started at ' + APP_PORT);
+});

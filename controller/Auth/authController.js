@@ -6,27 +6,30 @@ const JwtService = require("../../services/JwtService");
 const authController = {
     login: async (req, res, next) => {
         const { email, password } = req.body;
-        let access_token = null;
-        try {
-            let res = await User.findOne({ where: { email: email } })
-            if (!res) {
-                return next(CustomErrorHandler.wrongCredentials())
-            }
-            // compare passwords
-            const match = await bcrypt.compare(password, res.password)
-            if (!match) {
-                return next(CustomErrorHandler.wrongCredentials())
-            }
-            //genrate token
-            access_token = JwtService.sign({ userId: res.userId, role: res.role });
-
-        } catch (err) {
-            return next(err)
+        if (email.trim() === "" || password.trim() === "" || !email || !password) {
+            return res.status(400).json({ message: "fields missing" });
         }
-        res.json({ access_token })
+        let authorization = null;
+        try {
+            let user = await User.findOne({ where: { email: email } });
+            if (!user) {
+                return next(CustomErrorHandler.wrongCredentials());
+            }
+            // Compare passwords
+            const match = await bcrypt.compare(password, user.password);
+            if (!match) {
+                return next(CustomErrorHandler.wrongCredentials());
+            }
+            // Generate token
+            authorization = JwtService.sign({ userId: user.userId, role: user.role ,isActive:user.isActive});
+            res.json({ Authorization: authorization });
+        } catch (err) {
+            return next(err);
+        }
     },
+    
     register: async (req, res, next) => {
-        const { firstName, lastName, email, password, confirmPassword, role } = req.body;
+        const {email,name, password, confirmPassword,phone,address,area,zip, role,isActive } = req.body;
         let hashedPassword = null;
         if (password !== confirmPassword) {
             return next(CustomErrorHandler.passwordError('Password and Confirm Password should be same !'))
@@ -34,22 +37,27 @@ const authController = {
 
         hashedPassword = await bcrypt.hash(password, 10);
         const userObj = {
-            firstName,
-            lastName,
+            
             email,
-            role,
+            name,
             password: hashedPassword,
-            confirmPassword: hashedPassword
+            confirmPassword: hashedPassword,
+            phone,
+            address,
+            area,
+            zip,
+            role,
+            isActive:false
         }
-        let access_token = null;
+        let Authorization = null;
         try {
             let user = await User.create(userObj);
-            access_token = JwtService.sign({ userId: user.userId, role: user.role })
+            Authorization = JwtService.sign({ userId: user.userId, role: user.role ,isActive:isActive})
         } catch (err) {
             return next(err)
         }
 
-        res.json({ access_token })
+        res.json({ Authorization })
 
     }
 

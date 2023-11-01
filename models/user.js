@@ -14,9 +14,9 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         email: true,
         allowNull: false,
-        unique: true
+        
     },
-    Name: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -47,8 +47,14 @@ const User = sequelize.define('User', {
     role: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'customer'
+        defaultValue: 'frenchise'
     },
+    isActive:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false,
+        allowNull:false,
+
+    }
 }, {
     // Other model options go here
     tableName: 'users'

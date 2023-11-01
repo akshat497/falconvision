@@ -16,13 +16,13 @@ module.exports = errorHandler = (err, req, res, next) => {
     if (err instanceof ValidationError) {
         statusCode = 422;
         data = {
-            massage: err.errors[0].message
+            message: err.errors[0].message
         }
     }
     if (err instanceof CustomErrorHandler) {
         statusCode = err.status;
         data = {
-            massage: err.message
+            message: err.message
         }
     }
 
