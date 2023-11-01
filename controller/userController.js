@@ -1,4 +1,4 @@
-const User = require('../models/User'); // Import your User model
+const User = require('../models/user'); // Import your User model
 const authentication = require('../middlewares/authentication');
 const bcrypt = require('bcrypt');
 const CustomErrorHandler = require('../services/CustomErrorHandler');
