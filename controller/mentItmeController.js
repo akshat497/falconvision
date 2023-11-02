@@ -145,6 +145,7 @@ const authentication = require('../middlewares/authentication');
 const Category = require('../models/category');
 
 const WebSocketServer = require('../webSoketConnect');
+const CustomErrorHandler = require("../services/CustomErrorHandler");
 
 
 
@@ -224,7 +225,7 @@ const menuItemController = {
           type: type,
         };
         if (req.user.userId !== userId) {
-          return res.status(401).send('Unauthorized');
+          return next(CustomErrorHandler.UnAuthorised())
         }
         // if(req.user.isActive===false){
         //   return res.status(403).json({message:"Your account does't have permission to perform this action"});
@@ -304,7 +305,7 @@ const menuItemController = {
         }
   
         if (req.user.userId !== userId) {
-          return res.status(401).send('Unauthorized');
+          return next(CustomErrorHandler.UnAuthorised())
         }
         // if(req.user.isActive===false){
         //   return res.status(403).json({message:"Your account does't have permission to perform this action"});
@@ -363,15 +364,18 @@ const menuItemController = {
     try {
     authentication(req,res,async()=>{
       if(req.user.userId!==userId){
-        return res.status(401).send('Unauthorized');
+        return next(CustomErrorHandler.UnAuthorised())
       }
       if (!menuItemId || !userId) {
-        return res.status(400).send('Invalid input');
+        return next(CustomErrorHandler.MenuItemError("invalid input!",400))
       }
       // if(req.user.isActive===false){
       //   return res.status(403).json({message:"Your account does't have permission to perform this action"});
       // }
         let response = await MenuItem.destroy({ where: { menuItemId: menuItemId ,userId:userId } });
+        if(response===0){
+          return next(CustomErrorHandler.NotFound('No such Item Found'))
+        }
         WebSocketServer.broadUpdate(response);
         res.json(response);
     })

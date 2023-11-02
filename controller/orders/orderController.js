@@ -1,7 +1,9 @@
 const authentication = require("../../middlewares/authentication");
 const {Order,Customer,OrderItem} = require("../../models/order");
+const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const WebSocketServer = require("../../webSoketConnect"); // Import your WebSocket server
 
+const { Op } = require('sequelize');
 const orderController = {
     getOrderByUserId: async (req, res, next) => {
        
@@ -14,7 +16,7 @@ const orderController = {
             console.log(user.userId)
             // Check if the authenticated user is authorized to access this information
             if (user.userId !== userId) {
-              return res.status(403).json({ error: 'Unauthorized' });
+              return next(CustomErrorHandler.UnAuthorised());
             }
         
             const customer = await Customer.findAll({
@@ -32,7 +34,50 @@ const orderController = {
         }
       }
 ,      
+getSalesSummary: async (req, res, next) => {
+  try {
+    // Assuming that authentication middleware sets the user information in the request object
+    authentication(req, res, async () => {
+      const { startDate, endDate} = req.body; 
+      const { userId} = req.params; // Adjust this depending on how dates are sent from the frontend
+      if (req.user.userId !== userId) {
+        return next(CustomErrorHandler.UnAuthorised());
+      }
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: 'Both startDate and endDate are required' });
+      }
 
+      // Find all customers based on the user-provided date range
+      const customers = await Customer.findAll({
+        where: {
+          userId: req.user.userId, // Filter customers by user ID
+        },
+        include: {
+          model: Order,
+          where: {
+            createdAt: {
+              [Op.gte]: new Date(startDate),
+              [Op.lte]: new Date(endDate),
+            },
+          },
+        },
+      });
+
+      // Calculate the total sales for all customers
+      let totalSales = 0;
+
+      for (const customer of customers) {
+        for (const order of customer.Orders) {
+          totalSales += Number(order.totalAmount);
+        }
+      }
+
+      res.json({customers, totalSales });
+    });
+  } catch (err) {
+    return next(err);
+  }
+},
 createOrder: async (req, res, next) => {
   const { username, items, phoneNumber, totalAmount, tableNumber, frenchiseId, createdAt, updatedAt, userId } = req.body;
 
@@ -128,7 +173,8 @@ updateOrder: async (req, res, next) => {
       const order = await Order.findByPk(orderId);
 
       if (!order) {
-        return res.status(404).json({ message: "Order not found" });
+        return next(CustomErrorHandler.NotFound("Order not found" ));
+      
       }
 
       // Delete the order from the database

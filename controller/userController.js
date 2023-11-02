@@ -11,7 +11,8 @@ const userController = {
       authentication(req, res, async () => {
         // Check if the authenticated user is a "superadmin"
         if (req.user.role !== 'superadmin') {
-          return res.status(403).send('Forbidden: Only superadmins can access this resource');
+          // return res.status(403).send('Forbidden: Only superadmins can access this resource');
+          return next(CustomErrorHandler.forbiddden());
         }
 
         // Fetch all users
@@ -43,7 +44,7 @@ const userController = {
         });
 
         if (!user) {
-          return res.status(404).json({ message: 'User not found' });
+          return next(CustomErrorHandler.UserNotFound());
         }
 
         const userDetails = {
@@ -78,12 +79,12 @@ const userController = {
            Name,address,area,zip,isActive,role
         };
         if(req.user.role!=="superadmin"){
-          return res.status(403).send("forbidden")
+          return next(CustomErrorHandler.forbiddden());
 
         }
         let newUser=await User.update(obj,{where:{userId:userId}});
         if(!newUser){
-            return res.status(500).send("Error in updating");
+          return next(CustomErrorHandler.UserNotFound());
             }
             WebSocketServer.broadUpdate(newUser,"userUpdated")
             res.send(`${newUser} record has been successfully updated.`);
@@ -102,21 +103,21 @@ const userController = {
             const user = await User.findOne({ where: { userId: req.user.userId } });
 
             if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+              return next(CustomErrorHandler.UserNotFound());
             }
 
             // Compare the old password provided with the stored hashed password
             const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
             if (!isPasswordValid) {
-                return res.status(422).json({ message: 'Invalid password' });
+              return next(CustomErrorHandler.passwordError("Password is not valid ! "));
             }
 
             // Hash the new password
             const hashedPassword = await bcrypt.hash(password, 10);
 
             if (password !== confirmPassword) {
-                return res.status(400).json({ message: 'Password and confirm password do not match' });
+                return next(CustomErrorHandler.passwordError("Password and confirm password do not match! "));
             }
 
             // Update the user's password in the database

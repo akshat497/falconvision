@@ -1,6 +1,7 @@
 
 const authentication = require("../middlewares/authentication");
 const Category = require("../models/category");
+const CustomErrorHandler = require("../services/CustomErrorHandler");
 const WebSocketServer = require('../webSoketConnect');
 const categoryController = {
     getAllCategoryByUserId: async (req, res,  next) => {
@@ -22,14 +23,15 @@ const categoryController = {
                     name: name, userId: userId,isActive
                 }
                 if(req.user.userId!==userId){
-                    return res.status(401).send('Unauthorized');
+                    return next(CustomErrorHandler.UnAuthorised());
                 }
                 // if(req.user.isActive===false){
                 //     return res.status(403).send('Forbidden')
                 // }
                 let findMenu=await Category.findAll({where:{categoryId: categoryId ,userId:userId}})
                 if(findMenu.length<1){
-                    return res.status(401).send('not found this menu')
+                    return next(CustomErrorHandler.NotFound('NO such item found'));
+                  
 
                 }
                 console.log(findMenu)
@@ -49,7 +51,7 @@ const categoryController = {
                 name: name, userId: userId,isActive:isActive
             }
             if(req.user.userId!==userId){
-                return res.status(401).send('Unauthorized');
+                return next(CustomErrorHandler.UnAuthorised());
             }
             // if(req.user.isActive===false){
             //     return res.status(403).send('Forbidden')
@@ -67,7 +69,7 @@ const categoryController = {
         try {
            authentication(req,res,async()=>{
             if(req.user.userId!==userId){
-                return res.status(401).send('Unauthorized');
+                return next(CustomErrorHandler.UnAuthorised());
             }
             // if(req.user.isActive===false){
             //     return res.status(403).send('Forbidden')

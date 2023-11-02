@@ -32,6 +32,7 @@ router.delete("/deleteMenuItemsById/:menuItemId/:userId", menuItemController.del
 router.post("/resetpassword", userController.resetPassword)
 //Order Routes
 router.get("/getOrder/:userId", orderController.getOrderByUserId)
+router.post("/getSalesSummary/:userId", orderController.getSalesSummary)
 router.put("/updateIsActiveOfOrder", orderController.updateOrder)
 router.post("/addOrders", orderController.createOrder)
 router.delete("/deleteOrdersById/:orderId", orderController.deleteOrder)

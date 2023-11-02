@@ -106,7 +106,9 @@ wsServer.on('request', (request) => {
   });
 });
 
-server.listen(port);
+server.listen(port,()=>{
+  console.log("websoket running at "+port)
+});
 
 function broadUpdate(updatedItem, updateType) {
   connectedClients.forEach((client) => {

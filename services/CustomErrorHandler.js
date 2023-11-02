@@ -16,6 +16,24 @@ class CustomErrorHandler extends Error {
     static passwordError(message) {
         return new CustomErrorHandler(message, 409)
     }
+    static forbiddden(message = 'Forbidden !') {
+        return new CustomErrorHandler(message, 403)
+    }
+    static UpdatingError(message = 'Error in updating !') {
+        return new CustomErrorHandler(message, 404)
+    }
+    static UserNotFound(message = 'User not found !') {
+        return new CustomErrorHandler(message, 404)
+    }
+    static UnAuthorised(message = 'Unauthorized!') {
+        return new CustomErrorHandler(message, 401)
+    }
+    static MenuItemError(message) {
+        return new CustomErrorHandler(message, status)
+    }
+    static NotFound(message) {
+        return new CustomErrorHandler(message, 404)
+    }
 
 
 
