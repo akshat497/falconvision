@@ -17,7 +17,11 @@ const authentication = async (req, res, next) => {
     if (!user) {
       return res.status(401).send({ message: "User not found" });
     }
-
+    if (user.role === "superadmin") {
+      // Super admins can bypass all security checks, so they can proceed
+      req.user = user; // Store user object in req.user
+      return next();
+    }
     if (user.role==="fenchise"&&user.isActive===false) {
       return res.status(401).send({ message: "forbidden" });
     }

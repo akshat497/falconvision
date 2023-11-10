@@ -87,6 +87,21 @@ const Order = sequelize.define('Order', {
         allowNull: false,
         defaultValue: true, // Set a default value if needed
     },
+    isRejected: {
+        type: DataTypes.BOOLEAN, // Assuming isActive is a boolean field
+        allowNull: false,
+        defaultValue: false, // Set a default value if needed
+    },
+    isAccepted: {
+        type: DataTypes.BOOLEAN, // Assuming isActive is a boolean field
+        allowNull: false,
+        defaultValue: false, // Set a default value if needed
+    },
+    isCompleted: {
+        type: DataTypes.BOOLEAN, // Assuming isActive is a boolean field
+        allowNull: false,
+        defaultValue: false, // Set a default value if needed
+    },
 })
 
 // OrderItem.js

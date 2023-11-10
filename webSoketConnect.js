@@ -1,122 +1,65 @@
+// // Import the WebSocket server and other dependencies
 // const WebSocket = require('websocket').server;
-// const http = require('http');
-// const server = http.createServer();
+// const https = require('https'); // Use https module for SSL
+// const fs = require('fs'); // Require the filesystem module
+// const path = require('path');
 
-// const wsServer = new WebSocket({
-//   httpServer: server,
-// });
+// const port = process.env.PORT || 9090;
 
-// const connectedClients = new Set();
+// // Load SSL certificate and private key
+// const privateKey = fs.readFileSync(path.join(__dirname, 'key.pem'), 'utf8');
+// const certificate = fs.readFileSync(path.join(__dirname, 'certificate.crt'), 'utf8');
+// const credentials = { key: privateKey, cert: certificate };
 
-// wsServer.on('request', (request) => {
-//   const userID = getUniqueID();
-//   const connection = request.accept(null, request.origin);
-//   clients[userID] = connection;
-//   connectedClients.add(connection);
-
-//   connection.on('message', (message) => {
-//     if (message.type === 'utf8') {
-//       console.log('Received Message:', message.utf8Data);
-//       // Handle CRUD operations here and respond
-//       // For example, update your database and then broadcast updates to all connected clients
-//     }
-//   });
-
-//   connection.on('close', () => {
-//     console.log(`Connection closed for user ${userID}`);
-//     clients[userID] = null;
-//     connectedClients.delete(connection);
-//   });
-// });
-
-// server.listen(8080);
-// console.log('WebSocket server listening on port 8080');
-
-// module.exports = {
-//   connectedClients,
-//   broadcastMenuItemUpdate: (updatedItem) => {
-//     connectedClients.forEach((client) => {
-//       if (client.connected) {
-//         client.send(JSON.stringify(updatedItem));
-//       }
-//     });
-//   },
-// };
-// const WebSocket = require('websocket').server;
-// const http = require('http');
-// const server = http.createServer();
-
-// const wsServer = new WebSocket({
-//   httpServer: server,
-// });
-
-// const connectedClients = new Set();
-
-// wsServer.on('request', (request) => {
-//   const connection = request.accept(null, request.origin);
-//   connectedClients.add(connection);
-
-//   connection.on('message', (message) => {
-//     if (message.type === 'utf8') {
-//       console.log('Received Message:', message.utf8Data);
-//     }
-//   });
-
-//   connection.on('close', () => {
-//     connectedClients.delete(connection);
-//   });
-// });
-
-// server.listen(8080);
-// function broadUpdate(updatedItem) {
-//     connectedClients.forEach((client) => {
-//       if (client.connected) {
-//         client.send(JSON.stringify(updatedItem));
-//       }
-//     });
-//   }
-  
-//   module.exports = {
-    
-//     broadUpdate
-//   }
-
+// // Create an HTTPS server
+// const httpsServer = https.createServer(credentials);
 const WebSocket = require('websocket').server;
-const http = require('http');
-const server = http.createServer();
-const port=process.env.PORT||8080
+const https = require('https');
+
+const server = https.createServer();
+const port = process.env.PORT || 443;
 const wsServer = new WebSocket({
   httpServer: server,
 });
 
-const connectedClients = new Set();
+const roomClients = new Map();
 
 wsServer.on('request', (request) => {
+  // Extract room information from the request (modify this as per your use case)
+  const room = request.resourceURL.query.room || 'default';
+  console.log(`Connected to room: ${room}`);
   const connection = request.accept(null, request.origin);
-  connectedClients.add(connection);
+
+  if (!roomClients.has(room)) {
+    roomClients.set(room, new Set());
+  }
+  roomClients.get(room).add(connection);
 
   connection.on('message', (message) => {
     if (message.type === 'utf8') {
       console.log('Received Message:', message.utf8Data);
+      // Process the message here
     }
   });
 
   connection.on('close', () => {
-    connectedClients.delete(connection);
+    roomClients.get(room).delete(connection);
   });
 });
 
-server.listen(port,()=>{
-  console.log("websoket running at "+port)
-});
-
-function broadUpdate(updatedItem, updateType) {
-  connectedClients.forEach((client) => {
-    if (client.connected) {
-      client.send(JSON.stringify({ updateType, data: updatedItem }));
-    }
-  });
+function broadUpdate(room, updatedItem, updateType) {
+  if (roomClients.has(room)) {
+    roomClients.get(room).forEach((client) => {
+      if (client.connected) {
+        client.send(JSON.stringify({ updateType, data: updatedItem }));
+      }
+    });
+  }
 }
+
+server.listen(port, () => {
+  console.log("WebSocket server is running at " + port);
+});
 
 module.exports = {
   broadUpdate,

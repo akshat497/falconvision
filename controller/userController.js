@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const CustomErrorHandler = require('../services/CustomErrorHandler');
 const jwt = require("jsonwebtoken");
 const WebSocketServer = require('../webSoketConnect');
+const QRCode = require('qrcode-generator');
 const jwtsecreat = process.env.JWT_SECRET;
 const userController = {
   getAllUsers: async (req, res, next) => {
@@ -86,7 +87,8 @@ const userController = {
         if(!newUser){
           return next(CustomErrorHandler.UserNotFound());
             }
-            WebSocketServer.broadUpdate(newUser,"userUpdated")
+            // WebSocketServer.broadUpdate(newUser,"userUpdated")
+            WebSocketServer.broadUpdate(userId, newUser, 'userUpdated');
             res.send(`${newUser} record has been successfully updated.`);
         })
 
@@ -135,8 +137,29 @@ const userController = {
     } catch (error) {
         next(error);
     }
+},
+qrgeneratorL:(req,res,next)=>{
+  try {
+    const {tableCount,userId,url} = req.body
+    authentication(req,res,async()=>{
+      
+    const qrCodes = [];
+    if(req.user.userId!==userId){
+      return next(CustomErrorHandler.UnAuthorised());
+    }
+    for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
+      const url = `${url}/${userId}/${tableNumber}`;
+      const qr = QRCode(0, 'L');
+      qr.addData(url);
+      qr.make();
+      qrCodes.push(qr.createDataURL(4));
+    }
+    res.json(qrCodes);
+    })
+  } catch (error) {
+    return next(error)
+  }
 }
-
 };
 
 module.exports = userController;

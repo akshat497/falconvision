@@ -5,34 +5,66 @@ const WebSocketServer = require("../../webSoketConnect"); // Import your WebSock
 
 const { Op } = require('sequelize');
 const orderController = {
-    getOrderByUserId: async (req, res, next) => {
-       
-      
-        try {
-            const { userId } = req.params;
-          // Assuming that authentication middleware sets the user information in the request object
-         authentication(req,res,async()=>{
-            const { user } = req;
-            console.log(user.userId)
-            // Check if the authenticated user is authorized to access this information
-            if (user.userId !== userId) {
-              return next(CustomErrorHandler.UnAuthorised());
-            }
-        
-            const customer = await Customer.findAll({
-              where: { userId: userId },
-              include: {
-                model: Order,
-                include: OrderItem,
-              },
-            });
-        // WebSocketServer.broadUpdate(customer)
-            res.json(customer);
-         })
-        } catch (err) {
-          return next(err);
+  getOrderByUserId: async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const { allOrders } = req.query;
+  
+      authentication(req, res, async () => {
+        const { user } = req;
+        console.log(req.user)
+  
+        if (user?.role === 'superadmin') {
+          const options = {
+            where: { userId: userId },
+            include: {
+              model: Order,
+              include: OrderItem,
+            },
+          };
+  
+          // Check if the "allOrders" query parameter is present
+          if (!allOrders) {
+            options.limit = 100;
+          }
+  
+          // Order the results based on the creation date in descending order
+          options.order = [['createdAt', 'DESC']];
+  
+          const customer = await Customer.findAll(options);
+  
+          return res.json(customer);
+        } else {
+          if (user?.userId !== userId) {
+            return next(CustomErrorHandler.UnAuthorised());
+          }
+  
+          const options = {
+            where: { userId: userId },
+            include: {
+              model: Order,
+              include: OrderItem,
+            },
+          };
+  
+          if (!allOrders) {
+            options.limit = 40;
+          }
+  
+          // Order the results based on the creation date in descending order
+          options.order = [['createdAt', 'DESC']];
+  
+          const customer = await Customer.findAll(options);
+  
+          return res.json(customer);
         }
-      }
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+  
+  
 ,      
 getSalesSummary: async (req, res, next) => {
   try {
@@ -79,10 +111,13 @@ getSalesSummary: async (req, res, next) => {
   }
 },
 createOrder: async (req, res, next) => {
-  const { username, items, phoneNumber, totalAmount, tableNumber, frenchiseId, createdAt, updatedAt, userId } = req.body;
+  const { username, items, phoneNumber, totalAmount, tableNumber, createdAt, updatedAt, userId } = req.body;
 
   try {
       // Create a new customer in the database
+      if(!username||!items||!phoneNumber||!totalAmount||!tableNumber||!userId||username.trim()===""||tableNumber.trim()===""||phoneNumber.trim()===""){
+        return res.send({message:"fields missing"})
+      }
       const newCustomer = await Customer.create({
           username: username,
           phoneNumber: phoneNumber,
@@ -109,7 +144,7 @@ createOrder: async (req, res, next) => {
           });
       }
 
-      res.status(201).send({ message: "New order has been created!" });
+      res.status(200).send({ message: "New order has been created!" });
 
       // Broadcast the new customer, new order, and order items to the WebSocket
       const customer = await Customer.findAll({
@@ -119,7 +154,8 @@ createOrder: async (req, res, next) => {
           include: OrderItem,
         },
       });
-      WebSocketServer.broadUpdate(customer,"newOrder");
+      WebSocketServer.broadUpdate(userId, customer, 'newOrder');
+    
   } catch (error) {
       console.log("Error", error);
       return next(error);
@@ -128,7 +164,7 @@ createOrder: async (req, res, next) => {
 
 
 updateOrder: async (req, res, next) => {
-  const { totalamount, isActive, orderId } = req.body;
+  const { totalamount, isActive, orderId,isRejected,isAccepted,isCompleted,customerId,userId } = req.body;
 
   try {
     // Find the order to update in the database
@@ -142,6 +178,10 @@ updateOrder: async (req, res, next) => {
     // Update the order with the new data
     order.totalAmount = totalamount;
     order.isActive = isActive;
+    order.isRejected=isRejected;
+    order.isAccepted=isAccepted;
+    order.isCompleted=isCompleted;
+    order.customerId=customerId;
 
     // Save the changes to the database
     await order.save();
@@ -152,6 +192,7 @@ updateOrder: async (req, res, next) => {
     });
 
     // Broadcast the updated order to all connected clients using WebSocket
+    WebSocketServer.broadUpdate(userId, updatedOrder, 'updatedOrder');
     // WebSocketServer.broadUpdate(updatedOrder, 'updatedOrder');
 
     res.json(updatedOrder);

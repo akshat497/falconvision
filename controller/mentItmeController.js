@@ -210,9 +210,10 @@ const menuItemController = {
   },
 
   updateMenuItem: async (req, res, next) => {
-    const { categoryId, name, imageUrl, price, isActive, userId, menuItemId, veg, type } = req.body;
+
   
     try {
+      const { categoryId, name, imageUrl, price, isActive, userId, menuItemId, veg, type } = req.body;
       authentication(req, res, async () => {
         const obj = {
           name: name,
@@ -282,7 +283,9 @@ const menuItemController = {
                         };
                     });
   
-          WebSocketServer.broadUpdate(formattedMenuItems, 'updatedMenu');
+          // WebSocketServer.broadUpdate({updateType:'updatedMenu',data:formattedMenuItems} );
+          WebSocketServer.broadUpdate(userId, formattedMenuItems, 'updatedMenu');
+
           res.json(formattedMenuItems);
         } else {
           res.json({ message: 'No records updated.' });
@@ -300,7 +303,7 @@ const menuItemController = {
       authentication(req, res, async () => {
         const { name, imageUrl, price, isActive, userId, categoryId, veg, type } = req.body;
   
-        if (!name || !imageUrl || !price||!userId||!categoryId||!veg||!type) {
+        if (!name || !imageUrl || !price||!userId||!categoryId||!type) {
           return res.status(400).json({ message: 'all filelds are required' });
         }
   
@@ -349,7 +352,7 @@ const menuItemController = {
         };
   
         // Broadcast the newly added menu item to all connected clients using WebSocket
-        WebSocketServer.broadUpdate(formattedDoc, 'newMenu');
+        WebSocketServer.broadUpdate(userId, formattedDoc, 'newMenu');
   
         res.json(newItem);
       });
@@ -376,7 +379,7 @@ const menuItemController = {
         if(response===0){
           return next(CustomErrorHandler.NotFound('No such Item Found'))
         }
-        WebSocketServer.broadUpdate(response);
+        WebSocketServer.broadUpdate(userId, response, 'deletedMenu');
         res.json(response);
     })
     } catch (err) {

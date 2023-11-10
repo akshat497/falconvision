@@ -16,8 +16,9 @@ const categoryController = {
 
     },
     updateCategory: async (req, res, next) => {
-        const { categoryId, name, userId,isActive } = req.body;
+      
         try {
+            const { categoryId, name, userId,isActive } = req.body;
             authentication(req,res,async()=>{
                 let obj = {
                     name: name, userId: userId,isActive
@@ -36,7 +37,8 @@ const categoryController = {
                 }
                 console.log(findMenu)
                 let response = await Category.update(obj, { where: { categoryId: categoryId } });
-                 WebSocketServer.broadUpdate(response);
+                //  WebSocketServer.broadUpdate(response);
+                 WebSocketServer.broadUpdate(userId, response, 'updatedCategory');
                 res.json(response)
             })
         } catch (err) {
@@ -57,7 +59,8 @@ const categoryController = {
             //     return res.status(403).send('Forbidden')
             // }
             let response = await Category.create(obj);
-            WebSocketServer.broadUpdate(response);
+            // WebSocketServer.broadUpdate(response);
+            WebSocketServer.broadUpdate(userId, response, 'newCategory');
             res.json(response)
          })
         } catch (err) {
@@ -75,7 +78,7 @@ const categoryController = {
             //     return res.status(403).send('Forbidden')
             // }
             let response = await Category.destroy({ where: { categoryId,userId } });
-            WebSocketServer.broadUpdate(response);
+            WebSocketServer.broadUpdate(userId, response, 'deleteCategory');
             res.json(response)
            })
         } catch (err) {
