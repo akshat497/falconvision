@@ -135,7 +135,10 @@ createOrder: async (req, res, next) => {
       },
     });
     if (fetchedCouponCode || fetchedCouponCode?.isActive) {
-      const totalValidItemsPrice = validMenuItems.reduce((sum, item) => sum + Number(item.price), 0);
+     const totalValidItemsPrice = validMenuItems.reduce((sum, item) => {
+        const quantity = items.find((cartItem) => cartItem.menuItemId === item.menuItemId)?.quantity || 0;
+        return sum + Number(item.price) * quantity;
+      }, 0);
       var discountPercentage = fetchedCouponCode?.discount;
      discountedAmount = (discountPercentage / 100) * totalValidItemsPrice;
 
