@@ -185,7 +185,7 @@ const userController = {
           return next(CustomErrorHandler.UnAuthorised());
         }
         for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
-          const url = `${URL}/${userId}/${tableNumber}`;
+          const url = `https://ordermanagementbyfalconvesion.netlify.app/${userId}/${tableNumber}`;
           const qr = QRCode(0, "L");
           qr.addData(url);
           qr.make();
