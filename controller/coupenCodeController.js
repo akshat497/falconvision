@@ -110,8 +110,10 @@ const coupenCodeController = {
       }
   
       // Calculate the total price of valid items
-      const totalValidItemsPrice = validMenuItems.reduce((sum, item) => sum + Number(item.price), 0);
-  
+    const totalValidItemsPrice = validMenuItems.reduce((sum, item) => {
+        const quantity = items.find((cartItem) => cartItem.menuItemId === item.menuItemId)?.quantity || 0;
+        return sum + Number(item.price) * quantity;
+      }, 0);
       // Validate discount percentage
       let discountPercentage = fetchedCouponCode.discount;
       if (isNaN(discountPercentage) || discountPercentage <= 0 || discountPercentage > 100) {
