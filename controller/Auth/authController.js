@@ -255,7 +255,7 @@ const authController = {
 
       await user.save();
 
-      const resetUrl = `http://localhost:3000/resetpassword/${token}`;
+      const resetUrl = `https://ordermanagementbyfalconvesion.netlify.app//resetpassword/${token}`;
 
       await transporter.sendMail({
         from: "akshatsaini497@gmail.com",
