@@ -82,6 +82,12 @@ const Order = sequelize.define('Order', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
+    couponDiscountPercentage:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue:0
+
+    },
     isActive: {
         type: DataTypes.BOOLEAN, // Assuming isActive is a boolean field
         allowNull: false,

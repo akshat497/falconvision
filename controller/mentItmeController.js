@@ -146,72 +146,77 @@ const Category = require('../models/category');
 
 const WebSocketServer = require('../webSoketConnect');
 const CustomErrorHandler = require("../services/CustomErrorHandler");
-
-
-
-
+const CustomResponseHandler = require("../services/CustomResponseHandler");
 
 const menuItemController = {
   getMenuItemById: async (req, res, next) => {
     const { userId } = req.params;
 
     try {
-      const menuItems = await MenuItem.findAll({
-        where: { userId: userId },
-        include: {
-          model: Category,
-          as: 'Category',
-        },
-      });
+        const menuItems = await MenuItem.findAll({
+            where: { userId: userId },
+            include: {
+                model: Category,
+                as: 'Category',
+            },
+        });
+        if(menuItems.length<1){
+          return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404,[]))
+        }
+      console.log(menuItems.length)
+        const formattedMenuItems = menuItems.map((menuItem) => {
+            const {
+                menuItemId,
+                price,
+                name,
+                imageUrl,
+                createdAt,
+                updatedAt,
+                categoryId,
+                userId,
+                Category,
+                isActive,
+                veg,
+                type
+            } = menuItem;
 
-      const formattedMenuItems = menuItems.map((menuItem) => {
-                    const {
-                        menuItemId,
-                        price,
-                        name,
-                        imageUrl,
-                        createdAt,
-                        updatedAt,
-                        categoryId,
-                        userId,
-                        Category,
-                        isActive,
-                        veg,
-                        type
-                    } = menuItem;
-        
-                    return {
-                        menuItemId,
-                        price,
-                        name,
-                        imageUrl,
-                        createdAt,
-                        updatedAt,
-                        categoryId,
-                        userId,
-                        Category: {
-                            categoryId: Category.categoryId,
-                            name: Category.name,
-                            isActive:Category.isActive,
-                            createdAt: Category.createdAt,
-                            updatedAt: Category.updatedAt,
-                            userId: Category.userId,
-                        },
-                        isActive,
-                        veg,
-                        type
-                    };
-                });
-              
-                res.json(formattedMenuItems);
+            return {
+                menuItemId,
+                price,
+                name,
+                imageUrl,
+                createdAt,
+                updatedAt,
+                categoryId,
+                userId,
+                Category: {
+                    categoryId: Category.categoryId,
+                    name: Category.name,
+                    isActive: Category.isActive,
+                    createdAt: Category.createdAt,
+                    updatedAt: Category.updatedAt,
+                    userId: Category.userId,
+                },
+                isActive,
+                veg,
+                type
+            };
+        });
+
+        // Send the response directly using res.json
+        //  next(CustomResponseHandler.positiveResponse("fetched items", formattedMenuItems))
+        res.json(CustomResponseHandler.positiveResponse("fetched items", formattedMenuItems));
     } catch (err) {
-      return next(err);
+        // Handle errors appropriately, e.g., log the error
+        console.error(err);
+
+        // Send a negative response directly using res.status and res.json
+       return next(err)
     }
-  },
+},
+
 
   updateMenuItem: async (req, res, next) => {
-
-  
     try {
       const { categoryId, name, imageUrl, price, isActive, userId, menuItemId, veg, type } = req.body;
       authentication(req, res, async () => {
@@ -233,7 +238,7 @@ const menuItemController = {
         // }
         // Update the menu item in the database
         const [rowCount] = await MenuItem.update(obj, { where: { menuItemId, userId } });
-  
+   console.log(rowCount)
         if (rowCount > 0) {
           // Fetch all menu items after the update, including the associated category
           const menuItems = await MenuItem.findAll({
@@ -286,18 +291,15 @@ const menuItemController = {
           // WebSocketServer.broadUpdate({updateType:'updatedMenu',data:formattedMenuItems} );
           WebSocketServer.broadUpdate(userId, formattedMenuItems, 'updatedMenu');
 
-          res.json(formattedMenuItems);
+         return res.json(CustomResponseHandler.positiveResponse("updatedMenu", formattedMenuItems));
         } else {
-          res.json({ message: 'No records updated.' });
+         return res.json(CustomErrorHandler.NotFound("no record found"));
         }
       });
     } catch (err) {
       return next(err);
     }
   },
-  
-  
-
   addMenuItem: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
@@ -327,7 +329,7 @@ const menuItemController = {
   
         // Fetch the associated category
         const category = await Category.findByPk(categoryId);
-  
+     console.log(category)
         if (!category) {
           return res.status(404).json({ message: 'Category not found' });
         }
@@ -354,7 +356,7 @@ const menuItemController = {
         // Broadcast the newly added menu item to all connected clients using WebSocket
         WebSocketServer.broadUpdate(userId, formattedDoc, 'newMenu');
   
-        res.json(newItem);
+        res.json(CustomResponseHandler.positiveResponse("Menu Item Added Successfully",formattedDoc));
       });
     } catch (err) {
       return next(err);
@@ -380,7 +382,7 @@ const menuItemController = {
           return next(CustomErrorHandler.NotFound('No such Item Found'))
         }
         WebSocketServer.broadUpdate(userId, response, 'deletedMenu');
-        res.json(response);
+        res.json(CustomResponseHandler.positiveResponse("Menu Item Deleted Successfully",[]));
     })
     } catch (err) {
       return next(err);

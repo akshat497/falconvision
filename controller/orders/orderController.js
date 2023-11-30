@@ -2,13 +2,14 @@ const authentication = require("../../middlewares/authentication");
 const {Order,Customer,OrderItem} = require("../../models/order");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const WebSocketServer = require("../../webSoketConnect"); // Import your WebSocket server
-
+const MenuItem = require("../../models/menuItem");
 const { Op } = require('sequelize');
+const CoupenCode = require("../../models/coupenCode");
 const orderController = {
   getOrderByUserId: async (req, res, next) => {
     try {
       const { userId } = req.params;
-      const { allOrders } = req.query;
+      const { allOrders } = req.body;
   
       authentication(req, res, async () => {
         const { user } = req;
@@ -48,7 +49,7 @@ const orderController = {
           };
   
           if (!allOrders) {
-            options.limit = 40;
+            options.limit = 100;
           }
   
           // Order the results based on the creation date in descending order
@@ -111,56 +112,101 @@ getSalesSummary: async (req, res, next) => {
   }
 },
 createOrder: async (req, res, next) => {
-  const { username, items, phoneNumber, totalAmount, tableNumber, createdAt, updatedAt, userId } = req.body;
+  const { username, items, phoneNumber, tableNumber, createdAt, updatedAt, userId,name } = req.body;
 
   try {
-      // Create a new customer in the database
-      if(!username||!items||!phoneNumber||!totalAmount||!tableNumber||!userId||username.trim()===""||tableNumber.trim()===""||phoneNumber.trim()===""){
-        return res.send({message:"fields missing"})
+    if (!username || !items || !phoneNumber || !tableNumber || !userId || username.trim() === "" || tableNumber.trim() === "" || phoneNumber.trim() === "") {
+      return res.status(400).send({ message: "Fields missing or invalid" });
+    }
+    var discountedAmount=0
+    let fetchedCouponCode = await CoupenCode.findOne({
+      where: {
+        name,
+        userId,
+      },
+    });
+   
+     
+    // Get the valid menu items from the database based on the provided menu item IDs
+    const validMenuItems = await MenuItem.findAll({
+      where: {
+        userId,
+        menuItemId: items.map((item) => item.menuItemId),
+      },
+    });
+    if (fetchedCouponCode || fetchedCouponCode?.isActive) {
+      const totalValidItemsPrice = validMenuItems.reduce((sum, item) => sum + Number(item.price), 0);
+      var discountPercentage = fetchedCouponCode?.discount;
+     discountedAmount = (discountPercentage / 100) * totalValidItemsPrice;
+
+    }
+    // Calculate the total amount based on valid menu items and quantities
+    const totalAmount = items.reduce((total, userItem) => {
+      const validMenuItem = validMenuItems.find(item => item.menuItemId === userItem.menuItemId);
+
+      if (validMenuItem) {
+        // Use the quantity from the user input
+        const quantity = userItem.quantity;
+        total += validMenuItem.price * quantity;
       }
-      const newCustomer = await Customer.create({
-          username: username,
-          phoneNumber: phoneNumber,
-          userId: userId,
-          tableNumber: tableNumber,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-      });
 
-      // Create a new order in the database
-      const newOrder = await Order.create({
-          totalAmount: totalAmount,
-          customerId: newCustomer.customerId,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-      });
+      return total;
+    }, 0);
 
-      for (const item of items) {
-          await OrderItem.create({
-              item_name: item.item_name,
-              quantity: item.quantity,
-              price: item.price,
-              orderId: newOrder.orderId,
-          });
-      }
+    // Create a new customer in the database
+    const newCustomer = await Customer.create({
+      username: username,
+      phoneNumber: phoneNumber,
+      userId: userId,
+      tableNumber: tableNumber,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    });
 
-      res.status(200).send({ message: "New order has been created!" });
+    // Create a new order in the database
+    const newOrder = await Order.create({
+      totalAmount: totalAmount-discountedAmount,
+      customerId: newCustomer.customerId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    });
 
-      // Broadcast the new customer, new order, and order items to the WebSocket
-      const customer = await Customer.findAll({
-        where: { userId: userId ,customerId:newCustomer.customerId},
-        include: {
-          model: Order,
-          include: OrderItem,
-        },
-      });
-      WebSocketServer.broadUpdate(userId, customer, 'newOrder');
+    // Create OrderItems for valid menu items
+    for (const userItem of items) {
+      const validMenuItem = validMenuItems.find(item => item.menuItemId === userItem.menuItemId);
     
+      if (validMenuItem) {
+        // Use the quantity from the user input
+        const quantity = userItem.quantity;
+    
+        // Create OrderItem with the correct quantity
+        await OrderItem.create({
+          item_name: validMenuItem.name,
+          quantity: quantity,
+          price: validMenuItem.price,
+          orderId: newOrder.orderId,
+        });
+      }
+    }
+
+    res.status(200).send({ message: "New order has been created!" });
+
+    // Broadcast the new customer, new order, and order items to the WebSocket
+    const customer = await Customer.findAll({
+      where: { userId: userId, customerId: newCustomer.customerId },
+      include: {
+        model: Order,
+        include: OrderItem,
+      },
+    });
+    WebSocketServer.broadUpdate(userId, customer, 'newOrder');
   } catch (error) {
-      console.log("Error", error);
-      return next(error);
+    console.log("Error", error);
+    return next(error);
   }
-},
+}
+,
+
 
 
 updateOrder: async (req, res, next) => {
@@ -201,11 +247,7 @@ updateOrder: async (req, res, next) => {
     console.error("Error:", err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-}
-
-
-,  
-
+},  
   deleteOrder: async (req, res, next) => {
     const { orderId } = req.params;
 

@@ -1,85 +1,99 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
-const Category = require('./category');
-const MenuItem = require('./menuItem');
+const { DataTypes } = require("sequelize");
+const sequelize = require("./index");
+const Category = require("./category");
+const MenuItem = require("./menuItem");
+const CoupenCode = require("./coupenCode");
 
-const User = sequelize.define('User', {
+const User = sequelize.define(
+  "User",
+  {
     // Model attributes are defined here
     userId: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4, // Or DataTypes.UUIDV1
-        primaryKey: true
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4, // Or DataTypes.UUIDV1
+      primaryKey: true,
     },
     email: {
-        type: DataTypes.STRING,
-        email: true,
-        allowNull: false,
-        
+      type: DataTypes.STRING,
+      email: true,
+      allowNull: false,
+      
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     confirmPassword: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     phone: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     address: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     area: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     zip: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'frenchise'
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "frenchise",
     },
-    isActive:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:false,
-        allowNull:false,
-
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
     },
     resetToken: {
-        type:DataTypes.STRING
+      type: DataTypes.STRING,
     },
-    resetTokenExpiration:{
-         type:DataTypes.DATE
-        },
-}, {
+    resetTokenExpiration: {
+      type: DataTypes.DATE,
+    },
+    trialExpirationDate: {
+      type: DataTypes.DATE,
+      allowNull: true, // Nullable initially until the trial is started
+    },
+    isManuallyActivated: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+  },
+  {
     // Other model options go here
-    tableName: 'users'
-});
+    tableName: "users",
+  }
+);
 
 User.hasMany(Category, {
-    foreignKey: 'userId',
-    as: 'category'
-})
+  foreignKey: "userId",
+  as: "category",
+});
 Category.belongsTo(User, {
-    foreignKey: 'userId',
-})
+  foreignKey: "userId",
+});
 
 User.hasMany(MenuItem, {
-    foreignKey: 'userId'
-})
+  foreignKey: "userId",
+});
 
 MenuItem.belongsTo(User, {
-    foreignKey: 'userId'
-})
-
-module.exports = User
+  foreignKey: "userId",
+});
+User.hasMany(CoupenCode, { foreignKey: "userId" });
+CoupenCode.belongsTo(User, { foreignKey: "userId" });
+module.exports = User;

@@ -34,6 +34,9 @@ class CustomErrorHandler extends Error {
     static NotFound(message) {
         return new CustomErrorHandler(message, 404)
     }
+    static BadRequest(message){
+        return new CustomErrorHandler(message, 400);
+    }
 
 
 

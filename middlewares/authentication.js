@@ -13,7 +13,7 @@ const authentication = async (req, res, next) => {
 
     // Fetch user information based on data from the token
     const user = await User.findOne({ where: { userId: data.userId } });
-
+   
     if (!user) {
       return res.status(401).send({ message: "User not found" });
     }
@@ -22,7 +22,14 @@ const authentication = async (req, res, next) => {
       req.user = user; // Store user object in req.user
       return next();
     }
-    if (user.role==="fenchise"&&user.isActive===false) {
+    if (user.isActive && user.trialExpirationDate && user.trialExpirationDate <= new Date()&&user.isManuallyActivated===false) {
+      // If the trial period has ended, deactivate the user
+      user.isActive = false;
+      await user.save();
+      return res.status(401).json({ message: "Trial period has ended. Contact support to continue." });
+    }
+   
+    if (user.isActive===false) {
       return res.status(401).send({ message: "forbidden" });
     }
 

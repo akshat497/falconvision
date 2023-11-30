@@ -14,9 +14,9 @@
 // // Create an HTTPS server
 // const httpsServer = https.createServer(credentials);
 const WebSocket = require('websocket').server;
-const https = require('https');
+const http = require('http');
 
-const server = https.createServer();
+const server = http.createServer();
 const port = process.env.PORT || 443;
 const wsServer = new WebSocket({
   httpServer: server,
