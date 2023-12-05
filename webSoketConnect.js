@@ -17,7 +17,7 @@ const WebSocket = require('websocket').server;
 const http = require('http');
 
 const server = http.createServer();
-const port = process.env.PORT || 443;
+const port =  443;
 const wsServer = new WebSocket({
   httpServer: server,
 });
