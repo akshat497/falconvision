@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Header from "../common/Header";
+
 import "../../style/adminstyle.css";
 import { FaArrowLeft, FaArrowRight, FaUpload } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
-  fetchCategory,
+ 
   updateItem,
 } from "../../../redux/items/itemThunk";
 import RestaurantContext from "../../../context/RestaurantContext";
 import { toast } from "react-toastify";
-import { setCategory } from "../../../redux/items/addCategorySlice";
+
 export default function AddItem({ preview, clickedItem }) {
   const dispatch = useDispatch();
   const fileRef = useRef();
@@ -18,9 +18,7 @@ export default function AddItem({ preview, clickedItem }) {
   // (clickedItem);
   // const {restroDetails}=useContext(RestaurantContext)
   const restroDetails = useSelector((state) => state.restrodetail.restro);
-  const restroDetailsLoading = useSelector(
-    (state) => state.restrodetail.loading
-  );
+
   const loading = useSelector((state) => state.addItem.itemloading);
   const updateLoading=useSelector((state)=>state.updateitem.u_Itemloading)
   const fullFilled = useSelector(
@@ -343,7 +341,7 @@ export default function AddItem({ preview, clickedItem }) {
                 ? " Adding Item..."
                 : " Add Item"}
             </button> */}
-            <div className="bottom-buttons ">
+            <div className="bottom-buttons mx-3 mb-2">
   {currentStep >= 0 && (
     <button
       type="button"

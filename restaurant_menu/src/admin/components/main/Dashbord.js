@@ -347,10 +347,10 @@ const Dashboard = () => {
 
   return (
     <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
-      <div className="mb-5">
+      <div className="container-fluid">
         <button
           className={
-            showChart === "sales" ? "btn mx-2 btn-secondary" : "btn mx-2"
+            showChart === "sales" ? "btn-active mr-2" : "btn mr-2"
           }
           onClick={() => {
             setshowChart("sales");
@@ -360,7 +360,7 @@ const Dashboard = () => {
         </button>
         <button
           className={
-            showChart === "comparison" ? "btn mx-2 btn-secondary" : "btn mx-2"
+            showChart === "comparison" ? "btn-active mx-2" : "btn mx-2"
           }
           onClick={() => {
             setshowChart("comparison");
@@ -368,19 +368,20 @@ const Dashboard = () => {
         >
           Comparison <FaAdjust />
         </button>
-        {/* <button className={showChart==="profit"?"btn mx-2 btn-secondary":"btn mx-2"} onClick={() => { setshowChart('profit') }}>
+        {/* <button className={showChart==="profit"?"btn-active mx-2":"btn mx-2"} onClick={() => { setshowChart('profit') }}>
           Profit <FaMoneyBillWave/>
         </button> */}
       </div>
       <div>
         {showChart === "sales" && (
           <>
-            <div className="d-flex">
-              <div className="mx-5">
+            <div className="d-flex container-fluid mt-4">
+              <div className="mr-5">
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   placeholderText="Start Date"
+                  className="form-control"
                 />
               </div>
               <div>
@@ -388,6 +389,7 @@ const Dashboard = () => {
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   placeholderText="End Date"
+                  className="form-control"
                 />
               </div>
               <div>
@@ -406,13 +408,14 @@ const Dashboard = () => {
         )}
         {showChart === "comparison" && (
           <>
-            <div className="d-flex">
-              <div className="mx-5">
+            <div className="d-flex container-fluid mt-4">
+              <div className="mr-5">
                 <DatePicker
                   selected={startMonth}
                   onChange={(date) => setStartMonth(date)}
                   placeholderText="Start Month"
                   showMonthYearPicker
+                  className="form-control"
                 />
               </div>
               <div>
@@ -421,6 +424,7 @@ const Dashboard = () => {
                   onChange={(date) => setEndMonth(date)}
                   placeholderText="End Month"
                   showMonthYearPicker
+                  className="form-control"
                 />
               </div>
               <div>

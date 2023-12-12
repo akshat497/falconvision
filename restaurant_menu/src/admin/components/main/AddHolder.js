@@ -23,13 +23,13 @@ export default function AddHolder() {
             <div className="boxContainer">
                 <div className="button-container">
                     <button
-                        className={`btn  mx-2 ${displayMenuItem ? 'btn-secondary' : ''}`}
+                        className={`btn  mx-2 ${displayMenuItem ? 'btn-active' : 'btn'}`}
                         onClick={handleMenuItemClick}
                     >
                         Menu Items
                     </button>
                     <button
-                        className={`btn  mx-2 ${displayCategory ? 'btn-secondary' : ''}`}
+                        className={`btn  mx-2 ${displayCategory ? 'btn-active' : 'btn'}`}
                         onClick={handleCategoryClick}
                     >
                         Category

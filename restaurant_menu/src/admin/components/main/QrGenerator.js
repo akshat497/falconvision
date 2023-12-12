@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { qrGenerator } from '../../../redux/auth/authThunks';
-import { FaQrcode } from 'react-icons/fa';
+import { FaEarlybirds, FaQrcode } from 'react-icons/fa';
 import RestaurantContext from '../../../context/RestaurantContext';
 import { useParams } from 'react-router-dom';
 
 export default function QrGenerator() {
-  const [tables, setTables] = useState();
+  const [tables, setTables] = useState("ss");
   const dispatch = useDispatch();
   const params=useParams();
   const { expanded } = useContext(RestaurantContext);
@@ -19,7 +19,8 @@ export default function QrGenerator() {
     
     const obj = {
       tableCount: tables,
-      url:"https://ordermanagementbyfalconvesion.netlify.app/",
+      // url:"https://ordermanagementbyfalconvesion.netlify.app/",
+      url:window.location.origin,
       userId: restroDetails?.userId,
     };
     dispatch(qrGenerator(obj));
@@ -68,7 +69,7 @@ export default function QrGenerator() {
           onChange={(e) => setTables(e.target.value)}
         />
         <div className="input-group-append"  style={{width:"60%",margin:"2%"}}>
-          <button className="btn btn-primary mx-2" onClick={createQr} disabled={QrcodesLoading} style={{backgroundColor:"purple"}}>
+          <button className="btn text-light mx-2" onClick={createQr} disabled={QrcodesLoading||tables?.length===0||tables===null} style={{backgroundColor:"purple"}}>
             {QrcodesLoading ? "Generating..." : "Generate QR"}
           </button>
           <button className="btn btn-secondary ml-2" onClick={printQR} disabled={QrcodesLoading||Qrcodes===null||Qrcodes===0}>

@@ -11,6 +11,7 @@ import { updateCoupon } from '../../../redux/coupon/couponCodeThunk';
 import { UpdateCouponCode } from '../../../services/Services';
 import UpdateCouponModel from './UpdateCouponModel';
 import DeleteCouponModal from './DeleteCouponModel';
+import NoDatComponent from '../../../components/common/NoDatComponent';
 
 export default function CoupenDataTable() {
   const fetchLoading=useSelector((state)=>state.fetchitem.f_itemloading)
@@ -192,41 +193,39 @@ const CustomTableSkeleton = () => {
   </div>
   );
 }
-  return (
-    <>
-   <UpdateCouponModel
-    row={clickedRow}
-   />
-   <DeleteCouponModal
-     row={clickedRow}
-   />
-        <div className={isDarkMode?'bg-dark text-light my-5':"bg-dark text-light my-5"}>
-    {/* <ReactSwitch
-     checked={showDataTable}
-        onChange={()=>{handleView()}}
-    /> */}
-    {/* {showDataTable?<span className='mx-2 my-2'>table view activated</span>:<span className='mx-2 my-2'>table view deActivated</span>} */}
-        {fetchLoading?CustomTableSkeleton():<DataTable
-      
-      columns={columns}
-      data={fetchedCoupens||[]}
-      customStyles={customStyles}
-      
-      highlightOnHover
-      pagination
-      subHeader
-      subHeaderComponent={
-        <input
-          type="text"
-          style={{width:"200px",borderRadius:"10px",borderColor:"purple"}}
-          placeholder="Search by Name..."
-          value={searchText} // Bind the input value to the searchText state
-          onChange={handleSearch} // Call handleSearch function on input change
-        />
-      }
-    />}
-        
+return (
+  <>
+    <UpdateCouponModel row={clickedRow} />
+    <DeleteCouponModal row={clickedRow} />
+    <div className='my-3'>
+    <input
+                  type="text"
+                 className='form-control'
+                  placeholder="Search by Name..."
+                  value={searchText}
+                  onChange={handleSearch}
+                />
     </div>
-    </>
-  );
+      {fetchedCoupens?.length === 0 || fetchedCoupens === null ? (
+        <NoDatComponent />
+      ) : (
+        <div className={isDarkMode ? 'bg-dark text-light my-5' : 'bg-dark text-light my-5'}>
+          {fetchLoading ? (
+            CustomTableSkeleton()
+          ) : (
+            <DataTable
+              columns={columns}
+              data={fetchedCoupens || []}
+              customStyles={customStyles}
+              highlightOnHover
+              pagination
+              
+            />
+          )}
+        </div>
+      )}
+  
+  </>
+);
+
 }

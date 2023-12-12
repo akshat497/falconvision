@@ -1,13 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 // import RestaurantContext from '../../context/RestaurantContext'
-import {  FaRupeeSign } from "react-icons/fa";
+import { FaRupeeSign } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteItem,
- 
-  updateItem,
-} from "../../../redux/items/itemThunk";
+import { deleteItem, updateItem } from "../../../redux/items/itemThunk";
 import AddItem from "./AddItem";
 import RestaurantContext from "../../../context/RestaurantContext";
 
@@ -135,7 +131,7 @@ export default function Preview() {
   return (
     <>
       {/* <Header/> */}
-      
+
       {fetchLoading || deleteLoading || updateLoading ? (
         <div className="overlay"></div>
       ) : null}
@@ -165,14 +161,18 @@ export default function Preview() {
               : "dashboardcollapsed"
           }`}
         >
-        {fetcheditems?.length<1&&(<><NoDatComponent/></>)}
+          {fetcheditems?.length < 1 && (
+            <>
+              <NoDatComponent />
+            </>
+          )}
           {/* <Switch
    onChange={handleView}
         checked={showDataTable}
 /> */}
           {/* {showDataTable?<span className='mx-2 my-2'>table view activated</span>:<span className='mx-2 my-2'>table view deActivated</span>} */}
 
-          <div style={{ display: "flex", flexWrap: "wrap" }} >
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
             {!fetchLoading
               ? fetcheditems?.map((data) => (
                   <div

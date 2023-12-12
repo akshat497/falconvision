@@ -96,7 +96,7 @@ if(fullFilled!==null){
   
   {loading||updateLoading||deleteLoading?<div className='overlay'></div>:null}
       <section className={expanded?" ":""}>
-    <div className="add-item-container" style={{height:"250px"}}>
+    <div className="add-item-container" >
       <h2>Add Category</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -110,7 +110,7 @@ if(fullFilled!==null){
             required
           />
         </div>
-        <div className="bottom-buttons " style={{marginLeft:"75%"}}>
+        <div className="bottom-buttons my-2 mx-3" style={{justifyContent:"right"}}>
         <button type="submit" className="btn btn-primary" disabled={loading||itemData.name.trim()===""} style={{backgroundColor:"purple"}}>
           {loading?"Adding Category...":"Add Category"}
         </button>

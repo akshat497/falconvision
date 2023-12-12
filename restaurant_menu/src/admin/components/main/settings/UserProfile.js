@@ -21,12 +21,21 @@ export default function UserProfile() {
       setdisplayReferCode(true)
     }
   },[referCode])
+  const date = new Date();
+  const trialdate = new Date(restroDetails?.trialExpirationDate);
+  
+  // Calculate the difference in milliseconds
+  const timeDifference = trialdate.getTime()- date.getTime();
+  
+  // Convert the difference to days
+  const daysRemain = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  
   return (
     <div className="modal fade" tabIndex={-1} id="userProfileModal" aria-labelledby="userProfileModal" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Restaurant Details</h5>
+            <h5 className="modal-title mt-1">Restaurant Details</h5>
             <button type="button" data-bs-dismiss="modal" aria-label="Close" className="close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -50,15 +59,15 @@ export default function UserProfile() {
                     <strong>Email:</strong> {restroDetails?.email}
                   </p>
                   <p>
-                    <strong>Expire In:</strong> {restroDetails?.trialExpirationDate}
+                    <strong>Expire In:</strong> {daysRemain} Days
                   </p>
                   <p>
                     <strong>Account is:</strong> {restroDetails?.isActive===true?<span className='btn bg-success text-light'>Active <FaUserCheck/></span>:<span className='btn bg-secondary text-light'>Not Active <FaUserAlt/></span>}
                 
                   </p>
-                  <div onClick={generateReferCode} style={{cursor:"pointer"}}><b><FaLink /><small > Generate refer code</small></b></div>
+                  {/* <div onClick={generateReferCode} style={{cursor:"pointer"}}><b><FaLink /><small > Generate refer code</small></b></div>
                 <small><b>{displayReferCode&&(<><small>Refer code is:</small> {referCode?.referralCode}</>)}</b></small>
-                {referCodeLoading&&(<div className='ml-5'><FaCogs size={25}/></div>)}
+                {referCodeLoading&&(<div className='ml-5'><FaCogs size={25}/></div>)} */}
                 </div>
               </div>
             </div>

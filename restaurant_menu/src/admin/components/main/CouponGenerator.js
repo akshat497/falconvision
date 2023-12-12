@@ -44,7 +44,8 @@ const CouponGenerator = () => {
   };
 
   return (
-    <div className={expanded?"dashboard":"dashboardcollapsed"}>
+    <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
+      <div className="">
       <div className="coupon-container">
         <h2>Create Coupon</h2>
         <form className="coupon-form">
@@ -66,17 +67,23 @@ const CouponGenerator = () => {
               onChange={(e) => setDiscount(e.target.value)}
             />
           </div>
+          <div className="modal-footer">
           <button
-  type="button"
-  className="btn text-light"
-  style={{backgroundColor:"purple"}}
-  onClick={generateCoupon}
-  disabled={discount.trim() === "" || couponName.trim() === "" || generateCoupenCodeLoading}
->
-  {generateCoupenCodeLoading ? " Generating..." : " Generate Coupon"}
-</button>
-
+            type="button"
+            className="btn text-light "
+            style={{ backgroundColor: "purple" }}
+            onClick={generateCoupon}
+            disabled={
+              discount.trim() === "" ||
+              couponName.trim() === "" ||
+              generateCoupenCodeLoading
+            }
+          >
+            {generateCoupenCodeLoading ? " Generating..." : " Generate Coupon"}
+          </button>
+          </div>
         </form>
+      </div>
       </div>
     </div>
   );

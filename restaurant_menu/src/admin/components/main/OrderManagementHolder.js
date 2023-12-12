@@ -63,7 +63,7 @@ export default function OrderManagementHolder() {
     setSearchText(searchTerm);
 
     const filteredOrders = orders?.filter((order) => {
-      return order.username.toLowerCase().includes(searchTerm);
+      return order?.username?.toLowerCase().includes(searchTerm);
     });
 
     setOrdersCopy(filteredOrders);
@@ -79,21 +79,21 @@ export default function OrderManagementHolder() {
       };
       dispatch(fetchOrders(orderObj));
     }
-  }, [page, dispatch, detailRestro?.userId]);
+  }, [page]);
   return (
     <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
-      <h1>Order Management</h1>
-      <div className="my-4">
+      
+      <div className="container-fluid">
         <button
           onClick={() => handleFilterChange("new")}
-          className={activeFilter === "new" ? "btn btn-info mx-2" : "btn mx-2"}
+          className={activeFilter === "new" ? "btn-active mr-2" : "btn mr-2"}
         >
           New Orders
         </button>
         <button
           onClick={() => handleFilterChange("rejected")}
           className={
-            activeFilter === "rejected" ? "btn btn-danger mx-2" : "btn mx-2"
+            activeFilter === "rejected" ? "btn-active   mx-2" : "btn mx-2"
           }
           // style={{backgroundColor:activeFilter === 'rejected' ?"red":""}}
         >
@@ -102,7 +102,7 @@ export default function OrderManagementHolder() {
         <button
           onClick={() => handleFilterChange("completed")}
           className={
-            activeFilter === "completed" ? "btn btn-success mx-2" : "btn mx-2"
+            activeFilter === "completed" ? "btn-active mx-2" : "btn mx-2"
           }
         >
           Completed Orders

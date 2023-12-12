@@ -21,6 +21,8 @@ import SuperAdmin from './superAdmin/SuperAdmin'
 import FAQPage from './components/ClientPages/FaqPage'
 import AuthResetPassword from './components/main/AuthResetPassword'
 import Customer from './components/main/Customer'
+import AutoLogout from './services/AutoLogout'
+
 
 export default function App() {
  
@@ -29,6 +31,8 @@ export default function App() {
       <RestaurantContextState>
         <BrowserRouter>
         <ToastContainer />
+       <AutoLogout  />
+       
           <Routes>
           <Route path="/" element={<ClientHomePage/>}/>
           <Route path="/faq" element={<FAQPage/>}/>

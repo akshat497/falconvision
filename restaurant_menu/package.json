@@ -12,7 +12,6 @@
     "axios": "^1.5.1",
     "bootstrap-icons": "^1.11.1",
     "chart.js": "^4.4.0",
-    "install": "^0.13.0",
     "moment": "^2.29.4",
     "npm": "^10.2.1",
     "rc-slider": "^10.3.1",

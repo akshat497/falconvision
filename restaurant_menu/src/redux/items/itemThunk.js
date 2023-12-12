@@ -193,6 +193,6 @@ export const fetchRestraurantDetails = () => async (dispatch) => {
 
     dispatch(setRestroError(error?.message));
     dispatch(setRestroLoading(false));
-    showToast(error?.response?.data?.message ||error.message)
+   
   }
 };

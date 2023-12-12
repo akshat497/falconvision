@@ -2,15 +2,18 @@ import React, { useState } from 'react'
 import {  FaQuestion } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { forgetPassword } from '../../redux/auth/authThunks'
+import { useLocation } from 'react-router-dom';
 
 export default function ForgetPassword() {
     const dispatch=useDispatch();
+    const location=useLocation()
     const lodaing=useSelector((state)=>state.forgetpassword.forgetpasswordloading)
     const [email, setemail] = useState('')
 
     const sendEmail=()=>{
   var obj={
-    email:email
+    email:email,
+    url:window.location.origin+"/resetpassword"
   }
   dispatch(forgetPassword(obj))
     }

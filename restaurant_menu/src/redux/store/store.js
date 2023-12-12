@@ -1,5 +1,5 @@
 // store.js
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore,getDefaultMiddleware  } from "@reduxjs/toolkit";
 import authReducer from "../auth/authSlice";
 import loginReducer from "../auth/loginSlice"
 import additemReducer from "../items/addItemSlice"
@@ -29,7 +29,7 @@ import generateReferCodeReducer from "../auth/generateReferSlice"
 
 
 
-import thunk from "redux-thunk";
+
 
 const store = configureStore({
   reducer: {
@@ -61,7 +61,7 @@ const store = configureStore({
     generateReferCode:generateReferCodeReducer
 
   },
-  middleware: [thunk],
+  
 });
 
 export default store;

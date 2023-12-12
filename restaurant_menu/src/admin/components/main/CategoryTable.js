@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateCategory } from '../../../redux/items/itemThunk';
 
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import NoDatComponent from '../../../components/common/NoDatComponent';
 
 const CategoryTable = ({ categories, onUpdate, searchedText}) => {
   const loading=useSelector((state)=>state.fetchcategory.fetchedcategoryloading)
@@ -154,23 +155,23 @@ const CategoryTable = ({ categories, onUpdate, searchedText}) => {
   },[searchText])
   return (
     <>
-      {loading?CustomTableSkeleton():<div className=' my-5'>
-        {categories === null ? '' : 
+    <div className="my-3">
+    <input
+          type="text"
+          className='form-control'
+          placeholder="Search by Name..."
+          value={searchText} // Bind the input value to the searchText state
+          onChange={handleSearch} // Call handleSearch function on input change
+        />
+     </div>
+      {loading?CustomTableSkeleton():<div className=' '>
+        {categoryCopy === null ||categoryCopy?.length===0? <NoDatComponent/> : 
         <DataTable 
         columns={columns}
          data={categoryCopy} 
          highlightOnHover 
          pagination 
-         subHeader
-      subHeaderComponent={
-        <input
-          type="text"
-          style={{width:"200px",borderRadius:"10px",borderColor:"purple"}}
-          placeholder="Search by Name..."
-          value={searchText} // Bind the input value to the searchText state
-          onChange={handleSearch} // Call handleSearch function on input change
-        />
-      }
+       
          />}
       </div>}
       <div>

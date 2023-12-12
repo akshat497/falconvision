@@ -6,7 +6,8 @@ const aboutUsStyles = {
   container: {
     padding: "20px",
     background: "#f5f5f5",
-    marginTop:"3%"
+    marginTop:"3%",
+    height:"auto"
   },
   heading: {
     fontSize: "2.5rem",
@@ -36,7 +37,7 @@ function AboutUs() {
               </h2>
               <p style={aboutUsStyles.content}>
                 Welcome to FalconVision, where excellence meets innovation.
-                Founded in 2023, we have been on a remarkable journey to
+                Founded in 2007, we have been on a remarkable journey to
                 redefine the IT industry.
               </p>
               <p style={aboutUsStyles.content}>

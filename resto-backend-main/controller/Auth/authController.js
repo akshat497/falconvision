@@ -13,7 +13,7 @@ const userCache = new NodeCache();
 const { v4: uuidv4 } = require('uuid');
 const authentication = require("../../middlewares/authentication");
 const otpExpiry = 7 * 60 * 1000; // 7 minutes in milliseconds
-
+const jwt = require('jsonwebtoken');
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -22,45 +22,77 @@ const transporter = nodemailer.createTransport({
   },
 });
 const authController = {
+
+
+  // ...
+  
   login: async (req, res, next) => {
     const { email, password } = req.body;
-
+  
     if (email.trim() === "" || password.trim() === "" || !email || !password) {
       return res.status(400).json({ message: "fields missing" });
     }
-    const cachedUser = userCache.get(email, password);
+  
+    const cachedUser = userCache.get(email);
+  
     if (cachedUser) {
       // If found in the cache, return the cached data
-      return res.json({ Authorization: cachedUser.authorization });
+      const { authorization, cachedPassword, exp } = cachedUser;
+  
+      // Check if the token is expired
+      if (Date.now() >= exp * 1000) {
+        userCache.del(email); // Remove expired data from the cache
+      } else {
+        // Check the password
+        const match = await bcrypt.compare(password, cachedPassword);
+  
+        if (match) {
+          return res.json({ Authorization: authorization });
+        } else {
+          // If the password doesn't match, proceed to database lookup
+          userCache.del(email); // Remove incorrect data from the cache
+        }
+      }
     }
+  
     let authorization = null;
+  
     try {
       let user = await User.findOne({ where: { email: email } });
+  
       if (!user) {
         return next(CustomErrorHandler.wrongCredentials());
       }
+  
       // Compare passwords
       const match = await bcrypt.compare(password, user.password);
+  
       if (!match) {
         return next(CustomErrorHandler.wrongCredentials());
       }
+  
       // Generate token
       authorization = JwtService.sign({
         userId: user.userId,
         role: user.role,
         isActive: user.isActive,
       });
+  
+      const decodedToken = jwt.decode(authorization, { complete: true });
+      const exp = decodedToken.payload.exp;
+  
       userCache.set(
         email,
-        { authorization },
+        { authorization, cachedPassword: user.password, exp },
         /* optional TTL in seconds */ 300
       );
-
+  
       res.json({ Authorization: authorization });
     } catch (err) {
       return next(err);
     }
   },
+  
 
   register: async (req, res, next) => {
     const {
@@ -147,11 +179,15 @@ const authController = {
       isActive: true, // Activate the user initially
       trialExpirationDate,
     };
-    const referredUser = await User.findOne({ where: { referralCode } });
-    if (referredUser) {
-      // Update the trialExpirationDate by adding 2 days
-      referredUser.update({ trialExpirationDate: trialExpirationDate.setDate(trialExpirationDate.getDate() + 30) });
+    if (referralCode) {
+      const referredUser = await User.findOne({ where: { referralCode } });
+    
+      if (referredUser) {
+        // Update the trialExpirationDate by adding 2 days
+        referredUser.update({ trialExpirationDate: trialExpirationDate.setDate(trialExpirationDate.getDate() + 30) });
+      }
     }
+    
     
     let Authorization = null;
     try {
@@ -281,62 +317,75 @@ const authController = {
   },
 
   forgetPassword: async (req, res, next) => {
-    const { email, phoneNumber } = req.body;
-
+    const { url, email, phoneNumber } = req.body;
+  
     try {
-      const user = await User.findOne({ where: { email } });
-
+      // Check for missing fields
+      if (!email) {
+        return next(CustomErrorHandler.BadRequest("Email is required!"));
+      }
+  
+      // Trim the input values
+      const trimmedEmail = email.trim();
+      const trimmedPhoneNumber = phoneNumber ? phoneNumber.trim() : null;
+  
+      // Find the user by email
+      const user = await User.findOne({ where: { email: trimmedEmail } });
+  
       if (!user) {
         return next(CustomErrorHandler.UserNotFound());
       }
-
+  
+      // Generate a random token and set the resetToken and resetTokenExpiration fields
       const token = crypto.randomBytes(20).toString("hex");
       user.resetToken = token;
       user.resetTokenExpiration = new Date(Date.now() + 3600000); // Token expires in 1 hour
-
+  
+      // Save the user with updated token and expiration
       await user.save();
-
-      const resetUrl = `https://ordermanagementbyfalconvesion.netlify.app/resetpassword/${token}`;
-
-      await transporter.sendMail({
-        from: "akshatsaini497@gmail.com",
-        to: email,
-        subject: "Password Reset",
-        text: `Click on the following link to reset your password: ${resetUrl}`,
-      });
-      var req = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
-
-      req.headers({
-        authorization: process.env.QUICK_SMS_API,
-      });
-
-      req.form({
-        message: `Click on the following link to reset your password: ${resetUrl}`,
-        language: "english",
-        route: "q",
-        numbers: phoneNumber,
-      });
-
-      req.end(function (res) {
-        if (res.error) throw new Error(res.error);
-
-        console.log(res.body);
-      });
-
-      // Sending SMS
-
-      // sendMessage({
-      //   authorization: process.env.QUICK_SMS_API, // Replace with your Fast2SMS API key
-      //   message: `Click on the following link to reset your password: ${resetUrl}`,
-      //   numbers: [phoneNumber],
-      // });
-
+  
+      const resetUrl = `${url}/${token}`;
+  
+      // Send email
+      if (trimmedEmail) {
+        await transporter.sendMail({
+          from: "akshatsaini497@gmail.com",
+          to: trimmedEmail,
+          subject: "Password Reset",
+          text: `Click on the following link to reset your password: ${resetUrl}`,
+        });
+      }
+  
+      // Send SMS
+      if (trimmedPhoneNumber) {
+        var smsReq = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
+  
+        smsReq.headers({
+          authorization: process.env.QUICK_SMS_API,
+        });
+  
+        smsReq.form({
+          message: `Click on the following link to reset your password: ${resetUrl}`,
+          language: "english",
+          route: "q",
+          numbers: trimmedPhoneNumber,
+        });
+  
+        smsReq.end(function (smsRes) {
+          if (smsRes.error) throw new Error(smsRes.error);
+  
+          console.log(smsRes.body);
+        });
+      }
+  
       return res.json({ message: "Password reset link sent" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   },
+  
+  
 
   authresetPassword: async (req, res, next) => {
     const { token, newPassword, confirmPassword } = req.body;
@@ -364,7 +413,7 @@ const authController = {
       const isSamePassword = await bcrypt.compare(newPassword, user.password);
       if (isSamePassword) {
         return res.status(400).json({
-          message: "New password cannot be the same as the old password",
+          message: "New password cannot be same as the old password",
         });
       }
 

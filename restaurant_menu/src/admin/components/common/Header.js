@@ -49,9 +49,6 @@ export default function Header() {
     isDarkMode,
     setIsDarkMode,
     notification,
-    setnotification,
-    setFetcheditems,
-    fetcheditems,
     fetcheditemsCopy,
   } = useContext(RestaurantContext);
   const restroDetails = useSelector((state) => state.restrodetail.restro);
@@ -64,7 +61,7 @@ export default function Header() {
   const couponCodes = useSelector((state) => state.getCoupon.getCoupon);
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
   const [restroData, setrestroData] = useState({});
-  const [iconSize, seticonSize] = useState(20);
+  const [iconSize, seticonSize] = useState(24);
   const [display, setdisplay] = useState("");
   const [isRotated, setIsRotated] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
@@ -168,7 +165,6 @@ export default function Header() {
     );
   };
   const logOut = () => {
-   
     localStorage.removeItem("token");
     window.location.reload();
   };
@@ -205,36 +201,25 @@ export default function Header() {
         return null;
     }
   };
-  
+
   const handleMainHeaderSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
     setSearchedText(searchText);
 
-    const menuitems = fetcheditemsCopy?.filter((data) =>
-      data?.name?.toLowerCase()?.includes(searchText)
-    );
-
-    const category = fetcheCategory?.filter((data) =>
-      data?.name?.toLowerCase()?.includes(searchText)
-    );
-
-    const orders = allorders?.filter((data) =>
-      data?.username?.toLowerCase()?.includes(searchText)
-    );
-    const coupens = couponCodes?.filter((data) =>
-      data?.name?.toLowerCase()?.includes(searchText)
-    );
+    const searchInArray = (data, type) => {
+      return data
+        .filter((item) => item.name.toLowerCase().includes(searchText))
+        .map((item) => ({ ...item, type }));
+    };
 
     const filteredData = [
-      ...menuitems?.map((item) => ({ ...item, type: "menu" })),
-      ...category?.map((item) => ({ ...item, type: "category" })),
-      ...orders?.map((item) => ({ ...item, type: "orders" })),
-      ...coupens?.map((item) => ({ ...item, type: "coupon" })),
-    ]; // Combine menuitems, category, and orders with type information
+      ...searchInArray(allorders, "orders"),
+      ...searchInArray(couponCodes, "coupon"),
+      ...searchInArray(fetcheditemsCopy, "menu"),
+      ...searchInArray(fetcheCategory, "category"),
+    ];
 
     setsearchDisplay(filteredData);
-
-    // Set visibility of the dropdown based on the search text
     setShowSearchDropdown(searchText.length > 0);
   };
 
@@ -243,7 +228,6 @@ export default function Header() {
 
     switch (item?.type) {
       case "menu":
-       
         navigate("/admin/tables", { state: { item } });
 
         break;
@@ -271,49 +255,7 @@ export default function Header() {
       <UserProfile />
       <HelpModal />
       <Feedback />
-      {/* <div><nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container-fluid">
-        <a className="navbar-brand" href="#">Brand Name</a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-         
-           
-        
-          </ul>
-          <form className="d-flex">
-           
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_y99l-Op_mvXAHL9GBicTbVU8AyV9l6rxfQ&usqp=CAU" alt="DP" className="text-light profileImage" />
-            <h4 className='text-light mx-3 my-2'>Username</h4>
-          </form>
-        </div>
-      </div>
-    </nav></div>
-   <div>
-<div>
-  <div className="sidebar">
-   
-    <ul>
-      <li><Link to="/admin/dashbord">Dashboard</Link></li>
-      <li><Link href="#">Orders</Link></li>
-      <li><Link href="#">Add Item</Link></li>
-      <li><Link href="#">Settings</Link></li>
-    </ul>
-  </div>
- 
-</div>
-
-   </div> */}
+      
       {!restroLoading ? (
         <>
           <nav
@@ -323,7 +265,11 @@ export default function Header() {
                 : "navbar navbar-expand-lg navbar-light bg-light"
             }
           >
-            <span className="navbar-toggler-icon " onClick={toggleSidebar} />
+            <span
+              className="navbar-toggler-icon "
+              onClick={toggleSidebar}
+              style={{ cursor: "pointer" }}
+            />
             <div className="container-fluid">
               <a className="navbar-brand mx-2 fs-4" href="#">
                 <FaEarlybirds size={40} />
@@ -345,41 +291,43 @@ export default function Header() {
               >
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                   {/* ... other JSX code ... */}
-                 <div 
-                  style={{
+                  <div
+                    style={{
                       marginLeft: "50%",
                       width: "55vw",
                       borderRadius: "30px",
-                    }}>
-                 <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Search"
-                    style={{
-                     
-                      borderRadius: "30px",
                     }}
-                    onChange={handleMainHeaderSearch}
-                    value={SearchedText}
-                    disabled={restroDetails?.isActive === false}
-                  />
-                  {showSearchDropdown && (
-                    <div className="search-dropdown">
-                      {searchDisplay?.map((data, index) => (
-                        <button
-                          className="dropdown-item"
-                          key={index}
-                          onClick={() => handleResultClick(data)}
-                        >
-                          <div className="search-result">
-                            <span>{data?.name || data?.username}</span>
-                            <span className="type-indicator">{data?.type}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                 </div>
+                  >
+                    <input
+                      type="search"
+                      className="form-control"
+                      placeholder="Search"
+                      style={{
+                        borderRadius: "30px",
+                      }}
+                      onChange={handleMainHeaderSearch}
+                      value={SearchedText}
+                      disabled={restroDetails?.isActive === false}
+                    />
+                    {showSearchDropdown && (
+                      <div className="search-dropdown">
+                        {searchDisplay?.map((data, index) => (
+                          <button
+                            className="dropdown-item"
+                            key={index}
+                            onClick={() => handleResultClick(data)}
+                          >
+                            <div className="search-result">
+                              <span>{data?.name || data?.username}</span>
+                              <span className="type-indicator">
+                                {data?.type}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   {/* ... other JSX code ... */}
                 </ul>
 
@@ -395,60 +343,107 @@ export default function Header() {
                   />
 
                   <div
-                    className="dropdown-menu"
+                    className="dropdown-menu "
                     aria-labelledby="dropdownMenuLink"
                   >
-                    <button
-                      className="dropdown-item"
-                      onMouseEnter={handleGearClick}
-                      onClick={() => {
-                        setpasswordResetModalVisibel(
-                          !passwordResetModalVisibel
-                        );
-                      }}
-                      data-bs-toggle="modal"
-                      data-bs-target="#passwordResetModal"
-                    >
-                      {" "}
-                      <FaKey /> Reset Password
-                    </button>
-                    <button
-                      className="dropdown-item"
+                  
+                    <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                      <FaUser />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                      <button
+                      className="dropdown-setting"
                       onMouseEnter={handleGearClick}
                       data-bs-toggle="modal"
                       data-bs-target="#userProfileModal"
                     >
-                      <FaUser /> Profile
+                       Profile
                     </button>
-                    <button
-                      className="dropdown-item"
+                      </div>
+
+                    </div>
+                    <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                      <FaQuestion />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                      <button
+                      className="dropdown-setting"
                       onMouseEnter={handleGearClick}
                       data-bs-toggle="modal"
                       data-bs-target="#helpmodal"
                     >
-                      <FaQuestion /> Help
+                       Help
                     </button>
-                    <button
-                      className="dropdown-item"
+                      </div>
+                    </div>
+                    <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                      <FaExclamation />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                      <button
+                      className="dropdown-setting"
                       onMouseEnter={handleGearClick}
                       data-bs-toggle="modal"
                       data-bs-target="#Feedback"
                     >
-                      <FaExclamation /> Feedback
+                      Feedback
                     </button>
-                    <button
-                      className="dropdown-item"
-                      disabled
-                    >
-                      <FaRegBuilding />  Franchise
+                      </div>
+                    </div>
+                  <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                      <FaRegBuilding />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                      <button className="dropdown-setting" disabled>
+                      Franchise
                     </button>
+                      </div>
+                    </div>
+                    <div className="d-flex my-2  ">
+                      <div className="col-md-1">
+                        <FaKey />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                        <button
+                          className="dropdown-setting"
+                          onMouseEnter={handleGearClick}
+                          onClick={() => {
+                            setpasswordResetModalVisibel(
+                              !passwordResetModalVisibel
+                            );
+                          }}
+                          data-bs-toggle="modal"
+                          data-bs-target="#passwordResetModal"
+                        >
+                          Reset Password
+                        </button>
+                      </div>
+                    </div>
 
                     <a>
                       <hr className="dropdown-divider" />
                     </a>
-                    <button className="dropdown-item" href="#" onClick={logOut}>
-                      <FaSignOutAlt /> Log Out
+                    <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                      <FaSignOutAlt />
+                      </div>
+                     
+                      <div className="col-md-12 text">
+                      <button className="dropdown-setting" href="#" onClick={logOut}>
+                     Log Out
                     </button>
+                      </div>
+                    </div>
+                   
                   </div>
                 </div>
 
@@ -535,54 +530,106 @@ export default function Header() {
               <div
                 className={
                   expanded
-                    ? "menu-items content my-5 ml-4"
+                    ? "menu-items content my-5 "
                     : "menu-items content my-5 "
                 }
               >
                 <ul className="nav-links">
                   <li>
                     <Link to="/admin/">
+                    <div className="d-flex">
+                      <div className="col-md-1">
+                     
+                        <FaRegChartBar size={`${iconSize}`}  className="link-name "
+                        style={{
+                          color: pathname === "/admin/" ? "purple" : "",
+                        }}/>{" "}
+                     
+                      
+                      </div>
+                      <div className="col-md-10">
                       <span
                         className="link-name "
                         style={{
                           color: pathname === "/admin/" ? "purple" : "",
                         }}
                       >
-                        <FaRegChartBar size={`${iconSize}`} />{" "}
-                        <span className={`d-${display}`}>Dashboard</span>
+                        
+                        <span className={`d-${display}`}>Charts</span>
                       </span>
+                      </div>
+                    </div>
+                      
                     </Link>
                   </li>
                   <li>
+                  
                     <Link to="/admin/add">
-                      <span
+                    <div className="d-flex">
+                    <div className="col-md-1">
+                    <FaPlusCircle size={`${iconSize}` }  
+                    style={{
+                          color: pathname === "/admin/add" ? "purple" : "",
+                        }}
+                        className="link-name"
+                        />
+                        </div>
+                    <div className="col-md-10">
+                    <span
                         className="link-name"
                         style={{
                           color: pathname === "/admin/add" ? "purple" : "",
                         }}
                       >
-                        <FaPlusCircle size={`${iconSize}`} />
-                        <span className={`d-${display}`}> Add</span>
+                        
+                        <span className={`d-${display}`} > Add</span>
                       </span>
+                    </div>
+                  </div>
                     </Link>
                   </li>
-
                   <li>
                     <Link to="/admin/tables">
+                    <div className="d-flex">
+                      <div className="col-md-1"><FaTable size={`${iconSize}`} className="link-name"
+                        style={{
+                          color: pathname === "/admin/tables" ? "purple" : "",
+                        }} /></div>
+                      <div className="col-md-10">
                       <span
                         className="link-name"
                         style={{
                           color: pathname === "/admin/tables" ? "purple" : "",
                         }}
                       >
-                        <FaTable size={`${iconSize}`} />
+                        
                         <span className={`d-${display}`}> Tables</span>
                       </span>
+                      </div>
+                    </div>
+                     
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/ordermanagement">
-                      <span
+                    <div className="d-flex">
+                      <div className="col-md-1">
+                      <FaRegAddressBook 
+                      size={`${iconSize}`}
+                      className="link-name"
+                        style={{
+                          color:
+                            pathname === "/admin/ordermanagement"
+                              ? "purple"
+                              : "",
+                        }}
+                       />
+
+
+                      </div>
+                      <div className="col-md-10"
+                      >
+                        <span
                         className="link-name"
                         style={{
                           color:
@@ -591,48 +638,94 @@ export default function Header() {
                               : "",
                         }}
                       >
-                        <FaRegAddressBook size={`${iconSize}`} />
+                       
                         <span className={`d-${display}`}> Orders</span>
                       </span>
+                      </div>
+                    </div>
+                      
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/preview">
+                    <div className="d-flex">
+                      <div className="col-md-1">
+                      <FaImage 
+                      size={`${iconSize}`}
+                      className="link-name"
+                        style={{
+                          color: pathname === "/admin/preview" ? "purple" : "",
+                        }}
+                       />
+                      </div>
+                      <div className="col-md-10">
                       <span
                         className="link-name"
                         style={{
                           color: pathname === "/admin/preview" ? "purple" : "",
                         }}
                       >
-                        <FaImage size={`${iconSize}`} />
+                       
                         <span className={`d-${display}`}> Preview</span>
                       </span>
+                      </div>
+                    </div>
+                     
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/qr">
+                    <div className="d-flex">
+                      <div className="col-md-1">
+                      <FaQrcode 
+                      size={`${iconSize}`}
+                      className="link-name"
+                        style={{
+                          color: pathname === "/admin/qr" ? "purple" : "",
+                        }}
+                       />
+                      </div>
+                      <div className="col-md-10">
                       <span
                         className="link-name"
                         style={{
                           color: pathname === "/admin/qr" ? "purple" : "",
                         }}
                       >
-                        <FaQrcode size={`${iconSize}`} />
+                        
                         <span className={`d-${display}`}> QR</span>
                       </span>
+
+                      </div>
+                    </div>
+                      
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/coupon">
+                    <div className="d-flex">
+                      <div className="col-md-1">
+                      <FaTicketAlt 
+                      size={`${iconSize}`} 
+                      className="link-name"
+                        style={{
+                          color: pathname === "/admin/coupon" ? "purple" : "",
+                        }}
+                      />
+                      </div>
+                      <div className="col-md-10">
                       <span
                         className="link-name"
                         style={{
                           color: pathname === "/admin/coupon" ? "purple" : "",
                         }}
                       >
-                        <FaTicketAlt size={`${iconSize}`} />
+                       
                         <span className={`d-${display}`}> coupon</span>
                       </span>
+                      </div>
+                    </div>
+                     
                     </Link>
                   </li>
                 </ul>

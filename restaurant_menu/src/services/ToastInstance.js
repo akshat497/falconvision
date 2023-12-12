@@ -17,7 +17,7 @@ export const showToast = (message, type ) => {
         closeButton: true,
         closeOnClick: true,
         hideProgressBar:true,
-        transition:true,
+      
         draggable:true
       });
       break;

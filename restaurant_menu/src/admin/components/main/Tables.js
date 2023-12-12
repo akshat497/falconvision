@@ -111,7 +111,7 @@ export default function Tables() {
     };
     dispatch(updateCategory(body));
   };
-
+ 
   return (
     <div
       className={`dashboard ${
@@ -124,20 +124,21 @@ export default function Tables() {
           : "dashboardcollapsed"
       }`}
     >
-      <div className="mb-5">
+    
+      <div className="container-fluid">
         <button
-          className={showMenuDataTable ? `btn btn-secondary mx-2` : "btn mx-2"}
+          className={showMenuDataTable ? `btn-active mr-2 ` : "btn mr-2"}
           onClick={() => {
             setShowMenuDataTable(true);
             setShowDataTable(false);
             setShowCouponTable(false)
           }}
         >
-          {" "}
+          
           Menu Items
         </button>
         <button
-          className={showDataTable ? `btn btn-secondary` : "btn"}
+          className={showDataTable ? `btn-active` : "btn"}
           onClick={() => {
             setShowDataTable(true);
             setShowMenuDataTable(false);
@@ -148,7 +149,7 @@ export default function Tables() {
           Category 
         </button>
         <button
-          className={showCouponTable ? `btn btn-secondary` : "btn"}
+          className={showCouponTable ? `btn-active` : "btn"}
           onClick={() => {
             setShowDataTable(false);
             setShowMenuDataTable(false);

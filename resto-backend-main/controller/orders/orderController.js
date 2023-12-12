@@ -57,7 +57,7 @@ const orderController = {
 
           const customer = await Customer.findAll(options);
 
-          if (customer.length === 0) {
+          if (pageSize>100&&customer.length === 0) {
             return res.status(404).json({ message: "No more records found" });
           }
           return res.json(customer);

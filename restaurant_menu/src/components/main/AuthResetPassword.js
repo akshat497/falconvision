@@ -1,13 +1,14 @@
 // React component for resetting password
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom'; // Assuming you use React Router
+import { useLocation, useParams } from 'react-router-dom'; // Assuming you use React Router
 
 import { useDispatch } from 'react-redux';
 import { authResetPassword } from '../../redux/auth/authThunks';
 import { toast } from 'react-toastify';
 
 const AuthResetPassword = () => {
-    const dispatch=useDispatch()
+    const dispatch=useDispatch();
+    const location=useLocation()
   const { token } = useParams();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,7 +42,9 @@ const AuthResetPassword = () => {
     const resetData = {
       token,
       newPassword,
-      confirmPassword
+      confirmPassword,
+      
+
     };
 
     dispatch(authResetPassword(resetData));
@@ -67,7 +70,7 @@ const AuthResetPassword = () => {
     {/* {!passwordsMatch && <p className="error-text">Passwords do not match.</p>} */}
     <button
       onClick={handleResetPassword}
-      className='btn '
+      className='btn text-light'
       style={{backgroundColor:"purple"}}
     >
       Submit

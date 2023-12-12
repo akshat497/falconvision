@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header';
+
 import { FaInfoCircle } from 'react-icons/fa';
 
 

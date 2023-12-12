@@ -35,10 +35,10 @@ export default function Login() {
         email: email,
         password: password,
       };
-      if (rememberMe) {
-        // Store email and password in local storage
-        localStorage.setItem("rememberedEmail", email);
-        localStorage.setItem("rememberedPassword", password);
+      if (rememberMe===true) {
+        localStorage.setItem("stored crediancials", JSON.stringify(body));
+      }else{
+        localStorage.removeItem("stored crediancials")
       }
       dispatch(loginUser(body));
     } else {
@@ -59,12 +59,13 @@ export default function Login() {
     }
   }, [response, restroDetails]);
   useEffect(() => {
-    const storedEmail = localStorage.getItem("rememberedEmail");
-    const storedPassword = localStorage.getItem("rememberedPassword");
+    const storedCrediancials = JSON.parse(localStorage.getItem("stored crediancials"))
 
-    if (storedEmail && storedPassword) {
-      setEmail(storedEmail);
-      setPassword(storedPassword);
+
+    if (storedCrediancials?.email && storedCrediancials?.password) {
+      setEmail(storedCrediancials?.email);
+      setPassword(storedCrediancials?.password);
+      setRememberMe(true);
     }
   }, []);
 
@@ -73,19 +74,20 @@ export default function Login() {
       {loading ? <div className="overlay"></div> : null}
       <ClientHeader />
       <ForgetPassword/>
-      <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
+
+      <div className="container d-flex flex-column justify-content-center align-items-center vh-100 ">
   <section
-    className="card mb-3"
+    className="card "
     style={{
       boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
       borderRadius: "10px",
       width: "70%",
-      height: "60vh",
+      height: "auto",
       display: "flex",
     }}
   >
     <div className="row g-0 d-flex align-items-center">
-      <div className="col-lg-4 d-none d-lg-flex mb-5">
+      <div className="col-lg-4 d-none d-lg-flex ">
         <img
           src="https://img.freepik.com/free-vector/waiter-wearing-face-mask-serving_23-2148592573.jpg?w=740&t=st=1696666536~exp=1696667136~hmac=7179715719289404e6081cfcb7b8765d7ad8ac7729088381ae7f1d1c29ce8730"
           alt="Trendy Pants and Shoes"
@@ -94,10 +96,13 @@ export default function Login() {
         />
       </div>
       <div className="col-lg-8">
-        <div className="card-body py-5 px-md-5">
-          <form className="d-flex flex-column h-100">
+        <div className="card-body ">
+          <form className="d-flex flex-column ">
             {/* Email input */}
-            <div className="form-outline mb-4">
+            <div className="form-outline ">
+            <label className="form-label" htmlFor="form2Example1">
+                Email address
+              </label>
               <input
                 type="email"
                 id="form2Example1"
@@ -105,12 +110,13 @@ export default function Login() {
                 value={email}
                 onChange={handleEmailChange}
               />
-              <label className="form-label" htmlFor="form2Example1">
-                Email address
-              </label>
+             
             </div>
             {/* Password input */}
             <div className="form-outline mb-4">
+            <label className="form-label" htmlFor="form2Example2">
+                Password
+              </label>
               <input
                 type="password"
                 id="form2Example2"
@@ -118,9 +124,7 @@ export default function Login() {
                 value={password}
                 onChange={handlePasswordChange}
               />
-              <label className="form-label" htmlFor="form2Example2">
-                Password
-              </label>
+              
             </div>
             {/* 2 column grid layout for inline styling */}
             <div className="d-flex justify-content-between my-3">
@@ -133,6 +137,7 @@ export default function Login() {
                     defaultValue
                     id="form2Example31"
                     onChange={() => setRememberMe(!rememberMe)}
+                    checked={rememberMe}
                   />
                   <label
                     className="form-check-label"

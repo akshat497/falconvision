@@ -65,7 +65,7 @@ const FAQPage = () => {
      
      <ClientHeader />
       
-      <div className="faq-section my-5" style={{height:"100vh"}}>
+      <div className="faq-section " >
         {faqData.map((item, index) => (
           <div key={index} className="faq-item">
             <div

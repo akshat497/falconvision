@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope, FaEarlybird
 
 const Footer = () => {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer my-3">
       <div className="container">
         <div className="footer-top">
           <div className="footer-logo text-light">

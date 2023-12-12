@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import ClientHeader from "./ClientHeader";
 import Footer from "./Footer";
+import { showToast } from "../../services/ToastInstance";
 function Signup() {
   const sendingOtp = useSelector((state) => state.otpsend.otploading);
   let OtpResponse = useSelector((state) => state.otpsend.otp);
@@ -34,6 +35,7 @@ function Signup() {
   const [secondsRemaining, setSecondsRemaining] = useState(59);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [displayReferCode, setdisplayReferCode] = useState(false);
+  const [matched, setmatched] = useState(false);
   const [referCode, setReferCode] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,7 +56,8 @@ function Signup() {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      toast.warn("Field missing!");
+   
+      showToast("Field missing!","warn")
       return;
     }
 
@@ -67,7 +70,8 @@ function Signup() {
 
     // Check if password and confirm password match
     if (formData.password !== formData.confirmPassword) {
-      toast.warn("Password and confirm password do not match.");
+     
+      showToast("Password and confirm password do not match.","warn")
       return;
     }
     const body = {
@@ -107,7 +111,16 @@ function Signup() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    
   };
+  useEffect(()=>{
+    if (formData.password === formData.confirmPassword&&formData.password?.length >0&&formData.confirmPassword?.length>0 ) {
+      setmatched(true)
+    }else{
+      setmatched(false)
+    }
+  },[formData])
   useEffect(() => {
     const passwordScore = calculatePasswordStrength(formData.password);
     setPasswordStrength(passwordScore);
@@ -184,7 +197,7 @@ function Signup() {
     <>
       <ClientHeader />
       <div
-        className="container d-flex flex-column justify-content-center align-items-center vh-100"
+        className="container d-flex flex-column justify-content-center align-items-center "
         style={{ minHeight: "100vh" }}
       >
         <section
@@ -193,8 +206,9 @@ function Signup() {
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
             borderRadius: "10px",
             width: "70%",
-            height: "62vh",
+            height: "auto",
             display: "flex",
+            
           }}
         >
           {/* Form section */}
@@ -207,14 +221,14 @@ function Signup() {
                 height="390vh"
               />
             </div>
-            <div className="col-lg-8" style={{ marginTop: "" }}>
+            <div className="col-lg-8" >
               <div className="card-body ">
                 {/* Render different form sections based on the current step */}
                 {step === 0 && (
                   <div className="col-lg-12">
                     <form onSubmit={handleSubmit}>
                       {/* Restaurant Name input */}
-                      <div className="form-outline my-4">
+                      <div className="form-outline">
                         {/* <label className="form-label" htmlFor="restaurantName">
                         Restaurant Name
                       </label> */}
@@ -297,11 +311,11 @@ function Signup() {
                     <form onSubmit={handleSubmit}>
                       
                         
-                        <div className="form-outline mb-4">
+                        <div className="form-outline ">
                         <input
                           type="text"
                           id="pincode"
-                          className="form-control mb-4"
+                          className="form-control "
                           name="pincode"
                           value={formData.pincode}
                           onChange={handleChange}
@@ -311,59 +325,26 @@ function Signup() {
                             
                           
                           {/* Password strength indicator */}
-                          <div className="password-strength-indicator"
-                          style={{marginTop:"-4%"}}
-                          
-                          >
-                               {/* <progress
-                              max="100"
-                              value={passwordStrength}
-                              style={{
-                                width: "100%",
-                                height: "4px",
-                                border: "none",
-                                borderRadius: "5px",
-                                backgroundColor: "#ddd",
-                                
-                                
-                              }}
-                            /> */}
-                          
-                            <div classname="form-outline">
+                          <div classname="form-outline">
                         <input
                             type="password"
                             id="password"
-                            className="form-control "
+                            className={passwordStrength<90?"form-control-validate-week":"form-control"}
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="password"
                           />
                         
-                            <span>
-                              {formData?.password?.length>0&&<div>
-                                {
-                                  passwordStrength === 0
-                                ? <small style={{color:"red"}}><b>Weak</b></small>
-                                : passwordStrength < 50
-                                ? <small style={{color:"red"}}><b>Weak</b></small>
-                                : passwordStrength < 70
-                                ? <small style={{color:"gray"}}><b>Moderate</b></small>
-                                : passwordStrength < 90
-                                ? <small style={{color:"green"}}><b>Strong</b></small>
-                                : <small style={{color:"darkgreen"}}><b>Very Strong</b></small>
-                                }
-                              </div>}
-                            </span>
+                         
                           </div>
-                        </div>
                         {/* Confirm Password input */}
                        
                         <div className="form-outline ">
                           <input
                             type="password"
                             id="confirmPassword"
-                            className="form-control"
+                            className={matched===false?"form-control-validate-week":"form-control"}
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleChange}
@@ -487,7 +468,7 @@ function Signup() {
     <div>
       <button
         type="button"
-        className="btn btn-secondary"
+        className={step===0?`btn btn-secondary d-none`:"btn btn-secondary"}
         onClick={handlePrevious}
         disabled={step === 0}
       >
@@ -503,16 +484,12 @@ function Signup() {
           className="btn"
           onClick={handleNext}
           style={{
-            backgroundColor: "#CBC3E3",
+            backgroundColor: "purple",
             color: "white",
             transition: "background-color 0.3s",
+            
           }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = "#DA70D6";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = "#CBC3E3";
-          }}
+        
         >
           <FaArrowRight />
         </button>

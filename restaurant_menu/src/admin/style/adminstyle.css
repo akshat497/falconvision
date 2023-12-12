@@ -3,8 +3,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  height: 350px;
-  
+  height: 370px;
   overflow: hidden;
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -148,7 +147,7 @@ td {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
 }
 
 .modal {
@@ -213,10 +212,12 @@ td {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
+
 /* Top Navbar styles */
 .navbar {
   position: fixed;
@@ -224,7 +225,8 @@ td {
   left: 0;
   width: 100%;
   background-color: var(--your-top-navbar-color);
-  z-index: 100; /* Ensures it's on top */
+  z-index: 100;
+  /* Ensures it's on top */
   /* Other styles for your top navbar */
 }
 
@@ -237,72 +239,73 @@ td {
   width: 200px;
   background-color: var(--panel-color);
   border-right: 1px solid var(--border-color);
-  transition: width 0.5s; 
+  transition: width 0.5s;
   /* Other styles for your side navbar */
 }
 
 /* Dashboard styles */
 .dashboard {
-  margin-top: 5%; /* Make space for the fixed top navbar */
-  margin-left: 200px; /* Match the width of the side navbar */
+  margin-top: 5%;
+  /* Make space for the fixed top navbar */
+  margin-left: 200px;
+  /* Match the width of the side navbar */
   background-color: var(--panel-color);
-  min-height: 100vh;
+  min-height: 89vh;
   width: calc(100% - 200px);
   padding: 10px 14px;
-  
-  /* transition: var(--tran-05); */
   transition: margin-left 0.5s, width 0.5s;
-
-  /* Other styles for your dashboard */
+  background-color: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
 }
 
-.dashboardcollapsed{
-  margin-left: 50px;
-  margin-top: 5%; /* Adjust the margin for the expanded dashboard */
-  width: 100% ; 
-  background-color: var(--panel-color);
-  min-height: 100vh;
-  width: calc(100% - 50px);
-  padding: 10px 14px;
+.btn.focus,
+.btn:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(73, 4, 74, 0.25);
+}
+
+nav.close {
+  width: 60px;
+}
+
+nav .logo-name {
+  display: flex;
+  align-items: center;
+}
+
+nav .logo-image {
+  display: flex;
+  justify-content: center;
+  min-width: 45px;
+}
+
+nav .logo-image img {
+  width: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+nav .logo-name .logo_name {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-left: 14px;
   transition: var(--tran-05);
 }
 
- nav.close{
-  width: 60px; 
-}
-nav .logo-name{
-    display: flex;
-    align-items: center;
-}
-nav .logo-image{
-    display: flex;
-    justify-content: center;
-    min-width: 45px;
-}
-nav .logo-image img{
-    width: 40px;
-    object-fit: cover;
-    border-radius: 50%;
+nav.close .logo_name {
+  opacity: 0;
+  pointer-events: none;
 }
 
-nav .logo-name .logo_name{
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-color);
-    margin-left: 14px;
-    transition: var(--tran-05);
+nav .menu-items {
+  margin-top: 40px;
+  height: calc(100% - 90px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-nav.close .logo_name{
-    opacity: 0;
-    pointer-events: none;
-}
-nav .menu-items{
-    margin-top: 40px;
-    height: calc(100% - 90px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-} 
+
 .header-skeleton {
   position: fixed;
   top: 0;
@@ -313,7 +316,7 @@ nav .menu-items{
   background-color: var(--panel-color);
   border-right: 1px solid var(--border-color);
   transition: var(--tran-05);
-  
+
 }
 
 .header-skeleton .logo-name {
@@ -324,7 +327,8 @@ nav .menu-items{
 .header-skeleton .logo-image {
   width: 50px;
   height: 50px;
-  background: #848282; /* Background color for the logo image placeholder */
+  background: #848282;
+  /* Background color for the logo image placeholder */
   border-radius: 50%;
   margin-right: 12px;
 }
@@ -332,7 +336,8 @@ nav .menu-items{
 .header-skeleton .logo-text {
   width: 150px;
   height: 24px;
-  background: #848282; /* Background color for the logo text placeholder */
+  background: #848282;
+  /* Background color for the logo text placeholder */
   border-radius: 4px;
 }
 
@@ -350,7 +355,8 @@ nav .menu-items{
 .header-skeleton .logout-mode .skeleton {
   width: 100%;
   height: 18px;
-  background: #363636; /* Background color for links and mode placeholders */
+  background: #363636;
+  /* Background color for links and mode placeholders */
   border-radius: 4px;
 }
 
@@ -368,13 +374,16 @@ nav .menu-items{
   0% {
     opacity: 0.2;
   }
+
   50% {
     opacity: 0.4;
   }
+
   100% {
     opacity: 0.2;
   }
 }
+
 .skeleton-card {
   /* Set the background color for the card skeleton */
   background-color: #7e7d7d;
@@ -426,7 +435,7 @@ nav .menu-items{
 }
 
 /* Animation for the loading effect */
-.skeleton-card > * {
+.skeleton-card>* {
   animation: loading 1.5s infinite;
 }
 
@@ -434,24 +443,29 @@ nav .menu-items{
   0% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 0.8;
   }
+
   100% {
     opacity: 0.5;
   }
 }
-.menu-items li{
+
+.menu-items li {
   list-style: none;
 }
-.menu-items li a{
+
+.menu-items li a {
   display: flex;
   align-items: center;
   height: 50px;
   text-decoration: none;
   position: relative;
 }
-.nav-links li a:hover:before{
+
+.nav-links li a:hover:before {
   content: "";
   position: absolute;
   left: -7px;
@@ -460,29 +474,33 @@ nav .menu-items{
   border-radius: 50%;
   background-color: var(--primary-color);
 }
-body.dark li a:hover:before{
+
+body.dark li a:hover:before {
   background-color: var(--text-color);
 }
-  .menu-items li a i{
-      font-size: 24px;
-      min-width: 45px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--black-light-color);
-  }
-  .menu-items li a .link-name{
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--black-light-color);    
-      transition: var(--tran-05);
-  }
-  /* src/components/Sidebar.css */
+
+.menu-items li a i {
+  font-size: 24px;
+  min-width: 45px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--black-light-color);
+}
+
+.menu-items li a .link-name {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--black-light-color);
+  transition: var(--tran-05);
+}
+
+/* src/components/Sidebar.css */
 
 
 .collapsed {
-  width: 60px;
+  width: 75px;
 }
 
 .toggle-button {
@@ -524,6 +542,7 @@ li {
 .anticlockwise {
   transform: rotate(0deg);
 }
+
 /* Custom CSS for bottom-buttons and container */
 .container {
   display: flex;
@@ -542,7 +561,8 @@ li {
 
 /* Style for buttons */
 .bottom-buttons button {
-  padding: 10px 20px; /* Add padding to the buttons for spacing */
+  padding: 10px 20px;
+  /* Add padding to the buttons for spacing */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -550,63 +570,79 @@ li {
 
 /* Style for the "Previous" button */
 .bottom-buttons .btn-backs {
-  background-color: grey; /* Reddish background color */
-  color: #fff; /* White text color */
+  background-color: grey;
+  /* Reddish background color */
+  color: #fff;
+  /* White text color */
 }
 
 /* Style for the "Next" button */
 .bottom-buttons .btn {
-  background-color: rgb(173, 75, 173); /* Blue background color */
-  color: #fff; /* White text color */
+  background-color: rgb(173, 75, 173);
+  /* Blue background color */
+  color: #fff;
+  /* White text color */
 }
 
 /* Style for the "Submit" button */
 
-.boxConteiner{
+.boxConteiner {
   width: 300px;
   height: 300px;
   position: relative;
   overflow: hidden;
   perspective: 800px;
-  
+
 }
+
 .rdt_TableHead {
   background-color: #2196F3 !important;
 }
+
 /* Example CSS for dark-themed react-data-table-component */
 
 /* Change the background color of the table header */
 .rdt_TableHead {
-  background-color: #333; /* Dark background color */
-  color: white; /* Text color */
+  background-color: #333;
+  /* Dark background color */
+  color: white;
+  /* Text color */
 }
 
 /* Change the background color of table rows */
 .rdt_TableRow {
-  background-color: #444; /* Dark background color */
-  color: white; /* Text color */
+  background-color: #444;
+  /* Dark background color */
+  color: white;
+  /* Text color */
 }
 
 /* Change the background color of the selected row */
 .rdt_TableRow.selected {
-  background-color: #555; /* Dark background color for selected row */
+  background-color: #555;
+  /* Dark background color for selected row */
 }
 
 /* Customize the pagination buttons */
 .rdt_Pagination {
-  background-color: #333; /* Dark background color */
+  background-color: #333;
+  /* Dark background color */
 }
 
 /* Style the search bar input */
 .rdt_Search input {
-  background-color: #444; /* Dark background color for search input */
-  color: white; /* Text color */
+  background-color: #444;
+  /* Dark background color for search input */
+  color: white;
+  /* Text color */
 }
 
 /* Customize the hover color for rows */
 .rdt_TableRow:hover {
-  background-color: #555; /* Dark background color for hover */
+  background-color: #555;
+  /* Dark background color for hover */
 }
+
 /* YouTubeSkeletonLoader.css */
 .youtube-skeleton-loader {
   border: 1px solid #f0f0f0;
@@ -623,13 +659,15 @@ li {
 
 .youtube-skeleton-shimmer {
   flex: 1;
-  height: 25px; /* Adjust cell height as needed */
+  height: 25px;
+  /* Adjust cell height as needed */
   margin: 10px;
   background: linear-gradient(90deg, transparent, rgba(240, 240, 240, 0.5), transparent);
   background-size: 200% 100%;
   animation: loading 2s infinite;
   border-radius: 4px;
-  min-height: 20px; /* Match cell height for consistency */
+  min-height: 20px;
+  /* Match cell height for consistency */
 }
 
 .youtube-skeleton-header .youtube-skeleton-shimmer {
@@ -648,19 +686,22 @@ li {
 
 .youtube-skeleton-shimmer {
   flex: 1;
-  height: 25px; /* Adjust cell height as needed */
+  height: 25px;
+  /* Adjust cell height as needed */
   margin: 10px;
   background: linear-gradient(90deg, transparent, rgba(152, 150, 150, 0.7), transparent);
   background-size: 200% 100%;
   animation: loading 2s infinite;
   border-radius: 4px;
-  min-height: 20px; /* Match cell height for consistency */
+  min-height: 20px;
+  /* Match cell height for consistency */
 }
 
 @keyframes loading {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -675,9 +716,9 @@ li {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-  
+
   max-height: 600px;
-  overflow:scroll;
+  overflow: scroll;
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
@@ -712,7 +753,8 @@ li {
 .qr-code {
   display: flex;
   flex-direction: column;
-  width: 90px; /* Adjust the size as needed */
+  width: 90px;
+  /* Adjust the size as needed */
 }
 
 .qr-row {
@@ -721,17 +763,22 @@ li {
 }
 
 .qr-block {
-  width: 30px; /* Adjust the size as needed */
-  height: 30px; /* Adjust the size as needed */
-  margin: 2px; /* Adjust the spacing between blocks as needed */
+  width: 30px;
+  /* Adjust the size as needed */
+  height: 30px;
+  /* Adjust the size as needed */
+  margin: 2px;
+  /* Adjust the spacing between blocks as needed */
 }
 
 .qr-dark {
-  background-color: #000; /* Dark color for QR code */
+  background-color: #000;
+  /* Dark color for QR code */
 }
 
 .qr-light {
-  background-color: #fff; /* Light color for QR code */
+  background-color: #fff;
+  /* Light color for QR code */
 }
 
 
@@ -771,13 +818,17 @@ li {
 }
 
 @keyframes qr-animation {
-  0%, 100% {
-      transform: translateY(0);
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
+
   50% {
-      transform: translateY(20px);
+    transform: translateY(20px);
   }
 }
+
 /* NotificationPanel.css */
 
 .notification-container {
@@ -802,7 +853,8 @@ li {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   background-color: #fff;
-  width: 300px; /* Adjust the width as needed */
+  width: 300px;
+  /* Adjust the width as needed */
 }
 
 ul {
@@ -846,7 +898,7 @@ a {
   border: 1px solid #ddd;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  
+
 }
 
 
@@ -869,6 +921,7 @@ a {
   background-color: transparent;
   border: 0;
 }
+
 /* Add this to your styles */
 .search-result {
   display: flex;
@@ -877,15 +930,18 @@ a {
 }
 
 .type-indicator {
-  font-size: 0.8em; /* Adjust the font size as needed */
-  color: gray; /* or any other color you prefer */
+  font-size: 0.8em;
+  /* Adjust the font size as needed */
+  color: gray;
+  /* or any other color you prefer */
 }
+
 .coupon-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  height: 360px;
-  margin-top: 7%;
+  height: 380px;
+
   overflow: hidden;
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -901,6 +957,7 @@ a {
   text-align: center;
   color: #333;
 }
+
 .coupon-form {
   display: flex;
   flex-direction: column;
@@ -921,7 +978,8 @@ a {
 }
 
 .generate-button:hover {
-  background-color: #6a1b9a; /* Darker shade of purple on hover */
+  background-color: #6a1b9a;
+  /* Darker shade of purple on hover */
 }
 
 .coupon-code {
@@ -930,3 +988,103 @@ a {
   color: #333;
   font-weight: bold;
 }
+
+.dropdown-setting {
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: purple;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(128, 0, 128, 0.25);
+
+}
+
+.coupon-container-body {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.idxdtx {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background-color: #FFFFFF;
+  min-height: 52px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, .12);
+  border-bottom-style: solid;
+  background-color: purple !important;
+  color: white !important;
+}
+
+.btn-active {
+  background-color: #fff !important;
+  box-shadow: 0 0 0 0.2rem rgba(73, 4, 74, 0.25);
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  padding: 8px;
+  font-weight: 500;
+  color: purple;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.btn-danger {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.dashboardcollapsed {
+  margin-left: 65px;
+  margin-top: 5%;
+  /* Adjust the margin for the expanded dashboard */
+  width: 100%;
+  background-color: var(--panel-color);
+  min-height: 90vh;
+  width: calc(100% - 50px);
+  padding: 10px 14px;
+  background-color: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+  transition: var(--tran-05);
+}
+
+.react-datepicker__day--selected {
+  border-radius: 0.3rem;
+  background-color: rgb(148, 38, 126) !important;
+  color: #fff !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  border-radius: 0.3rem;
+  background-color: rgb(148, 38, 126) !important;
+  color: #fff !important;
+}
+
+.react-datepicker__month-text--keyboard-selected {
+  border-radius: 0.3rem;
+  background-color: rgb(148, 38, 126) !important;
+  color: #fff !important;
+}
+

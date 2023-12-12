@@ -36,7 +36,8 @@ export default function PasswordResetModal() {
     const sendEmail=()=>{
       var obj={
         email:restroDetails.email,
-        phoneNumber:restroDetails.phone
+        phoneNumber:restroDetails.phone,
+        url:window.location.origin+"/resetpassword"
       }
       dispatch(forgetPassword(obj))
         }

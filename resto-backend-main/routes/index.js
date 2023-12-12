@@ -6,10 +6,12 @@ const userController = require('../controller/userController')
 const orderController = require('../controller/orders/orderController')
 const contactUsController = require('../controller/contactUsData/contactUsController')
 const coupenCodeController = require('../controller/coupenCodeController')
+const authentication = require('../middlewares/authentication')
 const router = express.Router()
 const app = express();
 
-
+//expiration check
+router.get("/check-expire", authentication)
 //Auth Routes
 router.post("/register", authController.register)
 router.post("/login", authController.login)

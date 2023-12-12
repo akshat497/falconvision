@@ -125,20 +125,14 @@ export const loginUser = (userData) => async (dispatch) => {
       dispatch(setForgetPasswordLoading(true));
       const response = await Forgetpassword(userData); // Call your API function here
     if(response){
-      toast.success('Password reset email sent',{
-        autoClose:false,
-        closeButton:true,
-        closeOnClick:true
-      })
+    
+      showToast("Password reset email sent","success")
+      
     }
       dispatch(setForgetPassword(response));
       dispatch(setForgetPasswordLoading(false));
     } catch (error) {
-      toast.error(error?.response?.data?.message ||error.message,{
-        autoClose:false,
-        closeButton:true,
-        closeOnClick:true
-      })
+      showToast(error?.response?.data?.message ||error.message)
       // toast.error("something went wrong")
       dispatch(setForgetPasswordError(error.response.data.message));
       dispatch(setForgetPasswordLoading(false));
@@ -150,20 +144,12 @@ export const loginUser = (userData) => async (dispatch) => {
       dispatch(setAuthResetPasswordLoading(true));
       const response = await AuthResetPassword(userData); // Call your API function here
     if(response){
-      toast.success('Password reset successfull',{
-        autoClose:false,
-        closeButton:true,
-        closeOnClick:true
-      })
+      showToast("Password reset successfull","success")
     }
       dispatch(setAuthResetPassword(response));
       dispatch(setAuthResetPasswordLoading(false));
     } catch (error) {
-      toast.error(error?.response?.data?.message ||error.message,{
-        autoClose:false,
-        closeButton:true,
-        closeOnClick:true
-      })
+      showToast(error?.response?.data?.message ||error.message)
       // toast.error("something went wrong")
       dispatch(setAuthResetPasswordError(error.response.data.message));
       dispatch(setAuthResetPasswordLoading(false));
