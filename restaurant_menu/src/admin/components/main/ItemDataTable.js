@@ -37,11 +37,19 @@ export default function ItemDatatable({
   };
   useEffect(() => {
     const filteredOrders = fetcheditemsCopy?.filter((item) => {
-      return item.name.toLowerCase().includes(searchText);
+      const searchTerm = searchText.toLowerCase();
+  
+      return (
+        item.name.toLowerCase().includes(searchTerm) ||
+        (item.Category && item.Category.name.toLowerCase().includes(searchTerm)) ||
+        (item.price && item.price.toString().includes(searchTerm)) ||
+        (item.isActive && item.isActive.toString().toLowerCase().includes(searchTerm))
+      );
     });
-
+  
     setFetcheditems(filteredOrders);
   }, [searchText, fetcheditemsCopy, setFetcheditems]);
+  
   const handleToggleActive = (row) => {
     if (row.isActive) {
       const body = {
@@ -194,7 +202,7 @@ export default function ItemDatatable({
      <input
                   type="text"
                   className="form-control"
-                  placeholder="Search by Name..."
+                  placeholder="Search ..."
                   value={searchText} // Bind the input value to the searchText state
                   onChange={handleSearch} // Call handleSearch function on input change
                 />

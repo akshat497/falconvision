@@ -3,7 +3,7 @@ const authentication = require("../middlewares/authentication");
 const CustomErrorHandler = require("../services/CustomErrorHandler");
 const MenuItem = require("../models/menuItem");
 const { Order } = require("../models/order");
-const NodeCache = require('node-cache');
+const NodeCache = require("node-cache");
 const couponCache = new NodeCache();
 const coupenCodeController = {
   getCoupenCode: async (req, res, next) => {
@@ -26,24 +26,40 @@ const coupenCodeController = {
     try {
       authentication(req, res, async () => {
         const { name, userId, discount } = req.body;
-        if (!name || typeof name !== 'string' || !name.trim()) {
-            return res.status(400).json({ message: 'Coupon name is required and must be a non-empty string.' });
-          }
-    
-          if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({ message: 'User ID is required and must be a string.' });
-          }
-    
-          const discountValue = parseFloat(discount);
-          if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
-            return res.status(400).json({ message: 'Discount must be a number between 0 and 100.' });
-          }
+        if (!name || typeof name !== "string" || !name.trim()) {
+          return res
+            .status(400)
+            .json({
+              message:
+                "Coupon name is required and must be a non-empty string.",
+            });
+        }
+
+        if (!userId || typeof userId !== "string") {
+          return res
+            .status(400)
+            .json({ message: "User ID is required and must be a string." });
+        }
+
+        const discountValue = parseFloat(discount);
+        if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
+          return res
+            .status(400)
+            .json({ message: "Discount must be a number between 0 and 100." });
+        }
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }
+        let coupon = await CoupenCode.findAll({
+          where: { name: name, discount: discount },
+        });
+        console.log(coupon)
+        if (coupon.length>0) {
+          return next(CustomErrorHandler.alreadyExist("Coupon already exists"));
+        }
         let newCouponCode = await CoupenCode.create({ name, userId, discount });
         console.log("newCouponCode", newCouponCode);
-        res.status(200).json({ message: "true",newCouponCode });
+        res.status(200).json({ message: "true", newCouponCode });
       });
     } catch (error) {
       return next(error);
@@ -61,11 +77,11 @@ const coupenCodeController = {
           isActive,
           discount,
         };
-        let findCoupon=await CoupenCode.findAll({where:{CoupenCodeId: CoupenCodeId ,userId:userId}})
-        if(findCoupon.length<1){
-            return next(CustomErrorHandler.NotFound('NO such item found'));
-          
-
+        let findCoupon = await CoupenCode.findAll({
+          where: { CoupenCodeId: CoupenCodeId, userId: userId },
+        });
+        if (findCoupon.length < 1) {
+          return next(CustomErrorHandler.NotFound("NO such item found"));
         }
         const response = await CoupenCode.update(obj, {
           where: { CoupenCodeId, userId },
@@ -80,10 +96,12 @@ const coupenCodeController = {
   applyCoupenCode: async (req, res, next) => {
     try {
       const { name, userId, totalAmount, items } = req.body;
-  
+
       // Validate required fields
       if (!name || !userId || !items || !totalAmount) {
-        return res.status(400).json({ message: 'Invalid request. Check required fields.' });
+        return res
+          .status(400)
+          .json({ message: "Invalid request. Check required fields." });
       }
       const cacheKey = `${userId}_${name}`;
       const cachedResult = couponCache.get(cacheKey);
@@ -97,47 +115,61 @@ const coupenCodeController = {
           userId,
         },
       });
-  
+
       if (!fetchedCouponCode || fetchedCouponCode.isActive === false) {
-        return next(CustomErrorHandler.NotFound('Coupon code not found or not active'));
+        return next(
+          CustomErrorHandler.NotFound("Coupon code not found or not active")
+        );
       }
-     
+
       const validMenuItems = await MenuItem.findAll({
         where: {
           userId,
           menuItemId: items.map((item) => item.menuItemId),
         },
       });
-  
+
       // Check if validMenuItems is not empty
       if (!validMenuItems || validMenuItems.length === 0) {
-        return res.status(400).json({ message: 'No valid items found for the coupon code.' });
+        return res
+          .status(400)
+          .json({ message: "No valid items found for the coupon code." });
       }
-  
+
       // Calculate the total price of valid items
       const totalValidItemsPrice = validMenuItems.reduce((sum, item) => {
-        const quantity = items.find((cartItem) => cartItem.menuItemId === item.menuItemId)?.quantity || 0;
+        const quantity =
+          items.find((cartItem) => cartItem.menuItemId === item.menuItemId)
+            ?.quantity || 0;
         return sum + Number(item.price) * quantity;
       }, 0);
       // Validate discount percentage
       let discountPercentage = fetchedCouponCode.discount;
-      if (isNaN(discountPercentage) || discountPercentage <= 0 || discountPercentage > 100) {
-        return next(CustomErrorHandler.BadRequest('Invalid discount percentage'));
+      if (
+        isNaN(discountPercentage) ||
+        discountPercentage <= 0 ||
+        discountPercentage > 100
+      ) {
+        return next(
+          CustomErrorHandler.BadRequest("Invalid discount percentage")
+        );
       }
-  
+
       // Calculate the discounted amount
-      const discountedAmount = (discountPercentage / 100) * totalValidItemsPrice;
-  
+      const discountedAmount =
+        (discountPercentage / 100) * totalValidItemsPrice;
+
       // Check if the discounted amount exceeds the total amount
       const finalAmount = Math.max(totalValidItemsPrice - discountedAmount, 0);
-  
-      res.status(200).json({ message: 'Coupon applied', discountedAmount, finalAmount });
+
+      res
+        .status(200)
+        .json({ message: "Coupon applied", discountedAmount, finalAmount });
     } catch (error) {
       return next(error);
     }
-  }
-  
-,
+  },
+
   deleteCoupenCode: async (req, res, next) => {
     const { CoupenCodeId, userId } = req.params;
     try {

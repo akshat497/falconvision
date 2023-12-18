@@ -32,6 +32,9 @@ export const generateCoupen= (userData) => async (dispatch) => {
       
       dispatch(setGenerateCoupenCodeLoading(true));
       const response = await GenerateCouponCode(userData); // Call your API function here
+      if(response?.message==="true"){
+        showToast("Successfully Created.","success")
+      }
       dispatch(getCouponCode(response?.newCouponCode?.userId))
       dispatch(setGenerateCoupenCode(response));
       dispatch(setGenerateCoupenCodeLoading(false));

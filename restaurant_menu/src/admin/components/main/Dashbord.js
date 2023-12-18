@@ -215,7 +215,7 @@ const Dashboard = () => {
       {
         label: "Sales Amount",
         data: data,
-        backgroundColor: "gray",
+        backgroundColor: "purple",
         borderColor: "black",
         borderRadius: "10px",
         outerWidth: "10px",
@@ -309,9 +309,9 @@ const Dashboard = () => {
 
   // Determine the background colors for the bars
   const backgroundColorMonth1 =
-    totalSalesMonth1 > totalSalesMonth2 ? "green" : "red";
+    totalSalesMonth1 > totalSalesMonth2 ? "purple" : "purple";
   const backgroundColorMonth2 =
-    totalSalesMonth2 > totalSalesMonth1 ? "green" : "red";
+    totalSalesMonth2 > totalSalesMonth1 ? "gray" : "gray";
   // Update the 'barChartDatacompare' dataset
 
   const barChartDatacompare = {
@@ -324,7 +324,7 @@ const Dashboard = () => {
         label: "Sales Amount",
         data: [totalSalesMonth1, totalSalesMonth2],
         backgroundColor: [backgroundColorMonth1, backgroundColorMonth2], // You can adjust colors as needed
-        borderColor: "blue",
+        borderColor: "purple",
       },
     ],
   };
@@ -340,7 +340,7 @@ const Dashboard = () => {
         label: "Sales Amount",
         data: [totalSalesMonth1, totalSalesMonth2],
         backgroundColor: [backgroundColorMonth1, backgroundColorMonth2], // You can adjust colors as needed
-        borderColor: "blue",
+        borderColor: "purple",
       },
     ],
   };

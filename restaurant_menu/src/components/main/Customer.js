@@ -1,31 +1,29 @@
-
 import React, { useContext, useEffect, useState } from "react";
 import Card from "../../components/main/Card";
 import Header from "../../components/common/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactSwitch from "react-switch";
-import {  useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCategory, fetchItem } from "../../redux/items/itemThunk";
 import RestaurantContext from "../../context/RestaurantContext";
 
 export default function Customer() {
-    // let params = useParams();
-    let dispatch = useDispatch();
-    const { fetcheditemsCopy, } =
-  useContext(RestaurantContext);
-    const [vegOnly, setVegOnly] = useState(false);
-    const [nonvegOnly, setnontVegOnly] = useState(false);
-    const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
-    const fetchdItem = useSelector((state) => state.fetchitem.f_item);
-   
-    const params = JSON.parse(localStorage.getItem('params'));
-    useEffect(() => {
-       if(fetchdItem===null){
-        dispatch(fetchItem(params.userId));
-        dispatch(fetchCategory(params.userId));
-       }
-      }, [fetchdItem]);
-   
+  // let params = useParams();
+  let dispatch = useDispatch();
+  const { fetcheditemsCopy } = useContext(RestaurantContext);
+  const [vegOnly, setVegOnly] = useState(false);
+  const [nonvegOnly, setnontVegOnly] = useState(false);
+  const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
+  const fetchdItem = useSelector((state) => state.fetchitem.f_item);
+
+  const params = JSON.parse(localStorage.getItem("params"));
+  useEffect(() => {
+    if (fetchdItem === null) {
+      dispatch(fetchItem(params.userId));
+      dispatch(fetchCategory(params.userId));
+    }
+  }, [fetchdItem]);
+
   return (
     <>
       {fetchLoading ? <div className="overlay"></div> : null}
@@ -60,5 +58,5 @@ export default function Customer() {
   Powered by FalconVision <FaEarlybirds size={32}/>
 </footer> */}
     </>
-  )
+  );
 }

@@ -26,7 +26,7 @@ const authentication = async (req, res, next) => {
       // If the trial period has ended, deactivate the user
       user.isActive = false;
       await user.save();
-      return res.status(401).json({ message: "Trial period has ended. Contact support to continue." });
+      return res.status(401).json({ message: "Membership is expired. Contact support to continue." });
     }
    
     if (user.isActive===false) {

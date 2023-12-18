@@ -13,36 +13,23 @@ const FAQPage = () => {
     },
     {
       question: "Is your web application free for restaurants?",
-      answer: "Yes, our web application is free for all restaurants for the first 6 months. Enjoy our services without any cost during this period.",
+      answer: "Yes, our web application is free for all restaurants for the first month. Enjoy our services without any cost during this period.",
     },
     {
       question: "How can I add my restaurant's menu to the platform?",
-      answer: "After signing in, go to your dashboard, select 'Menu Management,' and easily upload your restaurant's menu items, including descriptions and prices.",
+      answer: "After signing in, go to your dashboard, select 'Add Tab,' and easily upload your restaurant's menu items, including category and prices.",
     },
-    {
-      question: "Can I customize the appearance of my restaurant's page?",
-      answer: "Absolutely! You have full control over your restaurant's page. Add images, customize the layout, and create a unique online presence.",
-    },
+   
     {
       question: "How can customers place orders on our restaurant's page?",
       answer: "Customers can view your menu and place orders directly from your restaurant's page. You'll receive the orders in real-time for easy processing.",
     },
     {
-      question: "What payment methods are supported on your platform?",
-      answer: "We support various payment methods, including credit/debit cards and digital wallets, ensuring a smooth payment experience for your customers.",
+      "question": "Is there a mobile app available for restaurant owners?",
+      "answer": "No, we currently do not offer a mobile app for restaurant owners. However, we provide other tools and services to help you manage your restaurant and orders efficiently."
     },
-    {
-      question: "How do I manage customer reviews and ratings?",
-      answer: "You can view, respond to, and manage customer reviews and ratings from your dashboard to maintain a positive online reputation.",
-    },
-    {
-      question: "Is there a mobile app available for restaurant owners?",
-      answer: "Yes, we offer a mobile app that allows you to manage your restaurant and orders on-the-go, ensuring convenience and flexibility.",
-    },
-    {
-      question: "What marketing tools are available to promote my restaurant?",
-      answer: "Explore our marketing tools, including promotional offers, email marketing, and social media integration, to boost your restaurant's visibility.",
-    },
+    
+   
     {
       question: "How can I get in touch with your support team?",
       answer: "Feel free to contact our support team through the 'Contact Us' section on our website, and we'll be happy to assist you with any queries or issues.",

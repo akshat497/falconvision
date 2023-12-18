@@ -119,7 +119,16 @@
 //     );
 // }
 import React, { useContext, useEffect, useState } from "react";
-import { FaShoppingCart, FaRupeeSign, FaPlus, FaMinus, FaJediOrder, FaFirstOrder, FaShoppingBag, FaPlusCircle } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaRupeeSign,
+  FaPlus,
+  FaMinus,
+  FaJediOrder,
+  FaFirstOrder,
+  FaShoppingBag,
+  FaPlusCircle,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -227,88 +236,234 @@ export default function Card({ veg, nonVeg }) {
   };
 
   const SkeletonItem = () => (
-    <div className="card mx-2 my-2 skeleton-card" style={{ width: "100%", maxWidth: "300px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)" }}>
-  <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden" }}>
-    <div className="skeleton-thumbnail" style={{ width: "40%", height: "200px", borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px" }}></div>
-    <div className="card-body" style={{ width: "60%", padding: "1rem" }}>
-      <div className="skeleton-title" style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: "0.5rem", width: "70%" }}></div>
-      <div className="skeleton-subtitle" style={{ height: "1rem", width: "50%", marginBottom: "1rem" }}></div>
-      <div className="skeleton-text" style={{ fontSize: "1.25rem", fontWeight: "bold", width: "80%", marginBottom: "1rem" }}></div>
-      <div className="d-flex align-items-center">
-        <div className="skeleton-button" style={{ height: "2rem", width: "40%", borderRadius: "8px", marginBottom: "0.5rem" }}></div>
-        {/* <div className="skeleton-button" style={{ height: "2rem", width: "40%", borderRadius: "8px" }}></div> */}
+    <div
+      className="card mx-2 my-2 skeleton-card"
+      style={{
+        width: "100%",
+        maxWidth: "300px",
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden" }}>
+        <div
+          className="skeleton-thumbnail"
+          style={{
+            width: "40%",
+            height: "200px",
+            borderTopLeftRadius: "8px",
+            borderBottomLeftRadius: "8px",
+          }}
+        ></div>
+        <div className="card-body" style={{ width: "60%", padding: "1rem" }}>
+          <div
+            className="skeleton-title"
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              width: "70%",
+            }}
+          ></div>
+          <div
+            className="skeleton-subtitle"
+            style={{ height: "1rem", width: "50%", marginBottom: "1rem" }}
+          ></div>
+          <div
+            className="skeleton-text"
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: "bold",
+              width: "80%",
+              marginBottom: "1rem",
+            }}
+          ></div>
+          <div className="d-flex align-items-center">
+            <div
+              className="skeleton-button"
+              style={{
+                height: "2rem",
+                width: "40%",
+                borderRadius: "8px",
+                marginBottom: "0.5rem",
+              }}
+            ></div>
+            {/* <div className="skeleton-button" style={{ height: "2rem", width: "40%", borderRadius: "8px" }}></div> */}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
   );
 
   return (
     <>
-    {fetcheditemsCopy?.length<1&&(<NoDatComponent/>)}
-      {fetchLoading ? 
-      <div className="overlay"></div> : null}
+      {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
+      {fetchLoading ? <div className="overlay"></div> : null}
       <div
         style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
       >
         {!fetchLoading
           ? fetcheditemsCopy?.map((data) => (
-            <div className="card mx-4 my-4" style={{ width: "100%", maxWidth: "300px", boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)", opacity: data?.isActive || data?.Category?.isActive ? "1" : "0.5", transition: "opacity 0.3s ease-in-out" }}>
-  <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden" }}>
-    <img src={data.imageUrl} className="card-img-left" alt="Food Image" style={{ width: "40%", height: "200px", objectFit: "cover", borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px" }} />
-    <div className="card-body" style={{ width: "60%", padding: "1rem" }}>
-      <div className="card-title" style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: "0.5rem", color: "#333" }}>
-        {data?.name}
-        <small className={data?.veg ? "badge bg-success mx-2 " : "badge bg-danger mx-2"} style={{ fontSize: "0.7rem",}}>
-          {data?.veg ? "veg" : "nonveg"}
-        </small>
-      </div>
-      <p style={{ color: "#f84f40", fontSize: "1rem", marginBottom: "1rem" }}>
-        {/* {data?.Category?.name} */}
-       
-      </p>
-      <p style={{ fontSize: "1.25rem", fontWeight: "bold", color: "#333" }}>
-        <FaRupeeSign /> {data.price}
-      </p>
-      <div className="d-flex align-items-center">
-        {cart?.find((item) => item.menuItemId === data.menuItemId) ? (
-          <>
-            {!data?.isActive || !data?.Category?.isActive ? (
-              <button className="btn btn-secondary" disabled style={{ cursor: "not-allowed", padding: "12px", borderRadius: "8px", width: "100%", fontWeight: "750", backgroundColor: "#eee", color: "#666", border: "none" }}>
-                Not Available
-              </button>
-            ) : (
-              <div className="quantity-controls d-flex align-items-center mt-4">
-                <button className="btn btn-sm btn-outline-danger" onClick={() => removeFromCart(data)} style={{ fontSize: "1.5rem" }}>
-                  <FaMinus />
-                </button>
-                <span className="mx-3 quantity-value" style={{ fontSize: "1.25rem"}}>
-                  {cart?.find((item) => item.menuItemId === data.menuItemId)?.quantity || 0}
-                </span>
-                <button className="btn btn-sm btn-success add-to-cart-btn" onClick={() => addToCart(data)} style={{ fontSize: "1.5rem",  }}>
-                  <FaPlus />
-                </button>
+              <div
+                className="card mx-4 my-4"
+                style={{
+                  width: "100%",
+                  maxWidth: "350px",
+                  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                  opacity:data?.isActive || data?.Category?.isActive ? "1" : "0.5",
+                  transition: "opacity 0.3s ease-in-out",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={data.imageUrl}
+                    className="card-img-left"
+                    alt="Food Image"
+                    style={{
+                      width: "40%",
+                      height: "200px",
+                      objectFit: "cover",
+                      borderTopLeftRadius: "8px",
+                      borderBottomLeftRadius: "8px",
+                    }}
+                  />
+                  <div
+                    className="card-body"
+                    style={{ width: "60%", padding: "1rem" }}
+                  >
+                    <div
+                      className="card-title"
+                      style={{
+                        fontSize: "1.25rem",
+                        fontWeight: "bold",
+                        marginBottom: "0.5rem",
+                        color: "#333",
+                      }}
+                    >
+                      {data?.name}
+                      <small
+                        className={
+                          data?.veg
+                            ? "badge bg-success mx-2 "
+                            : "badge bg-danger mx-2"
+                        }
+                        style={{ fontSize: "0.7rem" }}
+                      >
+                        {data?.veg ? "veg" : "nonveg"}
+                      </small>
+                    </div>
+                    <p
+                      style={{
+                        color: "#f84f40",
+                        fontSize: "1rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      {/* {data?.Category?.name} */}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "1.25rem",
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      <FaRupeeSign /> {data.price}
+                    </p>
+                    <div className="d-flex align-items-center">
+                      {cart?.find(
+                        (item) => item.menuItemId === data.menuItemId
+                      ) ? (
+                        <>
+                          {!data?.isActive || !data?.Category?.isActive ? (
+                            <button
+                              className="btn btn-secondary"
+                              disabled
+                              style={{
+                                cursor: "not-allowed",
+                                padding: "12px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                backgroundColor: "#eee",
+                                color: "#666",
+                                border: "none",
+                              }}
+                            >
+                              Not Available
+                            </button>
+                          ) : (
+                            <div className="quantity-controls d-flex align-items-center mt-4">
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => removeFromCart(data)}
+                                style={{ fontSize: "1.5rem" }}
+                              >
+                                <FaMinus />
+                              </button>
+                              <span
+                                className="mx-3 quantity-value"
+                                style={{ fontSize: "1.25rem" }}
+                              >
+                                {cart?.find(
+                                  (item) => item.menuItemId === data.menuItemId
+                                )?.quantity || 0}
+                              </span>
+                              <button
+                                className="btn btn-sm btn-success add-to-cart-btn"
+                                onClick={() => addToCart(data)}
+                                style={{ fontSize: "1.5rem" }}
+                              >
+                                <FaPlus />
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div>
+                          {!data?.isActive || !data?.Category?.isActive ? (
+                            <button
+                              className="btn btn-secondary"
+                              disabled
+                              style={{
+                                cursor: "not-allowed",
+                                padding: "12px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                backgroundColor: "#eee",
+                                color: "#666",
+                                border: "none",
+                              }}
+                            >
+                              Not Available
+                            </button>
+                          ) : (
+                            <button
+                              className="btn text-light mt-4"
+                              style={{
+                                padding: "10px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                backgroundColor: "purple",
+                              }}
+                              onClick={() => addToCart(data)}
+                            >
+                              Add
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-          </>
-        ) : (
-          <div>
-            {!data?.isActive || !data?.Category?.isActive ? (
-              <button className="btn btn-secondary" disabled style={{ cursor: "not-allowed", padding: "12px", borderRadius: "8px", width: "100%", fontWeight: "750", backgroundColor: "#eee", color: "#666", border: "none" }}>
-                Not Available
-              </button>
-            ) : (
-              <button className="btn text-light mt-4" style={{ padding: "10px", borderRadius: "8px", width: "100%", fontWeight: "750", backgroundColor: "purple" }} onClick={() => addToCart(data)}>
-                Add
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-</div>
-
             ))
           : ""}
 

@@ -184,7 +184,7 @@ export const FetchAllUsers = async () => {
     throw error;
   }
 };
-export const ActiveUser = async (obj) => {
+export const  UpdateUser = async (obj) => {
  
   try {
     const response = await createAxiosInstance().put(process.env.REACT_APP_BASE_URL+`updateUserDetails`,obj);
@@ -340,4 +340,41 @@ export const DeleteCouponCode = async (obj) => {
     } catch (error) {
       throw error;
     }
+    
 };
+export const ExtendMembership = async (obj) => {
+ 
+  try {
+ 
+    const response = await createAxiosInstance().put(process.env.REACT_APP_BASE_URL+`extendTrial`,obj);
+ 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+  
+};
+export const FetchFeedbacks = async (obj) => {
+ 
+  try {
+ 
+    const response = await createAxiosInstance().get(process.env.REACT_APP_BASE_URL+`getcontactus`);
+ 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+
+};
+
+export const DeleteFeedback = async (Id) => {
+ 
+  try {
+ 
+    const response = await createAxiosInstance().delete(process.env.REACT_APP_BASE_URL+`deletecontactus/${Id}`);
+ 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

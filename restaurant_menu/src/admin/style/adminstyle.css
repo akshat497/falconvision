@@ -255,7 +255,7 @@ td {
   padding: 10px 14px;
   transition: margin-left 0.5s, width 0.5s;
   background-color: #fff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25); */
 }
 
 .btn.focus,
@@ -716,15 +716,15 @@ li {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-
   max-height: 600px;
-  overflow: scroll;
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   position: relative;
+  align-items: center;
+  justify-content: center;
 
 }
 
@@ -748,6 +748,20 @@ li {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  max-height: 40%;
+  overflow-y: scroll;
+  min-height: 40%;
+  max-width: 70%;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
+  scrollbar-color: purple;
+}
+
+.input-group-append {
+  margin-top: 3%;
+
+
 }
 
 .qr-code {
@@ -937,11 +951,10 @@ a {
 }
 
 .coupon-container {
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
-  height: 380px;
-
+  padding: 10px;
+  height: 500px;
   overflow: hidden;
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -961,7 +974,8 @@ a {
 .coupon-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  margin-right: 8%;
 }
 
 
@@ -1010,6 +1024,7 @@ a {
 .coupon-container-body {
   height: 100vh;
   margin: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1066,8 +1081,61 @@ a {
   width: calc(100% - 50px);
   padding: 10px 14px;
   background-color: #fff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25); */
   transition: var(--tran-05);
+}
+
+@media screen and (max-width: 768px) {
+  .dashboardcollapsed {
+
+    margin-top: 12%;
+  }
+
+  .dashboard {
+    margin-top: 12%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .dashboardcollapsed {
+
+    margin-top: 18%;
+  }
+
+  .dashboard {
+    margin-top: 18%;
+  }
+}
+
+@media screen and (min-width: 577px) and (max-width: 768px) {
+  .dashboardcollapsed {
+    margin-top: 15%;
+  }
+
+  .dashboard {
+    margin-top: 15%;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 992px) {
+  .dashboardcollapsed {
+    /* Add specific styles for this screen range if needed */
+    margin-top: 12%;
+  }
+
+  .dashboard {
+    margin-top: 12%;
+  }
+}
+
+@media screen and (min-width: 993px)and (max-width: 1200px) {
+  .dashboardcollapsed {
+    margin-top: 8%;
+  }
+
+  .dashboard {
+    margin-top: 8%;
+  }
 }
 
 .react-datepicker__day--selected {
@@ -1088,3 +1156,9 @@ a {
   color: #fff !important;
 }
 
+.qr-footer {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4%;
+}

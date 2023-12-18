@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { FaHome ,FaRegAddressBook,FaSignOutAlt,FaRegMoon,FaMoon,FaPlusCircle,FaImage, FaBell,FaSlidersH, FaSlideshare, FaKey, FaDivide, FaExpand, FaUser, FaQuestion, FaExclamation, FaCog, FaTable, FaHotel, FaRegChartBar, FaUserClock} from 'react-icons/fa';
+import { FaHome ,FaRegAddressBook,FaSignOutAlt,FaRegMoon,FaMoon,FaPlusCircle,FaImage, FaBell,FaSlidersH, FaSlideshare, FaKey, FaDivide, FaExpand, FaUser, FaQuestion, FaExclamation, FaCog, FaTable, FaHotel, FaRegChartBar, FaUserClock, FaUsers, FaComments, FaPenFancy} from 'react-icons/fa';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -162,10 +162,25 @@ const logOut=()=>{
       <ul className="nav-links">
         <li><Link to="/superadmin/">
             
-            <span className="link-name " style={{color:pathname==="/superadmin/"?"green":""}}><FaUser size={`${iconSize}`}/> <span className={`d-${display}`}>Users</span></span>
+            <span className="link-name " style={{color:pathname==="/superadmin/"?"purple":""}}><FaUser size={`${iconSize}`}/> <span className={`d-${display}`}>Users</span></span>
           </Link></li>
          
-            
+          <li>
+      <Link to="/superadmin/membership">
+        <span className="link-name" style={{ color: pathname === "/superadmin/membership" ? "purple" : "" }}>
+          <FaUsers size={iconSize} /> {/* Use FaUsers icon */}
+          <span className={`d-${display}`}>Membership</span>
+        </span>
+      </Link>
+    </li>
+    <li>
+      <Link to="/superadmin/feedback">
+        <span className="link-name" style={{ color: pathname === "/superadmin/feedback" ? "purple" : "" }}>
+          <FaPenFancy size={iconSize} /> {/* Use FaUsers icon */}
+          <span className={`d-${display}`}>Feedbacks</span>
+        </span>
+      </Link>
+    </li>
            
    
       </ul>

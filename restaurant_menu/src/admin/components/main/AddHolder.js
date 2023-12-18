@@ -23,7 +23,7 @@ export default function AddHolder() {
             <div className="boxContainer">
                 <div className="button-container">
                     <button
-                        className={`btn  mx-2 ${displayMenuItem ? 'btn-active' : 'btn'}`}
+                        className={`btn  mx-3 ${displayMenuItem ? 'btn-active' : 'btn'}`}
                         onClick={handleMenuItemClick}
                     >
                         Menu Items

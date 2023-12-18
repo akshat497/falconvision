@@ -10,17 +10,14 @@ const userController = {
   getAllUsers: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
-        // Check if the authenticated user is a "superadmin"
-        if (req.user.role !== "superadmin") {
-          // return res.status(403).send('Forbidden: Only superadmins can access this resource');
-          return next(CustomErrorHandler.forbiddden());
-        }
-
-        // Fetch all users
+        
         const users = await User.findAll();
 
         if (!users) {
           return res.status(404).json({ message: "No users found" });
+        }
+        if (req.user.role !== "superadmin") {
+          return next(CustomErrorHandler.forbiddden());
         }
 
         // Return the list of users
@@ -73,11 +70,11 @@ const userController = {
   updateUserDetails: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
-        const { Name, address, area, zip, userId, isActive, role } = req.body;
+        const { name, address, area, zip, userId, isActive, role } = req.body;
 
         // hashedPassword = await bcrypt.hash(password, 10);
         var obj = {
-          Name,
+          name,
           address,
           area,
           zip,
@@ -85,6 +82,7 @@ const userController = {
           role,
           isManuallyActivated: true,
         };
+        console.log(userId)
         if (req.user.role !== "superadmin") {
           return next(CustomErrorHandler.forbiddden());
         }
@@ -94,7 +92,7 @@ const userController = {
         }
         // WebSocketServer.broadUpdate(newUser,"userUpdated")
         WebSocketServer.broadUpdate(userId, newUser, "userUpdated");
-        res.send(`${newUser} record has been successfully updated.`);
+        res.send({message:` record has been successfully updated.`});
       });
     } catch (error) {}
   },
@@ -199,28 +197,28 @@ const userController = {
     }
 
 },
-qrgeneratorL:(req,res,next)=>{
-  try {
-    const {tableCount,userId,URL} = req.body
-    authentication(req,res,async()=>{
+// qrgeneratorL:(req,res,next)=>{
+//   try {
+//     const {tableCount,userId,URL} = req.body
+//     authentication(req,res,async()=>{
       
-    const qrCodes = [];
-    if(req.user.userId!==userId){
-      return next(CustomErrorHandler.UnAuthorised());
-    }
-    for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
-      const url = `https://ordermanagementbyfalconvesion.netlify.app/${userId}/${tableNumber}`;
-      const qr = QRCode(0, 'L');
-      qr.addData(url);
-      qr.make();
-      qrCodes.push(qr.createDataURL(4));
-    }
-    res.json(qrCodes);
-    })
-  } catch (error) {
-    return next(error)
-  }
-},
+//     const qrCodes = [];
+//     if(req.user.userId!==userId){
+//       return next(CustomErrorHandler.UnAuthorised());
+//     }
+//     for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
+//       const url = `https://ordermanagementbyfalconvesion.netlify.app/${userId}/${tableNumber}`;
+//       const qr = QRCode(0, 'L');
+//       qr.addData(url);
+//       qr.make();
+//       qrCodes.push(qr.createDataURL(4));
+//     }
+//     res.json(qrCodes);
+//     })
+//   } catch (error) {
+//     return next(error)
+//   }
+// },
 
 
   }

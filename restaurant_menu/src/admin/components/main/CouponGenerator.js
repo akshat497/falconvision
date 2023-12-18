@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { generateCoupen } from "../../../redux/coupon/couponCodeThunk";
 import { useContext } from "react";
 import RestaurantContext from "../../../context/RestaurantContext";
-
+import coupon_image from "../../../images/coupon_image3-removebg-preview.png"
 const CouponGenerator = () => {
   const [couponName, setCouponName] = useState("");
   const [discount, setDiscount] = useState("");
@@ -44,48 +44,57 @@ const CouponGenerator = () => {
   };
 
   return (
-    <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
-      <div className="">
-      <div className="coupon-container">
-        <h2>Create Coupon</h2>
-        <form className="coupon-form">
-          <div className="input-group">
-            <label htmlFor="couponName">Coupon Name:</label>
-            <input
-              type="text"
-              id="couponName"
-              value={couponName}
-              onChange={(e) => setCouponName(e.target.value)}
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="discount">Discount (%):</label>
-            <input
-              type="number"
-              id="discount"
-              value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
-            />
-          </div>
-          <div className="modal-footer">
-          <button
-            type="button"
-            className="btn text-light "
-            style={{ backgroundColor: "purple" }}
-            onClick={generateCoupon}
-            disabled={
-              discount.trim() === "" ||
-              couponName.trim() === "" ||
-              generateCoupenCodeLoading
-            }
-          >
-            {generateCoupenCodeLoading ? " Generating..." : " Generate Coupon"}
-          </button>
-          </div>
-        </form>
+    <div className={`dashboard ${expanded ? '' : 'dashboardcollapsed'}`}>
+    <div className="coupon-container">
+      <h2 className="mb-5">Create Coupon</h2>
+      <div className="d-flex" style={{ justifyContent: 'space-between' }}>
+        <div>
+          <img src={coupon_image} alt="coupon_image" height={300} width={300} />
+        </div>
+        <div>
+          <form className="coupon-form">
+            <div className="input-group" >
+              <label htmlFor="couponName">Coupon Name:</label>
+              <input
+                type="text"
+                id="couponName"
+                className="form-control"
+                value={couponName}
+                style={{width:"400px",height:"40px"}}
+                onChange={(e) => setCouponName(e.target.value)}
+              />
+            </div>
+            <div className="input-group my-3 ">
+              <label htmlFor="discount" >Discount (%):</label>
+              <input
+                type="number"
+                id="discount"
+                className="form-control "
+                style={{width:"400px",height:"40px"}}
+                value={discount}
+                onChange={(e) => setDiscount(e.target.value)}
+              />
+            </div>
+          </form>
+        </div>
       </div>
+      <div className="modal-footer mr-4">
+        <button
+          type="button"
+          className="btn text-light"
+          style={{ backgroundColor: 'purple' }}
+          onClick={generateCoupon}
+          disabled={
+            discount.trim() === '' ||
+            couponName.trim() === '' ||
+            generateCoupenCodeLoading
+          }
+        >
+          {generateCoupenCodeLoading ? 'Generating...' : 'Generate Coupon'}
+        </button>
       </div>
     </div>
+  </div>
   );
 };
 

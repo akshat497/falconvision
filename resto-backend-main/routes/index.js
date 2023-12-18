@@ -59,5 +59,6 @@ router.delete("/deleteOrdersById/:orderId", orderController.deleteOrder)
 //contact us routes
 router.get("/getcontactus", contactUsController.getContactUs)
 router.post("/createcontactus", contactUsController.createContactUs)
+router.delete("/deletecontactus/:contactUsId", contactUsController.deleteContactUsById)
 //
 module.exports = router

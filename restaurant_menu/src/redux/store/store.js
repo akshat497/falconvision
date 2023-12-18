@@ -26,10 +26,11 @@ import getCouponReducer from "../coupon/getCouponCodeSlice";
 import deletecouponReducer from "../coupon/deleteCouponCodeSlice";
 import updatecouponReducer from "../coupon/updateCouponCodeSlice";
 import generateReferCodeReducer from "../auth/generateReferSlice"
-
-
-
-
+import extendmembershipReducer from "../users/extendMembershipSlice"
+import fetchcontactusReducer from "../contactus/fetchContactUsSlide"
+import deletecontactusReducer from "../contactus/deleteFeedbackSlice"
+import updateUserReducer from "../users/updateUserSlice"
+import fetchAllUsersReducer from "../users/fetchAllUsersSlice"
 
 const store = configureStore({
   reducer: {
@@ -58,7 +59,12 @@ const store = configureStore({
     getCoupon:getCouponReducer,
     deletecoupon:deletecouponReducer,
     updatecoupon:updatecouponReducer,
-    generateReferCode:generateReferCodeReducer
+    generateReferCode:generateReferCodeReducer,
+    extendmembership:extendmembershipReducer,
+    fetchcontactus:fetchcontactusReducer,
+    deletecontactus:deletecontactusReducer,
+    updateUser:updateUserReducer,
+    fetchAllUsers:fetchAllUsersReducer
 
   },
   

@@ -1,26 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { qrGenerator } from '../../../redux/auth/authThunks';
-import { FaEarlybirds, FaQrcode } from 'react-icons/fa';
-import RestaurantContext from '../../../context/RestaurantContext';
-import { useParams } from 'react-router-dom';
-
+import React, { useState, useEffect, useContext } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { qrGenerator } from "../../../redux/auth/authThunks";
+import { FaEarlybirds, FaQrcode } from "react-icons/fa";
+import RestaurantContext from "../../../context/RestaurantContext";
+import { useParams } from "react-router-dom";
+import qrimage from "../../../images/qr-code-concept-illustration_114360-5933.jpg"
 export default function QrGenerator() {
-  const [tables, setTables] = useState("ss");
+  const [tables, setTables] = useState("");
   const dispatch = useDispatch();
-  const params=useParams();
+  const params = useParams();
   const { expanded } = useContext(RestaurantContext);
   const restroDetails = useSelector((state) => state.restrodetail.restro);
   const Qrcodes = useSelector((state) => state.qrgenerator.qr);
   const QrcodesLoading = useSelector((state) => state.qrgenerator.qrloading);
 
-  
   const createQr = () => {
-    
     const obj = {
       tableCount: tables,
       // url:"https://ordermanagementbyfalconvesion.netlify.app/",
-      url:window.location.origin,
+      url: window.location.origin,
       userId: restroDetails?.userId,
     };
     dispatch(qrGenerator(obj));
@@ -29,7 +27,7 @@ export default function QrGenerator() {
   const printQR = () => {
     const qrCodesContainer = document.getElementById("qrCodesContainer");
     if (qrCodesContainer) {
-      const printWindow = window.open('', '', 'width=600,height=600');
+      const printWindow = window.open("", "", "width=600,height=600");
       printWindow.document.open();
       printWindow.document.write(`
         <html>
@@ -38,12 +36,14 @@ export default function QrGenerator() {
           </head>
           <body>
             <div id="" class="container">
-              ${Qrcodes.map((data, index) => `
+              ${Qrcodes.map(
+                (data, index) => `
                 <div class="  my-5">
                 <h3 class="text-center mb-4">Table No :${index + 1}</h3>
                   <img src="${data}" alt="QR Code" class="img-fluid" />
                 </div>
-              `).join('')}
+              `
+              ).join("")}
             </div>
           </body>
         </html>
@@ -56,53 +56,83 @@ export default function QrGenerator() {
 
   return (
     <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
-    <div className="container qr-generator">
-      <h2 className="text-center mt-3 mb-4">QR Code Generator</h2>
-  
-      <div className="input-group mb-3"   style={{width:"60%",marginLeft:"20%"}}>
-        <input
-          type="number"
-          className="form-control"
-          placeholder="Number of tables"
-          value={tables}
-          style={{width:"60%",margin:"2%"}}
-          onChange={(e) => setTables(e.target.value)}
-        />
-        <div className="input-group-append"  style={{width:"60%",margin:"2%"}}>
-          <button className="btn text-light mx-2" onClick={createQr} disabled={QrcodesLoading||tables?.length===0||tables===null} style={{backgroundColor:"purple"}}>
-            {QrcodesLoading ? "Generating..." : "Generate QR"}
-          </button>
-          <button className="btn btn-secondary ml-2" onClick={printQR} disabled={QrcodesLoading||Qrcodes===null||Qrcodes===0}>
-            Print QR Codes
-          </button>
+      <div className="container qr-generator">
+        <h2 className="text-center mt-3 mb-4">QR Code Generator</h2>
+
+        <div className="input-group mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Number of tables"
+            value={tables}
+            style={{ width: "60%", margin: "2%" }}
+            onChange={(e) => setTables(e.target.value)}
+          />
+        </div>
+
+        <div id="qrCodesContainer" className="generated-qrs ">
+          {Qrcodes?.length === 0 || Qrcodes === null ? (
+            <img
+              src={qrimage}
+              alt="qr_image"
+              height={300}
+              width={300}
+            />
+          ) : (
+            <>
+              {QrcodesLoading === true ? (
+                <div className="loader-container">
+                  <div className="qr-code">
+                    <img src="/Animation - 1699272201529.gif" alt="qr" />
+                  </div>
+
+                  <p className="loading-text">Generating QR Code</p>
+                  <p className="loading-details">
+                    Please wait while we generate your QR code.
+                  </p>
+                </div>
+              ) : (
+                Qrcodes?.map((data, index) => (
+                  <>
+                    <div key={index} className="qr-code mx-5 my-5">
+                      <img
+                        src={data}
+                        alt="QR Code"
+                        className="img-fluid"
+                        title={"table number " + Number(index + 1)}
+                      />
+                    </div>
+                  </>
+                ))
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="qr-footer">
+          <div>
+            <button
+              className="btn text-light mx-2"
+              onClick={createQr}
+              disabled={
+                QrcodesLoading || tables?.length === 0 || tables === null||tables.trim()===""
+              }
+              style={{ backgroundColor: "purple" }}
+            >
+              {QrcodesLoading ? "Generating..." : "Generate QR"}
+            </button>
+          </div>
+          <div>
+            <button
+              className="btn btn-secondary ml-2"
+              onClick={printQR}
+              disabled={QrcodesLoading || Qrcodes === null || Qrcodes === 0}
+            >
+              Print QR Codes
+            </button>
+          </div>
         </div>
       </div>
-  
-      <div id="qrCodesContainer" className="generated-qrs my-2">
-{QrcodesLoading ? (
-  <div className="loader-container">
-  <div className="qr-code">
-  <img src="/Animation - 1699272201529.gif" alt="qr" />
-
-</div>
-
-
-
-    <p className="loading-text">Generating QR Code</p>
-    <p className="loading-details">Please wait while we generate your QR code.</p>
-  </div>
-) : (
-  Qrcodes?.map((data, index) => (
-   <> 
-    <div key={index} className="qr-code mx-5 my-5">
-    
-      <img src={data} alt="QR Code" className="img-fluid" title={"table number "+Number(index+1)}/>
-    </div></>
-  ))
-)}
-</div>
     </div>
-  </div>
-  
   );
 }

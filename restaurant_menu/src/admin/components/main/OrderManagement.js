@@ -55,7 +55,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           <span>
             <b>
               {row.Orders[0]?.isActive ? (
-                <div className="badge bg-info">New </div>
+                <div className="badge text-light" style={{backgroundColor:"purple"}}>New </div>
               ) : row.Orders[0]?.isRejected ? (
                 <div className="badge bg-danger">Rejected </div>
               ) : row.Orders[0]?.isCompleted ? (
@@ -76,7 +76,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           <>
             {row.Orders[0]?.isActive ? (
               <button
-                className="btn btn-sm btn-success"
+                className="btn btn-sm btn-outline-success"
                 disabled={row.Orders[0]?.isAccepted === true}
                 onClick={() => {
                   sendNotifucation(row);
@@ -96,7 +96,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               onDoubleClick={() => rejectOrder(row)}
               className={
                 row.Orders[0]?.isActive
-                  ? "btn btn-sm btn-danger mx-2 "
+                  ? "btn btn-sm btn-outline-danger mx-2 "
                   : "btn sm btn-danger mx-2 d-none"
               }
             >
@@ -106,7 +106,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               onClick={() => completedOrder(row)}
               className={
                 row.Orders[0]?.isActive
-                  ? "btn btn-info btn-sm  mr-3"
+                  ? "btn btn-outline-info btn-sm  mr-3"
                   : "btn btn-info mr-3 d-none"
               }
             >
@@ -270,7 +270,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
 
   return (
     <>
-      <div className="container-fluid my-3">
+      <div className="container-fluid my-3 ">
         <input
           type="text"
           placeholder="Search by Name..."
@@ -279,7 +279,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           onChange={handleSearch} // Call handleSearch function on input change
         />
       </div>
-      <div>
+      <div className="mx-3">
         {ordersCopy.length === 0 || ordersCopy === null ? (
           <NoDatComponent />
         ) : (

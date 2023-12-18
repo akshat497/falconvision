@@ -27,6 +27,7 @@ const DeleteConfirmationModal = ({categories, itemToDelete,show, onDelete, onCan
           </div>
           <div className="modal-body">
             Are you sure you want to delete {itemToDelete?.name}
+            <p><small> <strong className='text-danger'>This action cannot be undone.</strong></small></p>
           </div>
           <div className="modal-footer">
            
@@ -48,6 +49,7 @@ const DeleteConfirmationModal = ({categories, itemToDelete,show, onDelete, onCan
           </div>
           <div className="modal-body">
             Are you sure you want to delete {categories?.name}
+            <p><small> <strong className='text-danger'>This action cannot be undone.</strong></small></p>
           </div>
           <div className="modal-footer">
            

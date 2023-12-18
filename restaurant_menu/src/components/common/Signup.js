@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import ClientHeader from "./ClientHeader";
 import Footer from "./Footer";
 import { showToast } from "../../services/ToastInstance";
+import waiterImage from "../../images/waiter-wearing-face-mask-serving_23-2148592573-removebg-preview.png"
+
 function Signup() {
   const sendingOtp = useSelector((state) => state.otpsend.otploading);
   let OtpResponse = useSelector((state) => state.otpsend.otp);
@@ -215,8 +217,9 @@ function Signup() {
           <div className="row g-0 d-flex align-items-center">
             <div className="col-lg-4 d-none d-lg-flex">
               <img
-                src="https://img.freepik.com/free-vector/waiter-wearing-face-mask-serving_23-2148592573.jpg?w=740&t=st=1696666536~exp=1696667136~hmac=7179715719289404e6081cfcb7b8765d7ad8ac7729088381ae7f1d1c29ce8730"
-                alt="Trendy Pants and Shoes"
+                src={waiterImage}
+                alt="waiter  img"
+                                                
                 className="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5"
                 height="390vh"
               />

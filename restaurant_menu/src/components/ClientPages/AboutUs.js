@@ -1,7 +1,6 @@
 import React from "react";
 import ClientHeader from "../common/ClientHeader";
-import Footer from "../common/Footer";
-
+import menLogo from '../../images/2men logo.png'
 const aboutUsStyles = {
   container: {
     padding: "20px",
@@ -60,7 +59,7 @@ function AboutUs() {
             </div>
             <div className="col-lg-6">
               <img
-                src="2men logo.png"
+                src={menLogo}
                 alt="About Us"
                 style={aboutUsStyles.image}
               />

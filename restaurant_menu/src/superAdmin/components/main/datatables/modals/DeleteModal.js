@@ -1,29 +1,22 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from '../../../../../redux/contactus/contactusthunk';
 
-import { deleteCoupon } from '../../../redux/coupon/couponCodeThunk';
-
-const DeleteCouponModal = ({row }) => {
+const DeleteModal = ({ itemToDelete }) => {
 
    const dispatch= useDispatch()
-    const deleteLoading=useSelector((state)=>state.deletecoupon.deletecouponLoading)
-    // const updatingCoupon = useSelector((state) => state.updatecoupon.updatecouponloading);
-    
-    // const deleteLoadingCategory=useSelector((state)=>state.deletecategory.d_categoryLoading)
+    const deleteLoading=useSelector((state)=>state.deleteitem.d_itemLoading)
+    const deleteLoadingCategory=useSelector((state)=>state.deletecategory.d_categoryLoading)
 
 
     const deleteitem=()=>{
         // (itemToDelete)
-        const obj={
-            CoupenCodeId:row?.CoupenCodeId,
-            userId:row?.userId
-        }
-        dispatch(deleteCoupon(obj))
+        dispatch(deleteContact(itemToDelete?.contactUsId))
     }
    
   return (
    <>
-     <div className="modal fade"  tabIndex={-1}  id="deleteCouponModel"  aria-labelledby="deleteCouponModel" aria-hidden="true">
+     <div className="modal fade"  tabIndex={-1}  id="deleteSuperAdminModel"  aria-labelledby="deleteSuperAdminModel" aria-hidden="true">
       <div className=" modal-dialog modal-dialog-centered" >
         <div className="modal-content">
           <div className="modal-header">
@@ -33,8 +26,8 @@ const DeleteCouponModal = ({row }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete {row?.name}
-            <p><small> <strong className='text-danger'>This action cannot be undone.</strong></small></p>
+            Are you sure you want to delete message of {itemToDelete?.name}
+           <p><small> <strong className='text-danger'>This action cannot be undone.</strong></small></p>
           </div>
           <div className="modal-footer">
            
@@ -45,10 +38,10 @@ const DeleteCouponModal = ({row }) => {
         </div>
       </div>
     </div>
-    
+   
    </>
     
   );
 };
 
-export default DeleteCouponModal;
+export default DeleteModal;

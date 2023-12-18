@@ -8,7 +8,12 @@ export const showToast = (message, type ) => {
         closeButton: true,
         closeOnClick: true,
         hideProgressBar:true,
-        draggable:true
+        draggable:true,
+        style: {
+          fontWeight: 'bold', // Add this line to make the font bold
+        },
+        
+        
       });
       break;
     case "warn":
@@ -17,8 +22,10 @@ export const showToast = (message, type ) => {
         closeButton: true,
         closeOnClick: true,
         hideProgressBar:true,
-      
-        draggable:true
+        draggable:true,
+        style: {
+          fontWeight: 'bold', // Add this line to make the font bold
+        },
       });
       break;
     default:
@@ -28,6 +35,9 @@ export const showToast = (message, type ) => {
         closeOnClick: true,
         hideProgressBar:true,
         draggable:true,
+        style: {
+          fontWeight: 'bold', // Add this line to make the font bold
+        },
       });
   }
 };
