@@ -27,10 +27,9 @@ function Signup() {
     area: "",
     address: "",
     pincode: "",
-    role: "fenchise",
     password: "",
     confirmPassword: "",
-    referCode:""
+    referralCode:""
   });
   const [otpSendAttempts, setOtpSendAttempts] = useState(0);
   const [showResendButton, setShowResendButton] = useState(false);
@@ -54,7 +53,6 @@ function Signup() {
       !formData.area ||
       !formData.street ||
       !formData.pincode ||
-      !formData.role ||
       !formData.password ||
       !formData.confirmPassword
     ) {
@@ -83,11 +81,10 @@ function Signup() {
       address: formData.area,
       area: formData.street,
       zip: formData.pincode,
-      role: formData.role,
       password: formData.password,
       confirmPassword: formData.confirmPassword,
       enteredOTP: formData.otp,
-      referCode:referCode
+      referralCode:formData.referralCode
     };
     dispatch(signupUser(body));
     // dispatch(verifyOtp(formData))
@@ -112,10 +109,18 @@ function Signup() {
   // },[OtpVerifyResponse])
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    
+  
+    // Check if the field is phoneNumber and restrict its length to 10 characters
+    if (name === 'phoneNumber') {
+      if (value.length <= 10) {
+        setFormData({ ...formData, [name]: value });
+      }
+    } else {
+      // For other fields, update the state without any length restriction
+      setFormData({ ...formData, [name]: value });
+    }
   };
+  
   useEffect(()=>{
     if (formData.password === formData.confirmPassword&&formData.password?.length >0&&formData.confirmPassword?.length>0 ) {
       setmatched(true)
@@ -369,8 +374,8 @@ function Signup() {
                             type="text"
                             id="referCode"
                             className="form-control"
-                            name="referCode"
-                            value={formData.referCode}
+                            name="referralCode"
+                            value={formData.referralCode}
                             onChange={handleChange}
                             placeholder="Enter refercode"
                           />

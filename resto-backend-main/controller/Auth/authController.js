@@ -104,7 +104,6 @@ const authController = {
       address,
       area,
       zip,
-      role,
       isActive,
       enteredOTP,
       referralCode
@@ -175,16 +174,31 @@ const authController = {
       address,
       area,
       zip,
-      role,
       isActive: true, // Activate the user initially
       trialExpirationDate,
     };
     if (referralCode) {
-      const referredUser = await User.findOne({ where: { referralCode } });
+      try {
+        const referredUser = await User.findOne({ where: { referralCode } });
     
-      if (referredUser) {
-        // Update the trialExpirationDate by adding 2 days
-        referredUser.update({ trialExpirationDate: trialExpirationDate.setDate(trialExpirationDate.getDate() + 30) });
+        // Check if referredUser is not found
+        if (!referredUser) {
+          return next(CustomErrorHandler.NotFound("Invalid referral code. Please provide a valid referral code or leave it blank if you don't have one."));
+
+        }
+    
+        // Increase the trialExpirationDate
+        const newTrialExpirationDate = new Date(referredUser.trialExpirationDate);
+        newTrialExpirationDate.setDate(newTrialExpirationDate.getDate() + 2);
+    
+        // Update the trialExpirationDate of the referredUser
+        await referredUser.update({ trialExpirationDate: newTrialExpirationDate });
+    
+        // Continue with the rest of your logic
+    
+      } catch (error) {
+        console.error("Error updating trialExpirationDate:", error);
+        return res.status(500).json({message:"Internal server error"})
       }
     }
     

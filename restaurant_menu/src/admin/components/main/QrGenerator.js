@@ -18,7 +18,7 @@ export default function QrGenerator() {
     const obj = {
       tableCount: tables,
       // url:"https://ordermanagementbyfalconvesion.netlify.app/",
-      url: window.location.origin,
+      URL: window.location.origin,
       userId: restroDetails?.userId,
     };
     dispatch(qrGenerator(obj));

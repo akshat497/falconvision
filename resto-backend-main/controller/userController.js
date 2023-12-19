@@ -180,6 +180,7 @@ const userController = {
       const { tableCount, userId, URL } = req.body;
       authentication(req, res, async () => {
         const qrCodes = [];
+        console.log(URL)
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }

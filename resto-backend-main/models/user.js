@@ -51,7 +51,7 @@ const User = sequelize.define(
     role: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "frenchise",
+      defaultValue: "franchise",
     },
     isActive: {
       type: DataTypes.BOOLEAN,
