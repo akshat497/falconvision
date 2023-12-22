@@ -1166,9 +1166,9 @@ a {
   display: flex;
   align-items: stretch;
   width: 100%;
-  background-color: rgb(255, 255, 255);
+  
   min-height: 52px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  background-color: purple;
+  background-color: purple !important;
   color: whitesmoke;
 }
