@@ -1162,3 +1162,13 @@ a {
   justify-content: space-between;
   margin-top: 4%;
 }
+.dkIDck {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  min-height: 52px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: purple;
+  color: whitesmoke;
+}

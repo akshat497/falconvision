@@ -228,7 +228,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
         },
         {
           name: "Message",
-          selector: ()=>{return row?.data?.Orders[0]?.message.length<1? <b className="">No message</b>: <textarea rows={3} disabled >{row?.data?.Orders[0]?.message}</textarea>},
+          selector: ()=>{return row?.data?.Orders[0]?.message?.length<1? <b className="">No message</b>: <textarea rows={3} disabled >{row?.data?.Orders[0]?.message}</textarea>},
           sortable: true,
         },
         {
