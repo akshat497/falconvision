@@ -309,9 +309,9 @@ const Dashboard = () => {
 
   // Determine the background colors for the bars
   const backgroundColorMonth1 =
-    totalSalesMonth1 > totalSalesMonth2 ? "purple" : "purple";
+    totalSalesMonth1 > totalSalesMonth2 ? "red" : "red";
   const backgroundColorMonth2 =
-    totalSalesMonth2 > totalSalesMonth1 ? "gray" : "gray";
+    totalSalesMonth2 > totalSalesMonth1 ? "purple" : "purple";
   // Update the 'barChartDatacompare' dataset
 
   const barChartDatacompare = {

@@ -10,42 +10,51 @@ var unirest = require("unirest");
 const OTP = require("../../models/OTP");
 const NodeCache = require("node-cache");
 const userCache = new NodeCache();
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const authentication = require("../../middlewares/authentication");
 const otpExpiry = 7 * 60 * 1000; // 7 minutes in milliseconds
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const CustomResponseHandler = require("../../services/CustomResponseHandler");
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: "akshatsaini497@gmail.com",
+//     pass: "wivohkdnqnizwhrp",
+//   },
+// });
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.hostinger.com",
+  secure: true,
+  port: 465,
   auth: {
-    user: "akshatsaini497@gmail.com",
-    pass: "wivohkdnqnizwhrp",
+    user: process.env.falcon_vision_Email,
+    pass: process.env.falcon_vision_Email_PASSWORD,
   },
 });
+
 const authController = {
-
-
   // ...
-  
+
   login: async (req, res, next) => {
     const { email, password } = req.body;
-  
+
     if (email.trim() === "" || password.trim() === "" || !email || !password) {
       return res.status(400).json({ message: "fields missing" });
     }
-  
+
     const cachedUser = userCache.get(email);
-  
+
     if (cachedUser) {
       // If found in the cache, return the cached data
       const { authorization, cachedPassword, exp } = cachedUser;
-  
+
       // Check if the token is expired
       if (Date.now() >= exp * 1000) {
         userCache.del(email); // Remove expired data from the cache
       } else {
         // Check the password
         const match = await bcrypt.compare(password, cachedPassword);
-  
+
         if (match) {
           return res.json({ Authorization: authorization });
         } else {
@@ -54,45 +63,44 @@ const authController = {
         }
       }
     }
-  
+
     let authorization = null;
-  
+
     try {
       let user = await User.findOne({ where: { email: email } });
-  
+
       if (!user) {
         return next(CustomErrorHandler.wrongCredentials());
       }
-  
+
       // Compare passwords
       const match = await bcrypt.compare(password, user.password);
-  
+
       if (!match) {
         return next(CustomErrorHandler.wrongCredentials());
       }
-  
+
       // Generate token
       authorization = JwtService.sign({
         userId: user.userId,
         role: user.role,
         isActive: user.isActive,
       });
-  
+
       const decodedToken = jwt.decode(authorization, { complete: true });
       const exp = decodedToken.payload.exp;
-  
+
       userCache.set(
         email,
         { authorization, cachedPassword: user.password, exp },
         /* optional TTL in seconds */ 300
       );
-  
+
       res.json({ Authorization: authorization });
     } catch (err) {
       return next(err);
     }
   },
-  
 
   register: async (req, res, next) => {
     const {
@@ -106,7 +114,7 @@ const authController = {
       zip,
       isActive,
       enteredOTP,
-      referralCode
+      referralCode,
     } = req.body;
 
     let hashedPassword = null;
@@ -180,29 +188,34 @@ const authController = {
     if (referralCode) {
       try {
         const referredUser = await User.findOne({ where: { referralCode } });
-    
+
         // Check if referredUser is not found
         if (!referredUser) {
-          return next(CustomErrorHandler.NotFound("Invalid referral code. Please provide a valid referral code or leave it blank if you don't have one."));
-
+          return next(
+            CustomErrorHandler.NotFound(
+              "Invalid referral code. Please provide a valid referral code or leave it blank if you don't have one."
+            )
+          );
         }
-    
+
         // Increase the trialExpirationDate
-        const newTrialExpirationDate = new Date(referredUser.trialExpirationDate);
+        const newTrialExpirationDate = new Date(
+          referredUser.trialExpirationDate
+        );
         newTrialExpirationDate.setDate(newTrialExpirationDate.getDate() + 2);
-    
+
         // Update the trialExpirationDate of the referredUser
-        await referredUser.update({ trialExpirationDate: newTrialExpirationDate });
-    
+        await referredUser.update({
+          trialExpirationDate: newTrialExpirationDate,
+        });
+
         // Continue with the rest of your logic
-    
       } catch (error) {
         console.error("Error updating trialExpirationDate:", error);
-        return res.status(500).json({message:"Internal server error"})
+        return res.status(500).json({ message: "Internal server error" });
       }
     }
-    
-    
+
     let Authorization = null;
     try {
       let user = await User.create(userObj);
@@ -258,12 +271,37 @@ const authController = {
       });
 
       // Send OTP to email
+      const name = email.split("@")[0];
       await transporter.sendMail({
-        from: "akshatsaini497@gmail.com",
+        from: {
+          name: "Falcon-vision", // Set the display name here
+          address: process.env.falcon_vision_Email,
+        },
         to: email,
-        subject: "OTP Verification",
-        text: `Your OTP is: ${otp}`,
+        subject: "One-Time Password (OTP) Notification",
+        html: `
+          <html>
+            <body>
+              <p>Dear ${name},</p>
+              <p>We trust this message finds you well. As part of our secure authentication process, we have generated a One-Time Password (OTP) for your account. Your OTP details are as follows:</p>
+          
+              <p><strong>OTP:</strong> ${otp}</p>
+          
+              <p>This additional layer of security ensures the protection of your account and sensitive information. Please use the provided OTP promptly to complete your desired action.</p>
+          
+              <p>Please note that the OTP will expire in 7 minutes. If you did not request this OTP or have any concerns regarding your account security, kindly reach out to our support team immediately at ${process.env.falcon_vision_Email}.</p>
+          
+              <p>Thank you for choosing Falcon Vision. We appreciate your continued trust in our services.</p>
+          
+              <p>Best regards,</p>
+              <p>Falcon Vision</p>
+              
+              
+            </body>
+          </html>
+        `,
       });
+      
 
       // Send OTP via SMS
       sendMessage({
@@ -274,7 +312,9 @@ const authController = {
 
       console.log(`OTP sent to ${email} and ${phoneNumber}`);
 
-      res.status(200).json({ message: "OTP sent successfully" });
+      res
+        .status(200)
+        .json(CustomResponseHandler.positiveResponse("Otp Send Successfully"));
     } catch (error) {
       console.error("Error sending OTP:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -332,74 +372,90 @@ const authController = {
 
   forgetPassword: async (req, res, next) => {
     const { url, email, phoneNumber } = req.body;
-  
+
     try {
       // Check for missing fields
+      const name = email.split("@")[0];
       if (!email) {
         return next(CustomErrorHandler.BadRequest("Email is required!"));
       }
-  
+
       // Trim the input values
       const trimmedEmail = email.trim();
       const trimmedPhoneNumber = phoneNumber ? phoneNumber.trim() : null;
-  
+
       // Find the user by email
       const user = await User.findOne({ where: { email: trimmedEmail } });
-  
+
       if (!user) {
         return next(CustomErrorHandler.UserNotFound());
       }
-  
+
       // Generate a random token and set the resetToken and resetTokenExpiration fields
       const token = crypto.randomBytes(20).toString("hex");
       user.resetToken = token;
-      user.resetTokenExpiration = new Date(Date.now() + 3600000); // Token expires in 1 hour
-  
+      user.resetTokenExpiration = new Date(Date.now() + 1800000); // Token expires in 30 minutes
+
       // Save the user with updated token and expiration
       await user.save();
-  
+
       const resetUrl = `${url}/${token}`;
-  
+
       // Send email
       if (trimmedEmail) {
         await transporter.sendMail({
-          from: "akshatsaini497@gmail.com",
+          from: {
+            name: "Falcon-vision",
+            address: process.env.falcon_vision_Email,
+          },
           to: trimmedEmail,
-          subject: "Password Reset",
-          text: `Click on the following link to reset your password: ${resetUrl}`,
+          subject: "Password Reset - Falcon Vision",
+          text: `
+          Dear ${name},
+
+          We hope this message finds you well. It has come to our attention that you have requested to reset your password. Please follow the link below to proceed with the password reset:
+      
+          ${resetUrl}
+      
+          Please note that this link is only valid for 30 minutes. If you did not initiate this password reset or have any concerns, please contact our support team immediately at ${process.env.falcon_vision_Email}.
+      
+          Your security is our top priority, and we appreciate your prompt attention to this matter.
+      
+          Best regards,
+      
+          Falcon-vision
+  `,
         });
       }
-  
+
       // Send SMS
       if (trimmedPhoneNumber) {
         var smsReq = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
-  
+
         smsReq.headers({
           authorization: process.env.QUICK_SMS_API,
         });
-  
+
         smsReq.form({
           message: `Click on the following link to reset your password: ${resetUrl}`,
           language: "english",
           route: "q",
           numbers: trimmedPhoneNumber,
         });
-  
+
         smsReq.end(function (smsRes) {
           if (smsRes.error) throw new Error(smsRes.error);
-  
+
           console.log(smsRes.body);
         });
       }
-  
+
       return res.json({ message: "Password reset link sent" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   },
-  
-  
 
   authresetPassword: async (req, res, next) => {
     const { token, newPassword, confirmPassword } = req.body;
@@ -446,37 +502,36 @@ const authController = {
       return res.status(500).json({ message: "Internal server error" });
     }
   },
-  
-  generateReferCode:async(req,res,next)=>{
+
+  generateReferCode: async (req, res, next) => {
     const { userId } = req.params;
-    authentication(req,res,async()=>{
-       try {
-      
-  
-      // Generate a unique referral code using uuid
-      const referralCode = uuidv4();
-  
-      // Find the user by userId
-      const user = await User.findOne({ where: { userId } });
-     if(userId!==req.user.userId){
-      return next(CustomErrorHandler.UnAuthorised())
-     }
-      // Update the user's referralCode
-      if (user) {
-        await user.update({ referralCode });
-        console.log('Generated Referral Code:', referralCode);
-  
-        // Send the referral code as a response
-        res.status(200).json({ referralCode });
-      } else {
-        // Handle the case where the user is not found
-        res.status(404).json({ message: 'User not found' });
+    authentication(req, res, async () => {
+      try {
+        // Generate a unique referral code using uuid
+        const referralCode = uuidv4();
+
+        // Find the user by userId
+        const user = await User.findOne({ where: { userId } });
+        if (userId !== req.user.userId) {
+          return next(CustomErrorHandler.UnAuthorised());
+        }
+        // Update the user's referralCode
+        if (user) {
+          await user.update({ referralCode });
+          console.log("Generated Referral Code:", referralCode);
+
+          // Send the referral code as a response
+          res.status(200).json({ referralCode });
+        } else {
+          // Handle the case where the user is not found
+          res.status(404).json({ message: "User not found" });
+        }
+      } catch (error) {
+        // Handle errors
+        next(error);
       }
-    } catch (error) {
-      // Handle errors
-      next(error);
-    }}) 
-  }
+    });
+  },
 };
 
 function generateOTP() {

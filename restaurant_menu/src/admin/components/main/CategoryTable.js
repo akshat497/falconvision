@@ -102,14 +102,14 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
         <div>
           <button
             onClick={() => handleUpdate(row)}
-            className="btn text-light mx-2"
+            className="btn text-light mx-2 my-2"
             style={{ backgroundColor: "purple" }}
             disabled={!row.isActive}
           >
             Update
           </button>
           <button
-            className="btn btn-danger"
+            className="btn btn-danger mx-2"
             onClick={() => {
               handleDelete(row);
             }}
@@ -180,6 +180,7 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
               data={categoryCopy}
               highlightOnHover
               pagination
+              responsive
             />
           )}
         </div>

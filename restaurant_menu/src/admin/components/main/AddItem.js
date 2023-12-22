@@ -119,6 +119,7 @@ export default function AddItem({ preview, clickedItem }) {
 
       dispatch(addItem(body));
     }
+    resetForm();
     // setItemData({
     //   name: "",
     //   price: "",
@@ -127,6 +128,18 @@ export default function AddItem({ preview, clickedItem }) {
     // });
     // setbase64Image("")
     // setCategory("")
+  };
+  const resetForm = () => {
+    setItemData({
+      name: "",
+      price: "",
+      dishType: "",
+      veg: "",
+    });
+  
+    setbase64Image("");
+    setSelectedCategory("");
+    setValidationErrors({});
   };
 
   useEffect(() => {

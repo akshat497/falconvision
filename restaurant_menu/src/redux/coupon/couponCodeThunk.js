@@ -32,10 +32,10 @@ export const generateCoupen= (userData) => async (dispatch) => {
       
       dispatch(setGenerateCoupenCodeLoading(true));
       const response = await GenerateCouponCode(userData); // Call your API function here
-      if(response?.message==="true"){
-        showToast("Successfully Created.","success")
+      if(response?.success===true){
+        showToast(response.message,"success")
       }
-      dispatch(getCouponCode(response?.newCouponCode?.userId))
+      dispatch(getCouponCode(userData?.userId))
       dispatch(setGenerateCoupenCode(response));
       dispatch(setGenerateCoupenCodeLoading(false));
     } catch (error) {
@@ -64,7 +64,9 @@ export const generateCoupen= (userData) => async (dispatch) => {
       dispatch(setupdateCouponloading(true));
       
       const response = await UpdateCouponCode(userData); 
-      
+      if(response?.success===true){
+        showToast(response.message,"success")
+      }
       dispatch(getCouponCode(userData?.userId));
       dispatch(setupdateCoupon(response));
       dispatch(setupdateCouponloading(false));
@@ -79,6 +81,9 @@ export const generateCoupen= (userData) => async (dispatch) => {
       dispatch(setDeleteCouponloading(true));
       
       const response = await DeleteCouponCode(userData); 
+      if(response?.success===true){
+        showToast(response.message,"success")
+      }
       dispatch(getCouponCode(userData?.userId));
       dispatch(setDeleteCoupon(response));
       dispatch(setDeleteCouponloading(false));

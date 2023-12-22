@@ -108,6 +108,12 @@ const Order = sequelize.define('Order', {
         allowNull: false,
         defaultValue: false, // Set a default value if needed
     },
+    message:{
+        type : DataTypes.TEXT ,
+        allowNull:true,
+        
+
+    }
 })
 
 // OrderItem.js

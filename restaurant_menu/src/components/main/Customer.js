@@ -28,8 +28,8 @@ export default function Customer() {
     <>
       {fetchLoading ? <div className="overlay"></div> : null}
       <Header />
-
-      <div className="d-flex justify-content-between margin">
+  <div className="d-flex justify-content-between margin ">
+  <div className="d-flex ">
         <ReactSwitch
           checked={vegOnly}
           onChange={() => setVegOnly(!vegOnly)}
@@ -39,7 +39,11 @@ export default function Customer() {
           id="veg-switch"
           offColor="#90EE90"
         />
-
+        <div><span className="switch-label mt-1 mx-1"><b>VEG</b> </span></div>
+ </div>
+ 
+ <div className="d-flex ">
+ <div><span className="switch-label mt-1 mx-1"><b>NON-VEG</b> </span></div>
         <ReactSwitch
           checked={nonvegOnly}
           onChange={() => setnontVegOnly(!nonvegOnly)}
@@ -51,6 +55,9 @@ export default function Customer() {
           offColor="#ffcccb"
         />
       </div>
+  </div>
+  
+ 
 
       <Card id={params.userId} veg={vegOnly} nonVeg={nonvegOnly} />
 

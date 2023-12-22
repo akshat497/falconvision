@@ -151,69 +151,74 @@ const CustomResponseHandler = require("../services/CustomResponseHandler");
 const menuItemController = {
   getMenuItemById: async (req, res, next) => {
     const { userId } = req.params;
-
+  
     try {
-        const menuItems = await MenuItem.findAll({
-            where: { userId: userId },
-            include: {
-                model: Category,
-                as: 'Category',
-            },
-        });
-        if(menuItems.length<1){
-          return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404,[]))
-        }
-      console.log(menuItems.length)
-        const formattedMenuItems = menuItems.map((menuItem) => {
-            const {
-                menuItemId,
-                price,
-                name,
-                imageUrl,
-                createdAt,
-                updatedAt,
-                categoryId,
-                userId,
-                Category,
-                isActive,
-                veg,
-                type
-            } = menuItem;
-
-            return {
-                menuItemId,
-                price,
-                name,
-                imageUrl,
-                createdAt,
-                updatedAt,
-                categoryId,
-                userId,
-                Category: {
-                    categoryId: Category.categoryId,
-                    name: Category.name,
-                    isActive: Category.isActive,
-                    createdAt: Category.createdAt,
-                    updatedAt: Category.updatedAt,
-                    userId: Category.userId,
-                },
-                isActive,
-                veg,
-                type
-            };
-        });
-
-        // Send the response directly using res.json
-        //  next(CustomResponseHandler.positiveResponse("fetched items", formattedMenuItems))
-        res.json(CustomResponseHandler.positiveResponse("fetched items", formattedMenuItems));
+      const menuItems = await MenuItem.findAll({
+        where: { userId: userId },
+        include: {
+          model: Category,
+          as: 'Category',
+        },
+      });
+  
+      if (menuItems.length < 1) {
+        return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404, []));
+      }
+  
+      const formattedMenuItems = menuItems.map((menuItem) => {
+        const {
+          menuItemId,
+          price,
+          name,
+          imageUrl,
+          createdAt,
+          updatedAt,
+          categoryId,
+          userId,
+          Category,
+          isActive,
+          veg,
+          type,
+        } = menuItem;
+  
+        const categoryInfo =
+          Category && Category.categoryId
+            ? {
+                categoryId: Category.categoryId,
+                name: Category.name,
+                isActive: Category.isActive,
+                createdAt: Category.createdAt,
+                updatedAt: Category.updatedAt,
+                userId: Category.userId,
+              }
+            : { name: "Category Deleted" }; // Use a custom text for deleted category
+  
+        return {
+          menuItemId,
+          price,
+          name,
+          imageUrl,
+          createdAt,
+          updatedAt,
+          categoryId,
+          userId,
+          Category: categoryInfo,
+          isActive,
+          veg,
+          type,
+        };
+      });
+  
+      res.json(CustomResponseHandler.positiveResponse("Fetched items", formattedMenuItems));
     } catch (err) {
-        // Handle errors appropriately, e.g., log the error
-        console.error(err);
-
-        // Send a negative response directly using res.status and res.json
-       return next(err)
+      // Handle errors appropriately, e.g., log the error
+      console.error(err);
+  
+      // Send a negative response directly using res.status and res.json
+      return next(err);
     }
-},
+  },
+  
 
 
   updateMenuItem: async (req, res, next) => {
@@ -291,7 +296,8 @@ const menuItemController = {
           // WebSocketServer.broadUpdate({updateType:'updatedMenu',data:formattedMenuItems} );
           WebSocketServer.broadUpdate(userId, formattedMenuItems, 'updatedMenu');
 
-         return res.json(CustomResponseHandler.positiveResponse("updatedMenu", formattedMenuItems));
+          return res.json(CustomResponseHandler.positiveResponse("Menu updated successfully", formattedMenuItems));
+
         } else {
          return res.json(CustomErrorHandler.NotFound("no record found"));
         }

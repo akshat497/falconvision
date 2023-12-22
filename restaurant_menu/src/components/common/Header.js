@@ -55,26 +55,54 @@ export default function Header({ id }) {
   // useEffect(()=>{
   //   setallItemaCopy(allItems)
   // },[allItems]);
-  const noDataComponent = () => {
-    return <h1 className="text-center mt-5">No item found</h1>;
-  };
-  useEffect(() => {
-    const filterData = fetcheditems?.filter((data) => {
-      return (
-        data?.Category?.name
-          ?.toLowerCase()
-          .includes(searchInput?.toLowerCase()) ||
-        data?.name?.toLowerCase().includes(searchInput?.toLowerCase())
-      );
+  const filterItems = (items, searchInput) => {
+    return items?.filter((item) => {
+      const isMatch = deepSearch(item, searchInput?.toLowerCase());
+  console.log(items)
+      // Check if the item is veg and the search input is 'veg'
+      const isVegMatch = item.veg===true && searchInput.toLowerCase() === 'veg';
+      const isNonVegMatch = !item.Veg===false && searchInput.toLowerCase() === 'nonveg';
+
+      return isMatch || isVegMatch || isNonVegMatch;
+     
     });
+  };
   
-    setFetcheditemsCopy(filterData);
-  
-    if (searchInput.trim() === "") {
-      setcategoryName(false);
-      setFetcheditemsCopy(fetcheditems);// Reset to original data
+  const deepSearch = (obj, searchText) => {
+    if (!obj || typeof obj !== 'object') {
+      return false;
     }
-  }, [searchInput]);
+  
+    const values = Object.values(obj);
+  
+    for (const value of values) {
+      if (typeof value === 'object') {
+        if (deepSearch(value, searchText)) {
+          return true;
+        }
+      } else {
+        const stringValue = value?.toString().toLowerCase();
+        if (stringValue && stringValue.includes(searchText)) {
+          return true;
+        }
+      }
+    }
+  
+    return false;
+  };
+  
+  
+useEffect(() => {
+  const filteredData = filterItems(fetcheditems, searchInput);
+
+  setFetcheditemsCopy(filteredData);
+
+  if (searchInput.trim() === '') {
+    setFetcheditemsCopy(fetcheditems); // Reset to original data
+  }
+}, [searchInput, fetcheditems]);
+  
+  
   
 
   const handleFilter = (e) => {
@@ -167,44 +195,45 @@ export default function Header({ id }) {
         </li>
 
         <li className="nav-item dropdown">
-          <a
-            className="nav-link dropdown-toggle"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            {categoryName
-              ? fetcheditemsCopy[0]?.Category?.name
-              : "Category"}
-          </a>
-          <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-            {category?.map((data) => (
-              <li key={data?.categoryId}>
-                {data?.isActive ? (
-                  <li
-                    className="dropdown-item"
-                    onClick={handleFilter}
-                    id={data?.categoryId}
-                  >
-                    {data?.name}
-                  </li>
-                ) : (
-                  <li className="dropdown-item" id={data?.categoryId}>
-                    {data?.name + " (Currently Unavailable)"}
-                  </li>
-                )}
+      <a
+        className="nav-link dropdown-toggle"
+        id="navbarDropdown"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {categoryName ? fetcheditemsCopy[0]?.Category?.name : 'Category'}
+      </a>
+      <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+        {category?.map((data) => (
+          <li key={data?.categoryId}>
+            {data?.isActive ? (
+              <li
+                className="dropdown-item"
+                onClick={handleFilter}
+                id={data?.categoryId}
+              >
+                {data?.name}
               </li>
-            ))}
-            <li className="dropdown-item ml-3" onClick={() => {
-              setcategoryName(false);
-              setFetcheditemsCopy(fetcheditems);
-              setsortOrder("");
-            }}>
-              All
-            </li>
-          </ul>
+            ) : (
+              <li className="dropdown-item" id={data?.categoryId}>
+                {data?.name + ' (Currently Unavailable)'}
+              </li>
+            )}
+          </li>
+        ))}
+        <li
+          className="dropdown-item ml-3"
+          onClick={() => {
+            setcategoryName(false);
+            setFetcheditemsCopy(fetcheditems);
+            setsortOrder('');
+          }}
+        >
+          All
         </li>
+      </ul>
+    </li>
 
         <li className="nav-item">
           <li
@@ -219,7 +248,7 @@ export default function Header({ id }) {
       </ul>
 
       <form className="d-flex">
-        <div className="input-group mb-3">
+        <div className="input-group " style={{borderRight:"none"}}>
           <input
             className="form-control"
             type="search"
@@ -228,27 +257,25 @@ export default function Header({ id }) {
             onChange={handleSearch}
             value={searchInput}
           />
-          <div className="input-group-append">
+          <div className="mt-1">
             {!searchInput.length > 0 ? (
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => {
-                  // Perform your search action here
-                }}
-              >
+             
+                <div className="btn text-light" style={{backgroundColor:"purple",borderLeft:"none"}}>
                 <FaSearch />
-              </button>
+                </div>
+             
             ) : (
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => {
+              <div
+              className="btn text-light" 
+              style={{backgroundColor:"purple",borderLeft:"none"}}
+                   onClick={() => {
                   setsearchInput("");
+                  
                 }}
+             
               >
                 <FaTimes />
-              </button>
+              </div>
             )}
           </div>
         </div>

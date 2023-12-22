@@ -86,7 +86,7 @@ function ContactUs() {
         <p>Rohtak, 124001</p>
 
         <h4>Email</h4>
-        <p>Email: falcon.vesion@gmail.com</p>
+        <p>Email: <a href=""><b>contact@falcon-vision.in</b></a></p>
 
         <h4>Phone</h4>
         <p>Phone: +91 70562-75526</p>

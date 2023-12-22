@@ -1318,3 +1318,7 @@ element.style {
   box-shadow: 0 0 0 0.2rem rgba(241, 2, 62, 0.25)
 
 }
+.search-icon{
+  height: inherit;
+  background-color: black;
+}

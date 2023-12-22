@@ -33,7 +33,7 @@ const DeleteCouponModal = ({row }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete {row?.name}
+            Are you sure you want to delete <b>{row?.name} </b>Coupon
             <p><small> <strong className='text-danger'>This action cannot be undone.</strong></small></p>
           </div>
           <div className="modal-footer">

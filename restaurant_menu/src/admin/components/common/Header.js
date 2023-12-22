@@ -2,33 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
-  FaHome,
   FaRegAddressBook,
   FaSignOutAlt,
-  FaRegMoon,
-  FaMoon,
   FaPlusCircle,
   FaImage,
   FaBell,
-  FaSlidersH,
-  FaSlideshare,
   FaKey,
-  FaDivide,
-  FaExpand,
   FaUser,
   FaQuestion,
   FaExclamation,
   FaCog,
   FaTable,
-  FaHotel,
   FaRegChartBar,
   FaQrcode,
   FaEarlybirds,
   FaTicketAlt,
-  FaBuilding,
   FaRegBuilding,
-  FaGlobe,
-  FaPuzzlePiece,
+  FaClipboardList,
+  FaTimesCircle,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -38,9 +30,15 @@ import PasswordResetModal from "../main/settings/modals/PasswordResetModal";
 import UserProfile from "../main/settings/UserProfile";
 import HelpModal from "../main/settings/modals/HelpModal";
 import Feedback from "../main/settings/modals/Feedback";
-
+import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
+import NotificationBell from "../../../images/Notification-Bell.png";
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const updatedOrder = useSelector(
+    (state) => state.updateisactiveorder.isActiveOrder
+  );
+
   const { pathname } = useLocation();
 
   const {
@@ -48,8 +46,9 @@ export default function Header() {
     setExpanded,
     isDarkMode,
     setIsDarkMode,
-    notification,
+
     fetcheditemsCopy,
+    orders,
   } = useContext(RestaurantContext);
   const restroDetails = useSelector((state) => state.restrodetail.restro);
   const fetcheCategory = useSelector(
@@ -70,6 +69,7 @@ export default function Header() {
     useState(false);
   const [SearchedText, setSearchedText] = useState("");
   const [searchDisplay, setsearchDisplay] = useState([]);
+  const [notificationLengthState, setnotificationLengthState] = useState(0);
   const handleGearClick = () => {
     setIsRotated(!isRotated); // Toggle isRotated between true and false
   };
@@ -170,45 +170,121 @@ export default function Header() {
   };
 
   const handleNotification = (notification) => {
-    switch (notification) {
-      case "updatedMenu":
-        return (
-          <div>
-            <b>Menu item is updated </b>
-          </div>
-        );
-
-      case "neworder":
-        return (
-          <div>
-            <b>Received a new order</b>
-          </div>
-        );
-
-      case "newMenu":
-        return (
-          <div>
-            <b>New menu item is added</b>
-          </div>
-        );
-      case "userUpdated":
-        return (
-          <div>
-            <b>Check your account status</b>
-          </div>
-        );
+    switch (notification.updateType) {
+      case "updatedOrder":
+        break;
+      case "newOrder":
+        break;
       default:
-        return null;
+        return (
+          <>
+            {notification?.Orders[0]?.isActive === true && (
+              <div
+                className="notification-container"
+                style={{
+                  padding: "10px",
+                  border: "1px solid #ddd",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                <div
+                  className="notification-content"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <div className="icon-col" style={{ marginRight: "10px" }}>
+                    <FaClipboardList size={30} />
+                  </div>
+                  <div className="order-info-col">
+                    Received a new order from table number{" "}
+                    <b>{notification?.tableNumber}</b>
+                  </div>
+                  <div
+                    className="action-buttons col-md-3"
+                    style={{ marginLeft: "auto", display: "flex" }}
+                  >
+                    {notification?.Orders[0]?.isAccepted === false && (
+                      <div className="mx-1 my-1" style={{ cursor: "pointer" }}>
+                        <FaCheckCircle
+                          color="#4CAF50"
+                          size={24}
+                          onClick={() => {
+                            sendNotifucation(notification);
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {notification?.Orders[0]?.isRejected === false && (
+                      <div className="mx-1 my-1" style={{ cursor: "pointer" }}>
+                        <FaTimesCircle
+                          color="#FF0000"
+                          size={24}
+                          onClick={() => {
+                            rejectOrder(notification);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <small>
+                  <b>Time</b>:{" "}
+                  {new Date(notification?.createdAt).toLocaleString()}
+                </small>
+              </div>
+            )}
+          </>
+        );
     }
   };
 
+  const sendNotifucation = (row) => {
+    var obj = {
+      totalamount: row?.Orders[0]?.totalAmount,
+      isActive: row?.Orders[0]?.isActive,
+      isRejected: row?.Orders[0]?.isRejected,
+      isCompleted: row?.Orders[0]?.isCompleted,
+      isAccepted: true,
+      orderId: row?.Orders[0]?.orderId,
+      customerId: row?.Orders[0]?.customerId,
+      userId: row?.userId,
+    };
+
+    dispatch(updateIsActiveOrder(obj));
+  };
+  const rejectOrder = (row) => {
+    // Implement logic to reject an order
+
+    var obj = {
+      totalamount: row?.Orders[0]?.totalAmount,
+      isActive: false,
+      isRejected: true,
+      isCompleted: row?.Orders[0]?.isCompleted,
+      isAccepted: false,
+      orderId: row?.Orders[0]?.orderId,
+      customerId: row?.Orders[0]?.customerId,
+      userId: row?.userId,
+    };
+
+    dispatch(updateIsActiveOrder(obj));
+  };
+  console.log("orders", orders);
   const handleMainHeaderSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
     setSearchedText(searchText);
 
     const searchInArray = (data, type) => {
       return data
-        .filter((item) => item.name.toLowerCase().includes(searchText))
+        .filter((item) => {
+          // Check if any property of the item includes the search text
+          const itemValues = Object.values(item).map((value) =>
+            value?.toString().toLowerCase()
+          );
+          return itemValues.some(
+            (value) => value && value.includes(searchText)
+          );
+        })
         .map((item) => ({ ...item, type }));
     };
 
@@ -248,6 +324,23 @@ export default function Header() {
     setShowSearchDropdown(false);
     setSearchedText("");
   };
+  const calculateNotificationLength = () => {
+    if (orders.length > 0) {
+      const notificationLength = orders.reduce(
+        (total, data) =>
+          total +
+          data.Orders.filter((filteredData) => filteredData?.isActive).length,
+        0
+      );
+      setnotificationLengthState(notificationLength);
+    } else {
+      setnotificationLengthState(0);
+    }
+  };
+
+  useEffect(() => {
+    calculateNotificationLength();
+  }, [orders]);
 
   return (
     <>
@@ -255,7 +348,7 @@ export default function Header() {
       <UserProfile />
       <HelpModal />
       <Feedback />
-      
+
       {!restroLoading ? (
         <>
           <nav
@@ -285,6 +378,7 @@ export default function Header() {
               >
                 <span className="navbar-toggler-icon" />
               </button>
+             
               <div
                 className="collapse navbar-collapse"
                 id="navbarSupportedContent"
@@ -346,72 +440,70 @@ export default function Header() {
                     className="dropdown-menu "
                     aria-labelledby="dropdownMenuLink"
                   >
-                  
                     <div className="d-flex my-2 ">
                       <div className="col-md-1">
-                      <FaUser />
-                      </div>
-                     
-                      <div className="col-md-12 text">
-                      <button
-                      className="dropdown-setting"
-                      onMouseEnter={handleGearClick}
-                      data-bs-toggle="modal"
-                      data-bs-target="#userProfileModal"
-                    >
-                       Profile
-                    </button>
+                        <FaUser />
                       </div>
 
-                    </div>
-                    <div className="d-flex my-2 ">
-                      <div className="col-md-1">
-                      <FaQuestion />
-                      </div>
-                     
                       <div className="col-md-12 text">
-                      <button
-                      className="dropdown-setting"
-                      onMouseEnter={handleGearClick}
-                      data-bs-toggle="modal"
-                      data-bs-target="#helpmodal"
-                    >
-                       Help
-                    </button>
+                        <button
+                          className="dropdown-setting"
+                          onMouseEnter={handleGearClick}
+                          data-bs-toggle="modal"
+                          data-bs-target="#userProfileModal"
+                        >
+                          Profile
+                        </button>
                       </div>
                     </div>
                     <div className="d-flex my-2 ">
                       <div className="col-md-1">
-                      <FaExclamation />
+                        <FaQuestion />
                       </div>
-                     
+
                       <div className="col-md-12 text">
-                      <button
-                      className="dropdown-setting"
-                      onMouseEnter={handleGearClick}
-                      data-bs-toggle="modal"
-                      data-bs-target="#Feedback"
-                    >
-                      Feedback
-                    </button>
+                        <button
+                          className="dropdown-setting"
+                          onMouseEnter={handleGearClick}
+                          data-bs-toggle="modal"
+                          data-bs-target="#helpmodal"
+                        >
+                          Help
+                        </button>
                       </div>
                     </div>
-                  <div className="d-flex my-2 ">
+                    <div className="d-flex my-2 ">
                       <div className="col-md-1">
-                      <FaRegBuilding />
+                        <FaExclamation />
                       </div>
-                     
+
                       <div className="col-md-12 text">
-                      <button className="dropdown-setting" disabled>
-                      Franchise
-                    </button>
+                        <button
+                          className="dropdown-setting"
+                          onMouseEnter={handleGearClick}
+                          data-bs-toggle="modal"
+                          data-bs-target="#Feedback"
+                        >
+                          Feedback
+                        </button>
+                      </div>
+                    </div>
+                    <div className="d-flex my-2 ">
+                      <div className="col-md-1">
+                        <FaRegBuilding />
+                      </div>
+
+                      <div className="col-md-12 text">
+                        <button className="dropdown-setting" disabled>
+                          Franchise
+                        </button>
                       </div>
                     </div>
                     <div className="d-flex my-2  ">
                       <div className="col-md-1">
                         <FaKey />
                       </div>
-                     
+
                       <div className="col-md-12 text">
                         <button
                           className="dropdown-setting"
@@ -434,16 +526,19 @@ export default function Header() {
                     </a>
                     <div className="d-flex my-2 ">
                       <div className="col-md-1">
-                      <FaSignOutAlt />
+                        <FaSignOutAlt />
                       </div>
-                     
+
                       <div className="col-md-12 text">
-                      <button className="dropdown-setting" href="#" onClick={logOut}>
-                     Log Out
-                    </button>
+                        <button
+                          className="dropdown-setting"
+                          href="#"
+                          onClick={logOut}
+                        >
+                          Log Out
+                        </button>
                       </div>
                     </div>
-                   
                   </div>
                 </div>
 
@@ -456,22 +551,28 @@ export default function Header() {
                       aria-expanded="false"
                     />
                     <span
-                      className="badge text-danger"
+                      className={
+                        notificationLengthState === 0
+                          ? `badge d-none`
+                          : `badge `
+                      }
                       style={{
                         position: "absolute",
                         top: "-5px",
-                        right: "-5px",
-                        padding: " 5px 10px",
-                        borderRadius: "50%",
-
-                        color: "#fff",
+                        right: "2px",
+                        borderRadius: "100%",
+                        color: "white",
                         fontSize: "12px",
+                        backgroundColor: "purple",
                       }}
                     >
                       <b>
-                        {notification.length > 0 ? notification.length : ""}
+                        {notificationLengthState === 0
+                          ? ""
+                          : notificationLengthState}
                       </b>
                     </span>
+
                     <ul
                       className="dropdown-menu notification-dropdown"
                       style={{
@@ -485,23 +586,56 @@ export default function Header() {
                         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
                         borderRadius: "4px",
                         backgroundColor: "#fff",
-                        width: "300px",
+                        width: "400px",
                       }}
                     >
                       {/* Your list items go here */}
 
-                      {notification.length === 0 ? (
+                      {Array.isArray(orders) && orders.length > 0 ? (
+                        orders.some(
+                          (order) => order?.Orders?.[0]?.isActive === true
+                        ) ? (
+                          orders.map((order, index) => (
+                            <div className="" type="">
+                              {handleNotification(order)}
+                            </div>
+                          ))
+                        ) : (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <div>
+                              <div
+                                className=""
+                                style={{
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <img
+                                  src={NotificationBell}
+                                  height={200}
+                                  width={200}
+                                  alt="Notification-Bell"
+                                />
+                              </div>
+                              <div >
+                                Notifications will appear here
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ) : (
                         <li>
                           <button className="dropdown-item" type="button">
-                            <div>Notification will appear here</div>
+                            <div>Notifications will appear here</div>
                           </button>
                         </li>
-                      ) : (
-                        notification?.map((notification, index) => (
-                          <li key={index}>
-                            <b> {notification}</b>
-                          </li>
-                        ))
                       )}
                     </ul>
                   </div>
@@ -519,6 +653,7 @@ export default function Header() {
                   </div>
                 </form>
               </div>
+         
             </div>
           </nav>
           <div>
@@ -537,195 +672,189 @@ export default function Header() {
                 <ul className="nav-links">
                   <li>
                     <Link to="/admin/">
-                    <div className="d-flex">
-                      <div className="col-md-1">
-                     
-                        <FaRegChartBar size={`${iconSize}`}  className="link-name "
-                        style={{
-                          color: pathname === "/admin/" ? "purple" : "",
-                        }}/>{" "}
-                     
-                      
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaRegChartBar
+                            size={`${iconSize}`}
+                            className="link-name "
+                            style={{
+                              color: pathname === "/admin/" ? "purple" : "",
+                            }}
+                          />{" "}
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name "
+                            style={{
+                              color: pathname === "/admin/" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}>Charts</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-md-10">
-                      <span
-                        className="link-name "
-                        style={{
-                          color: pathname === "/admin/" ? "purple" : "",
-                        }}
-                      >
-                        
-                        <span className={`d-${display}`}>Charts</span>
-                      </span>
-                      </div>
-                    </div>
-                      
                     </Link>
                   </li>
                   <li>
-                  
                     <Link to="/admin/add">
-                    <div className="d-flex">
-                    <div className="col-md-1">
-                    <FaPlusCircle size={`${iconSize}` }  
-                    style={{
-                          color: pathname === "/admin/add" ? "purple" : "",
-                        }}
-                        className="link-name"
-                        />
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaPlusCircle
+                            size={`${iconSize}`}
+                            style={{
+                              color: pathname === "/admin/add" ? "purple" : "",
+                            }}
+                            className="link-name"
+                          />
                         </div>
-                    <div className="col-md-10">
-                    <span
-                        className="link-name"
-                        style={{
-                          color: pathname === "/admin/add" ? "purple" : "",
-                        }}
-                      >
-                        
-                        <span className={`d-${display}`} > Add</span>
-                      </span>
-                    </div>
-                  </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color: pathname === "/admin/add" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> Add</span>
+                          </span>
+                        </div>
+                      </div>
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/tables">
-                    <div className="d-flex">
-                      <div className="col-md-1"><FaTable size={`${iconSize}`} className="link-name"
-                        style={{
-                          color: pathname === "/admin/tables" ? "purple" : "",
-                        }} /></div>
-                      <div className="col-md-10">
-                      <span
-                        className="link-name"
-                        style={{
-                          color: pathname === "/admin/tables" ? "purple" : "",
-                        }}
-                      >
-                        
-                        <span className={`d-${display}`}> Tables</span>
-                      </span>
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaTable
+                            size={`${iconSize}`}
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/tables" ? "purple" : "",
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/tables" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> Tables</span>
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                     
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/ordermanagement">
-                    <div className="d-flex">
-                      <div className="col-md-1">
-                      <FaRegAddressBook 
-                      size={`${iconSize}`}
-                      className="link-name"
-                        style={{
-                          color:
-                            pathname === "/admin/ordermanagement"
-                              ? "purple"
-                              : "",
-                        }}
-                       />
-
-
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaRegAddressBook
+                            size={`${iconSize}`}
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/ordermanagement"
+                                  ? "purple"
+                                  : "",
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/ordermanagement"
+                                  ? "purple"
+                                  : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> Orders</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-md-10"
-                      >
-                        <span
-                        className="link-name"
-                        style={{
-                          color:
-                            pathname === "/admin/ordermanagement"
-                              ? "purple"
-                              : "",
-                        }}
-                      >
-                       
-                        <span className={`d-${display}`}> Orders</span>
-                      </span>
-                      </div>
-                    </div>
-                      
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/preview">
-                    <div className="d-flex">
-                      <div className="col-md-1">
-                      <FaImage 
-                      size={`${iconSize}`}
-                      className="link-name"
-                        style={{
-                          color: pathname === "/admin/preview" ? "purple" : "",
-                        }}
-                       />
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaImage
+                            size={`${iconSize}`}
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/preview" ? "purple" : "",
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/preview" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> Preview</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-md-10">
-                      <span
-                        className="link-name"
-                        style={{
-                          color: pathname === "/admin/preview" ? "purple" : "",
-                        }}
-                      >
-                       
-                        <span className={`d-${display}`}> Preview</span>
-                      </span>
-                      </div>
-                    </div>
-                     
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/qr">
-                    <div className="d-flex">
-                      <div className="col-md-1">
-                      <FaQrcode 
-                      size={`${iconSize}`}
-                      className="link-name"
-                        style={{
-                          color: pathname === "/admin/qr" ? "purple" : "",
-                        }}
-                       />
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaQrcode
+                            size={`${iconSize}`}
+                            className="link-name"
+                            style={{
+                              color: pathname === "/admin/qr" ? "purple" : "",
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color: pathname === "/admin/qr" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> QR</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-md-10">
-                      <span
-                        className="link-name"
-                        style={{
-                          color: pathname === "/admin/qr" ? "purple" : "",
-                        }}
-                      >
-                        
-                        <span className={`d-${display}`}> QR</span>
-                      </span>
-
-                      </div>
-                    </div>
-                      
                     </Link>
                   </li>
                   <li>
                     <Link to="/admin/coupon">
-                    <div className="d-flex">
-                      <div className="col-md-1">
-                      <FaTicketAlt 
-                      size={`${iconSize}`} 
-                      className="link-name"
-                        style={{
-                          color: pathname === "/admin/coupon" ? "purple" : "",
-                        }}
-                      />
+                      <div className="d-flex">
+                        <div className="col-md-1">
+                          <FaTicketAlt
+                            size={`${iconSize}`}
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/coupon" ? "purple" : "",
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-10">
+                          <span
+                            className="link-name"
+                            style={{
+                              color:
+                                pathname === "/admin/coupon" ? "purple" : "",
+                            }}
+                          >
+                            <span className={`d-${display}`}> coupon</span>
+                          </span>
+                        </div>
                       </div>
-                      <div className="col-md-10">
-                      <span
-                        className="link-name"
-                        style={{
-                          color: pathname === "/admin/coupon" ? "purple" : "",
-                        }}
-                      >
-                       
-                        <span className={`d-${display}`}> coupon</span>
-                      </span>
-                      </div>
-                    </div>
-                     
                     </Link>
                   </li>
                 </ul>

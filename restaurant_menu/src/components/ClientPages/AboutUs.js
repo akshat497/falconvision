@@ -36,7 +36,7 @@ function AboutUs() {
               </h2>
               <p style={aboutUsStyles.content}>
                 Welcome to FalconVision, where excellence meets innovation.
-                Founded in 2007, we have been on a remarkable journey to
+                Founded in 2023, we have been on a remarkable journey to
                 redefine the IT industry.
               </p>
               <p style={aboutUsStyles.content}>

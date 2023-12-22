@@ -3,13 +3,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DataTable from "react-data-table-component";
 
-import {
-  FaCheck,
+import { 
   FaCheckCircle,
-  FaCheckDouble,
-  FaRegCheckCircle,
   FaRupeeSign,
-  FaTicketAlt,
+
 } from "react-icons/fa";
 
 import "react-loading-skeleton/dist/skeleton.css";
@@ -70,7 +67,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     },
 
     {
-      name: "",
+      name: "Operations",
       cell: (row) => (
         <div className="d-flex  " style={{ marginLeft: "-30%" }}>
           <>
@@ -83,7 +80,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 }}
               >
                 {row.Orders[0]?.isAccepted === true ? (
-                  <FaCheckCircle size={30} color="white" />
+                  <FaCheckCircle size={30} color="green" />
                 ) : (
                   "Accept"
                 )}
@@ -91,8 +88,8 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             ) : (
               ""
             )}
-
-            <button
+            { row.Orders[0]?.isActive?
+             <button
               onDoubleClick={() => rejectOrder(row)}
               className={
                 row.Orders[0]?.isActive
@@ -101,7 +98,19 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               }
             >
               Reject{" "}
-            </button>
+            </button>:
+            <button
+              onDoubleClick={() => UndoOrder(row)}
+              className={
+               
+                   "btn btn-sm btn-outline-danger mx-2 "
+                  
+              }
+            >
+              undo{" "}
+            </button>}
+
+           
             <button
               onClick={() => completedOrder(row)}
               className={
@@ -117,6 +126,20 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
       ),
     },
   ];
+  const UndoOrder=(row)=>{
+    var obj = {
+      totalamount: row?.Orders[0]?.totalAmount,
+      isActive: true,
+      isRejected: false,
+      isCompleted:false,
+      isAccepted: false,
+      orderId: row?.Orders[0]?.orderId,
+      customerId: row?.Orders[0]?.customerId,
+      userId: row?.userId,
+    };
+
+    dispatch(updateIsActiveOrder(obj));
+  }
   const sendNotifucation = (row) => {
     var obj = {
       totalamount: row?.Orders[0]?.totalAmount,
@@ -139,7 +162,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
       isActive: false,
       isRejected: true,
       isCompleted: row?.Orders[0]?.isCompleted,
-      isAccepted: row?.Orders[0]?.isAccepted,
+      isAccepted: false,
       orderId: row?.Orders[0]?.orderId,
       customerId: row?.Orders[0]?.customerId,
       userId: row?.userId,
@@ -182,6 +205,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     //   // row.data.Orders[0].isActive = false
 
     // }
+    console.log()
 
     if (row.data && row.data.Orders) {
       const orderItems = row.data.Orders.flatMap((order) => order.OrderItems);
@@ -203,6 +227,11 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           sortable: true,
         },
         {
+          name: "Message",
+          selector: ()=>{return row?.data?.Orders[0]?.message.length<1? <b className="">No message</b>: <textarea rows={3} disabled >{row?.data?.Orders[0]?.message}</textarea>},
+          sortable: true,
+        },
+        {
           name: "total",
           selector: (row) => row.quantity * row.price,
           sortable: true,
@@ -218,6 +247,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             dense
             striped
             highlightOnHover
+            responsive
           />
           <table>
             <tbody>
@@ -233,8 +263,10 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 <td></td>
                 <td></td>
                 <td>
-                  <FaRupeeSign /> {row.data.Orders[0].totalAmount}
+                  
                 </td>
+                <td></td>
+                <td><FaRupeeSign /> {row.data.Orders[0].totalAmount}</td>
               </tr>
             </tbody>
           </table>
@@ -291,6 +323,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 expandableRows
                 highlightOnHover
                 expandableRowsComponent={expandableRow}
+                responsive
               />
             ) : null}
           </>

@@ -60,6 +60,10 @@ export const addItem = (userData) => async (dispatch) => {
   try {
     dispatch(setItemLoading(true));
     const response = await AddItem(userData);
+    if(response?.success===true){
+      showToast("The menu item has been successfully added.","success");
+
+    }
     dispatch(fetchItem(userData?.userId));
     dispatch(setItem(response));
     dispatch(setItemLoading(false));
@@ -74,6 +78,10 @@ export const addCategory = (userData) => async (dispatch) => {
   try {
     dispatch(setCategoryloading(true));
     const response = await AddCategory(userData); // Call your API function here
+    if(response){
+      showToast("New category has been successfully added.","success");
+
+    }
     dispatch(fetchCategory(userData?.userId));
     dispatch(setCategory(response));
     dispatch(setCategoryloading(false));
@@ -101,6 +109,11 @@ export const deleteCategory = (userData) => async (dispatch) => {
     dispatch(setDeleteCategoryloading(true));
 
     const response = await DeleteCategory(userData);
+    if(response){
+      showToast(response.message,"success");
+
+    }
+    dispatch(fetchItem(userData?.userId));
     dispatch(fetchCategory(userData?.userId));
 
     dispatch(setDeleteCategory(response));
@@ -116,6 +129,10 @@ export const updateCategory = (userData) => async (dispatch) => {
     dispatch(setupdateCategoryloading(true));
 
     const response = await UpdateCategory(userData);
+    if(response.success===true){
+      showToast(response.message,"success")
+    }
+
     dispatch(fetchCategory(userData?.userId));
 
     dispatch(setupdateCategory(response));
@@ -131,6 +148,10 @@ export const updateItem = (userData) => async (dispatch) => {
     dispatch(setupdateItemloading(true));
 
     const response = await UpdateItem(userData);
+    if(response.success===true){
+      showToast(response.message,"success")
+    }
+
     dispatch(fetchItem(userData?.userId));
 
     dispatch(setupdateItem(response));
@@ -145,8 +166,7 @@ export const fetchItem = (userData) => async (dispatch) => {
   try {
     dispatch(setFetchedItemLoading(true));
     const response = await FetchItem(userData);
-    
-
+   
     dispatch(setFetchedItem(response?.data));
     dispatch(setFetchedItemLoading(false));
   } catch (error) {
@@ -160,6 +180,10 @@ export const deleteItem = (userData) => async (dispatch) => {
     dispatch(setDeleteItemloading(true));
 
     const response = await DeleteItem(userData);
+    if(response.success===true){
+      showToast(response.message,"success");
+
+    }
     dispatch(fetchItem(userData?.userId));
 
     dispatch(setDeleteItem(response));

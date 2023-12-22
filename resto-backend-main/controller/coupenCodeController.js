@@ -4,6 +4,7 @@ const CustomErrorHandler = require("../services/CustomErrorHandler");
 const MenuItem = require("../models/menuItem");
 const { Order } = require("../models/order");
 const NodeCache = require("node-cache");
+const CustomResponseHandler = require("../services/CustomResponseHandler");
 const couponCache = new NodeCache();
 const coupenCodeController = {
   getCoupenCode: async (req, res, next) => {
@@ -59,7 +60,7 @@ const coupenCodeController = {
         }
         let newCouponCode = await CoupenCode.create({ name, userId, discount });
         console.log("newCouponCode", newCouponCode);
-        res.status(200).json({ message: "true", newCouponCode });
+        return res.status(200).json(CustomResponseHandler.positiveResponse("Coupon created successfully",newCouponCode));
       });
     } catch (error) {
       return next(error);
@@ -87,7 +88,7 @@ const coupenCodeController = {
           where: { CoupenCodeId, userId },
         });
 
-        res.status(200).json({ response });
+        res.json(CustomResponseHandler.positiveResponse("Coupon updated successfully.",response));
       });
     } catch (error) {
       return next(error);
@@ -190,7 +191,7 @@ const coupenCodeController = {
           return next(CustomErrorHandler.NotFound("No such Item Found"));
         }
         // WebSocketServer.broadUpdate(userId, response, "deletedMenu");
-        res.json(response);
+        res.status(200).json(CustomResponseHandler.positiveResponse("Coupon deleted successfully."));
       });
     } catch (err) {
       return next(err);

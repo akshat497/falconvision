@@ -72,7 +72,7 @@ export default function OrderManagementHolder() {
     setpage(page + 100);
   };
   useEffect(() => {
-    if (page > 100) {
+    if (page > 100 &&page!==undefined) {
       const orderObj = {
         userId: detailRestro?.userId,
         page: page,

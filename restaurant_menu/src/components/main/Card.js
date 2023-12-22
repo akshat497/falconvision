@@ -165,8 +165,10 @@ export default function Card({ veg, nonVeg }) {
   // }, [response]);
 
   // Load the cart from localStorage when the component mounts
+  
   useEffect(() => {
-    let filteredItems = originalItems; // Initialize with the original list
+    
+    let filteredItems = fetcheditems; // Initialize with the original list
 
     if (veg) {
       filteredItems = filteredItems.filter((data) => data.veg === veg);
@@ -178,7 +180,7 @@ export default function Card({ veg, nonVeg }) {
 
     // Update the state with the filtered items
     setFetcheditemsCopy(filteredItems);
-    setFetcheditems(filteredItems);
+    // setFetcheditems(filteredItems);
   }, [veg, nonVeg, originalItems, setFetcheditemsCopy]);
   const savedCart = JSON.parse(localStorage.getItem("cart"));
   useEffect(() => {

@@ -6,6 +6,7 @@ import { createOrder } from '../redux/orders/orderThunk';
 import { useEffect } from 'react';
 import { sendOtp, verifyOtp } from '../redux/auth/authThunks';
 import { toast } from 'react-toastify';
+import { showToast } from '../services/ToastInstance';
 
 
 
@@ -23,7 +24,8 @@ const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     phoneNumber: '',
-    email:''
+    email:'',
+    message:''
   });
   const [otpSendAttempts, setOtpSendAttempts] = useState(0);
   const [showResendButton, setShowResendButton] = useState(false);
@@ -32,11 +34,30 @@ const CheckoutPage = () => {
   const [tableNumber, settableNumber] = useState('')
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  
+    // Check if the input is phoneNumber and limit its length to 10 characters
+    if (name === 'phoneNumber') {
+      if (value.length <= 10) {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else if(name==='message'){
+      if(value.length<=100){
+        setFormData({...formData,[name]:value})
+      }
+
+    }
+    else {
+      // For other fields, simply update the form data
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
+  
 useEffect(()=>{
 const data=JSON.parse(localStorage.getItem('params'));
 settableNumber(data.tableNumber);
@@ -47,35 +68,21 @@ setFormData([])
     e.preventDefault();
     // Handle the order submission here
     const cartItems= JSON.parse(localStorage.getItem('cart'))
-    if(!cartItems){
-      return toast.error("Empty cart",{
-        position:"top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton:false
-        
-      
-      })
+    if(!cartItems || cartItems.length===0){
+      return showToast("Empty cart")
+     
     }
     dispatch(verifyOtp(formData))
     }
    const placeOrder=()=>{
     const cartItems= JSON.parse(localStorage.getItem('cart'))
-    if(!cartItems){
-      return toast.error("Empty cart",{
-        position:"top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton:false
-        
-      
-      })
+    if(!cartItems || cartItems.length===0){
+      return showToast("Empty cart")
     }
     const obj = {
      userName: formData.username,
      phoneNumber: formData.phoneNumber,
+     message:formData.message,
      items: cartItems,
    };
    
@@ -83,6 +90,7 @@ setFormData([])
    const convertedObj = {
      username: obj.userName,
      phoneNumber: obj.phoneNumber,
+     message:obj.message,
      totalAmount: 0, // You would need to calculate the totalAmount based on 'cartItems' and other properties.
      tableNumber: 0, // Set the appropriate table number.
      userId: '', 
@@ -169,6 +177,7 @@ if(OtpVerifyResponse?.message==="OTP is valid"){
             type="text"
             id="username"
             name="username"
+            className='form-control'
             value={formData.username}
             onChange={handleInputChange}
             required
@@ -180,6 +189,7 @@ if(OtpVerifyResponse?.message==="OTP is valid"){
             type="number"
             id="phoneNumber"
             name="phoneNumber"
+            className='form-control'
             value={formData.phoneNumber}
             onChange={handleInputChange}
             required
@@ -191,9 +201,24 @@ if(OtpVerifyResponse?.message==="OTP is valid"){
             type="text"
             id="email"
             name="email"
+            className='form-control'
             value={formData.email}
             onChange={handleInputChange}
             required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="message">Message:</label>
+          <textarea
+            type="text"
+            id="message"
+            name="message"
+            rows={5}
+            className='form-control'
+            placeholder='Message for chef (optional)'
+            value={formData.message}
+            onChange={handleInputChange}
+            
           />
         </div>
         <div className={OtpResponse!==null?"form-group ":"form-group d-none" }>

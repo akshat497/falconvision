@@ -26,8 +26,12 @@ export const fetchOrders = (userData) => async (dispatch) => {
   export const updateIsActiveOrder = (userData) => async (dispatch) => {
     try {
       dispatch(setisActiveOrderloading(true));
-      const response = await UpdateIsActiveOfOrder(userData);  
-       dispatch(fetchOrders(response?.Customer?.userId))
+      const response = await UpdateIsActiveOfOrder(userData); 
+      const orderObj = {
+        userId: response?.Customer?.userId,
+        page: 100,
+      }; 
+       dispatch(fetchOrders(orderObj))
       dispatch(setisActiveOrder(response));
       dispatch(setisActiveOrderloading(false));
     } catch (error) {

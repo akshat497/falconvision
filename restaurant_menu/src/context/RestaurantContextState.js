@@ -9,11 +9,12 @@ import { toast } from "react-toastify";
 import { fetchCategory, fetchItem } from "../redux/items/itemThunk";
 import { setFetchedCategory } from "../redux/items/fetchCategorySlice";
 import { fetchOrders } from "../redux/orders/orderThunk";
+import { showToast } from "../services/ToastInstance";
 export default function RestaurantContextState(props) {
   const dispatch = useDispatch();
   // const token = useSelector((state) => state.login.user);
   const allItems = useSelector((state) => state?.fetchitem?.f_item);
-  const couponCodes=useSelector((state)=>state.getCoupon.getCoupon)
+  const couponCodes = useSelector((state) => state.getCoupon.getCoupon);
   const [restroDetails] = useState({});
   const [fetcheditems, setFetcheditems] = useState([]);
   const [fetcheditemsCopy, setFetcheditemsCopy] = useState([]);
@@ -64,11 +65,10 @@ export default function RestaurantContextState(props) {
     const userData = JSON.parse(localStorage.getItem("params"));
     const userId = userData?.userId || detailRestro?.userId;
     // const serverAddress = `wss://falconvesionbackend.onrender.com:443/?room=${userId}`;
-    // const serverAddress = `ws://127.0.0.1:9090/?room=${userId}`;
-    const serverAddress=`ws://www.api.falcon-vision.in:9090/?room=${userId}`
-    
+    const serverAddress = `ws://127.0.0.1:9090/?room=${userId}`;
+    // const serverAddress=`ws://www.api.falcon-vision.in:9090/?room=${userId}`
+
     const ws = new WebSocket(serverAddress);
-    
 
     ws.onopen = () => {
       console.log("WebSocket Client Connected");
@@ -77,35 +77,39 @@ export default function RestaurantContextState(props) {
     ws.onmessage = (message) => {
       // Handle messages received from the server
       const dataFromServer = JSON.parse(message.data);
-     
+      
       const { updateType, data } = dataFromServer;
       // setnotification([...notification, updateType]);
+       setnotification([
+            dataFromServer ,
+            ...notification
+          ]);
       // Handle different update types
-      console.log(dataFromServer)
+      console.log(dataFromServer);
       switch (updateType) {
         case "updatedMenu":
           // Handle updated menu data
-         
+
           dispatch(setFetchedItem(dataFromServer?.data));
           setFetcheditemsCopy([dataFromServer?.data]);
-          
+
           // dispatch(fetchItem(userData?.userId))
           // Update your component state or perform actions
           break;
-          case "updatedCategory":
-            dispatch(fetchCategory(userData?.userId))
-            dispatch(fetchItem(userData?.userId))
-            break;
+        case "updatedCategory":
+         
+          dispatch(fetchCategory(userData?.userId));
+          dispatch(fetchItem(userData?.userId));
+          break;
         case "newOrder":
           setOrders([dataFromServer?.data[0], ...orders]);
-          setnotification([...notification,`Received a new order from ${dataFromServer?.data[0]?.name}`]);
           setorder(orders);
 
           break;
         case "newMenu":
           setFetcheditems([...fetcheditems, dataFromServer?.data]);
           setFetcheditemsCopy([...fetcheditemsCopy, dataFromServer?.data]);
-          
+
           // dispatch(setFetchedItem(fetcheditems));
           // dispatch(fetchItem(userData?.userId))
 
@@ -119,34 +123,28 @@ export default function RestaurantContextState(props) {
           break;
         case "updatedOrder":
           const userPhone = JSON.parse(localStorage.getItem("userPhone"));
-          
+
           if (
             dataFromServer?.data?.isAccepted === true &&
             dataFromServer?.data?.isCompleted === false &&
-            Number(dataFromServer.data.Customer.phoneNumber) === Number(userPhone)
+            Number(dataFromServer.data.Customer.phoneNumber) ===
+              Number(userPhone)
           ) {
-            toast.info("Order is accepted", {
-              closeOnClick: true, // Close the toast on click
-              autoClose: false, // Do not auto-close the toast
-            });
+            showToast("Order is accepted", "info");
           }
           if (
             dataFromServer?.data?.isRejected === true &&
-            Number(dataFromServer.data.Customer.phoneNumber) === Number(userPhone)
+            Number(dataFromServer.data.Customer.phoneNumber) ===
+              Number(userPhone)
           ) {
-            toast.error("Order is Rejected", {
-              closeOnClick: true, // Close the toast on click
-              autoClose: false, // Do not auto-close the toast
-            });
+            showToast("Order is Rejected");
           }
           if (
             dataFromServer?.data?.isCompleted === true &&
-            Number(dataFromServer.data.Customer.phoneNumber) === Number(userPhone)
+            Number(dataFromServer.data.Customer.phoneNumber) ===
+              Number(userPhone)
           ) {
-            toast.success("Order is completed ", {
-              closeOnClick: true, // Close the toast on click
-              autoClose: false, // Do not auto-close the toast
-            });
+            showToast("Order is completed ", "success");
           }
           break;
         default:
@@ -154,9 +152,7 @@ export default function RestaurantContextState(props) {
       }
     };
 
-    ws.onerror = function (error) {
-      
-    };
+    ws.onerror = function (error) {};
 
     // Ensure the WebSocket client is closed when the component unmounts
     return () => {
@@ -236,15 +232,16 @@ export default function RestaurantContextState(props) {
   // }, [detailRestro, dispatch, setFetcheditems,fetcheditems,orders]);
 
   useEffect(() => {
-   
     setFetcheditems(allItems);
     setFetcheditemsCopy(allItems);
-    
   }, [allItems]);
-  useEffect(()=>{
-    if (couponCodes === null || couponCodes === undefined) {setfetchedCoupens([])}else{setfetchedCoupens(couponCodes)}
-    
-  },[couponCodes])
+  useEffect(() => {
+    if (couponCodes === null || couponCodes === undefined) {
+      setfetchedCoupens([]);
+    } else {
+      setfetchedCoupens(couponCodes);
+    }
+  }, [couponCodes]);
   useEffect(() => {
     if (allorders === null || allorders === undefined) {
       setOrders([]);
@@ -252,7 +249,7 @@ export default function RestaurantContextState(props) {
       setOrders(allorders);
     }
   }, [allorders]);
- 
+
   useEffect(() => {
     setmode("dark");
   }, []);
@@ -275,7 +272,7 @@ export default function RestaurantContextState(props) {
         notification,
         setnotification,
         fetchedCoupens,
-        setfetchedCoupens
+        setfetchedCoupens,
       }}
     >
       {props.children}

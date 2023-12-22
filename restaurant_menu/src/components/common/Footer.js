@@ -21,7 +21,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="footer-contact">
-          <p><FaEnvelope /> Email: falcon.vesion@gmail.com</p>
+          <p><FaEnvelope /> Email: <b>contact@falcon-vision.in</b></p>
           <p>Phone: +91 70562-75526</p>
           <p>Address: 205/14 Chunnipura, Rohtak, India</p>
         </div>

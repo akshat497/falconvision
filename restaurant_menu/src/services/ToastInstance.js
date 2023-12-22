@@ -11,6 +11,8 @@ export const showToast = (message, type ) => {
         draggable:true,
         style: {
           fontWeight: 'bold', // Add this line to make the font bold
+          backgroundColor:"whiteSmoke",
+          color:"#07bc0c"
         },
         
         
@@ -25,9 +27,25 @@ export const showToast = (message, type ) => {
         draggable:true,
         style: {
           fontWeight: 'bold', // Add this line to make the font bold
+          backgroundColor:"whiteSmoke",
+          color:"#f1c40f"
         },
       });
       break;
+      case "info":
+        toast.info(message, {
+          autoClose: true,
+          closeButton: true,
+          closeOnClick: true,
+          hideProgressBar:true,
+          draggable:true,
+          style: {
+            fontWeight: 'bold', // Add this line to make the font bold
+            backgroundColor:"whiteSmoke",
+            color:"#3498db;"
+          },
+        });
+        break;
     default:
       toast.error(message, {
         autoClose: true,
@@ -37,6 +55,8 @@ export const showToast = (message, type ) => {
         draggable:true,
         style: {
           fontWeight: 'bold', // Add this line to make the font bold
+          backgroundColor:"whiteSmoke",
+          color:"#e74c3c"
         },
       });
   }

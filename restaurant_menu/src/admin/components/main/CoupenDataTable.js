@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSwitch from "react-switch";
-import { updateItem } from "../../../redux/items/itemThunk";
+
 
 import RestaurantContext from "../../../context/RestaurantContext";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { updateCoupon } from "../../../redux/coupon/couponCodeThunk";
-import { UpdateCouponCode } from "../../../services/Services";
+
 import UpdateCouponModel from "./UpdateCouponModel";
 import DeleteCouponModal from "./DeleteCouponModel";
 import NoDatComponent from "../../../components/common/NoDatComponent";
@@ -19,9 +19,7 @@ export default function CoupenDataTable() {
 
   const {
     isDarkMode,
-    setFetcheditems,
-    fetcheditems,
-    fetcheditemsCopy,
+   
     fetchedCoupens,
     setfetchedCoupens,
   } = useContext(RestaurantContext);
@@ -95,6 +93,7 @@ export default function CoupenDataTable() {
             id={`switch-${row?.categoryId}`}
             onColor="#800080" // Set the color when the switch is on (purple)
             offColor="#d3d3d3"
+            
           />
         </div>
       ),
@@ -107,7 +106,7 @@ export default function CoupenDataTable() {
             onClick={() => {
               setclickedRow(row);
             }}
-            className="btn  text-light mx-2"
+            className="btn  text-light mx-2 my-2"
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#updatecoupon"
@@ -121,7 +120,7 @@ export default function CoupenDataTable() {
             onClick={() => {
               setclickedRow(row);
             }}
-            className="btn btn-danger"
+            className="btn btn-danger mx-2"
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteCouponModel"
@@ -226,6 +225,7 @@ export default function CoupenDataTable() {
               customStyles={customStyles}
               highlightOnHover
               pagination
+              responsive
             />
           )}
         </div>

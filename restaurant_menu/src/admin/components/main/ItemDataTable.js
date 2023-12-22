@@ -109,7 +109,7 @@ export default function ItemDatatable({
         <div>
           <button
             onClick={() => onRowUpdate(row)}
-            className="btn  text-light mx-2"
+            className="btn  text-light mx-2 my-2"
             disabled={!row?.isActive}
             // data-bs-toggle="modal"
             //  data-bs-target="#exampleModal"
@@ -119,7 +119,7 @@ export default function ItemDatatable({
           </button>
           <button
             onClick={() => setItemToDelete(row)}
-            className="btn btn-danger"
+            className="btn btn-danger mx-2"
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteModel"
@@ -229,6 +229,7 @@ export default function ItemDatatable({
               customStyles={customStyles}
               highlightOnHover
               pagination
+              responsive
               
             />
           )}

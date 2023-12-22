@@ -120,6 +120,7 @@ const orderController = {
       items,
       phoneNumber,
       tableNumber,
+      message,
       createdAt,
       updatedAt,
       userId,
@@ -154,10 +155,13 @@ const orderController = {
           menuItemId: items.map((item) => item.menuItemId),
         },
       });
+      if(validMenuItems.length===0){
+        return res.status(404).json(CustomErrorHandler.NotFound("No items found in cart"))
+      }
       const inactiveItemNames = validMenuItems
         .filter((item) => !item.isActive)
         .map((inactiveItem) => inactiveItem.name);
-
+     
       if (inactiveItemNames.length === 1) {
         return res
           .status(404)
@@ -226,6 +230,7 @@ const orderController = {
         customerId: newCustomer.customerId,
         createdAt: createdAt,
         updatedAt: updatedAt,
+        message:message
       });
 
       // Create OrderItems for valid menu items
