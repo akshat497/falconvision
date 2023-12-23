@@ -312,7 +312,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 
                 <td >
                 <b>
-                <FaRupeeSign />  {(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage)}
+                <FaRupeeSign />  {row.data.Orders[0].couponDiscountPercentage!==0?(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage):row.data.Orders[0].couponDiscountPercentage}
                 </b>
              
                 </td>
@@ -328,7 +328,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               
                 <td></td>
                
-                <td className="ml-4">  <FaRupeeSign /> {row.data.Orders[0].totalAmount-(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage)}</td>
+                <td className="ml-4">  <FaRupeeSign /> {row.data.Orders[0].couponDiscountPercentage!==0?row.data.Orders[0].totalAmount-(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage):row.data.Orders[0].totalAmount}</td>
                 
               </tr>
             </tbody>
