@@ -12,6 +12,7 @@ import {
 import "react-loading-skeleton/dist/skeleton.css";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
 import NoDatComponent from "../../../components/common/NoDatComponent";
+import { useEffect } from "react";
 
 // import { w3cwebsocket } from 'websocket';
 
@@ -20,11 +21,13 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
 
   // const allorders = useSelector((state) => state.getOrder.order);
   const allordersLoading = useSelector((state) => state.getOrder.loading);
-
+  const [isExpanded, setIsExpanded] = useState({isExpanded:false,customerId:""});
+ 
   // const isActiveUpdate=useSelector((state)=> state.updateisactiveorder.isActiveOrder)
 
   // useEffect(()=>{if(isUpdated!==null){setseen(true)}},[isUpdated])
 
+  useEffect(()=>{console.log("isExpanded",isExpanded)},[isExpanded])
   const columns = [
     {
       name: "Customer Name",
@@ -39,6 +42,50 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     {
       name: "Phone-number",
       selector: "phoneNumber",
+      sortable: true,
+    },
+    {
+      name: "Message",
+      selector: (row) => {
+        // Check if the message has been displayed, and if not, display it
+         console.log("rowdata",row)
+         
+          return row?.Orders[0]?.message?.length < 1 || row?.Orders[0]?.message === null ?
+            <b className="">No message</b> :
+            <div
+            style={{
+              maxHeight: "100px",
+              overflow: "hidden",
+              cursor: "pointer",
+              border: "1px solid #ccc",
+              padding: "8px",
+              borderRadius: "4px",
+            }}
+            onClick={() => {
+  setIsExpanded((prev) => ({
+    isExpanded: !prev.isExpanded,
+    customerId: row.Orders[0]?.customerId,
+  }));
+}}
+
+          >
+            {isExpanded.isExpanded===true &&isExpanded.customerId===row.Orders[0]?.customerId? (
+              <textarea
+                disabled
+                style={{ width: "100%", minHeight: "60px", border: "none", outline: "none" }}
+                rows={3}
+                
+              >
+                {row?.Orders[0]?.message}
+              </textarea>
+            ) : (
+              <>
+                {row?.Orders[0]?.message.slice(0, 12)}
+                {row?.Orders[0]?.message?.length > 12 && '...'}
+              </>
+            )}
+          </div>
+      },
       sortable: true,
     },
     {
@@ -226,16 +273,13 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           selector: "quantity",
           sortable: true,
         },
-        {
-          name: "Message",
-          selector: ()=>{return row?.data?.Orders[0]?.message?.length<1? <b className="">No message</b>: <textarea rows={3} disabled >{row?.data?.Orders[0]?.message}</textarea>},
-          sortable: true,
-        },
+       
         {
           name: "total",
-          selector: (row) => row.quantity * row.price,
+          selector: (row) => <><small><FaRupeeSign size={17} /></small> {row.quantity * row.price}</>,
           sortable: true,
         },
+       
       ];
 
       return (
@@ -248,25 +292,44 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             striped
             highlightOnHover
             responsive
+            
           />
-          <table>
+          <table border={1} className="table " style={{padding:"0px"}}>
             <tbody>
               <thead></thead>
+              <tr className="text-success ">
+              <td>
+             <b>
+             Discount
+             </b>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+               
+                
+                <td >
+                <b>
+                <FaRupeeSign />  {(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage)}
+                </b>
+             
+                </td>
+              </tr>
               <tr>
                 <td>
-                  <h3>Total</h3>
+                  <b>Total</b>
                 </td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
+              
                 <td></td>
-                <td></td>
-                <td>
-                  
-                </td>
-                <td></td>
-                <td><FaRupeeSign /> {row.data.Orders[0].totalAmount}</td>
+               
+                <td className="ml-4">  <FaRupeeSign /> {row.data.Orders[0].totalAmount-(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage)}</td>
+                
               </tr>
             </tbody>
           </table>

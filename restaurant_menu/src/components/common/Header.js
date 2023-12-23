@@ -61,7 +61,7 @@ export default function Header({ id }) {
   console.log(items)
       // Check if the item is veg and the search input is 'veg'
       const isVegMatch = item.veg===true && searchInput.toLowerCase() === 'veg';
-      const isNonVegMatch = !item.Veg===false && searchInput.toLowerCase() === 'nonveg';
+      const isNonVegMatch = item.Veg===false && searchInput.toLowerCase() === 'nonveg';
 
       return isMatch || isVegMatch || isNonVegMatch;
      

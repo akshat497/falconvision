@@ -131,9 +131,10 @@ export const updateCategory = (userData) => async (dispatch) => {
     const response = await UpdateCategory(userData);
     if(response.success===true){
       showToast(response.message,"success")
+      dispatch(fetchItem(userData?.userId))
+      dispatch(fetchCategory(userData?.userId));
     }
-
-    dispatch(fetchCategory(userData?.userId));
+  
 
     dispatch(setupdateCategory(response));
     dispatch(setupdateCategoryloading(false));
@@ -150,9 +151,10 @@ export const updateItem = (userData) => async (dispatch) => {
     const response = await UpdateItem(userData);
     if(response.success===true){
       showToast(response.message,"success")
+      dispatch(fetchItem(userData?.userId));
     }
 
-    dispatch(fetchItem(userData?.userId));
+    
 
     dispatch(setupdateItem(response));
     dispatch(setupdateItemloading(false));

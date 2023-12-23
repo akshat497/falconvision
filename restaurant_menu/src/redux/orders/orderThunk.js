@@ -46,11 +46,8 @@ export const fetchOrders = (userData) => async (dispatch) => {
       const response = await CreateOrder(userData);  
      
       if(response.message==="New order has been created!"){
-        localStorage.removeItem('cart')
-        toast.success('Order placed',{
-          autoClose:false,
-          closeOnClick: true
-        });
+       
+       showToast("Order Placed!","success")
         localStorage.removeItem("coupen")
          window.location.reload()
         

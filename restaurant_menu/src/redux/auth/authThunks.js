@@ -86,22 +86,22 @@ export const loginUser = (userData) => async (dispatch) => {
       dispatch(setOtpLoading(false));
     }
   };
-  export const verifyOtp = (userData) => async (dispatch) => {
-    try {
+  // export const verifyOtp = (userData) => async (dispatch) => {
+  //   try {
       
-      dispatch(setOtpLoadingVerify(true));
-      const response = await OtpVerify(userData); // Call your API function here
+  //     dispatch(setOtpLoadingVerify(true));
+  //     const response = await OtpVerify(userData); // Call your API function here
       
-      dispatch(setOtpVerify(response));
-      dispatch(setOtpLoadingVerify(false));
-    } catch (error) {
+  //     dispatch(setOtpVerify(response));
+  //     dispatch(setOtpLoadingVerify(false));
+  //   } catch (error) {
       
-     showToast(error?.response?.data?.message ||error.message)
-      // toast.error("something went wrong")
-      dispatch(setOtpErrorVerify(error.message));
-      dispatch(setOtpLoadingVerify(false));
-    }
-  };
+  //    showToast(error?.response?.data?.message ||error.message)
+  //     // toast.error("something went wrong")
+  //     dispatch(setOtpErrorVerify(error.message));
+  //     dispatch(setOtpLoadingVerify(false));
+  //   }
+  // };
 
   export const qrGenerator = (userData) => async (dispatch) => {
     try {

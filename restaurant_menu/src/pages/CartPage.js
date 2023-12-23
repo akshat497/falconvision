@@ -3,14 +3,9 @@ import {
   FaRupeeSign,
   FaPlus,
   FaMinus,
-  FaRecycle,
   FaTrash,
   FaPlusCircle,
-  FaDochub,
-  FaSign,
-  FaCheck,
-  FaTimes,
-  FaIdBadge,
+
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";

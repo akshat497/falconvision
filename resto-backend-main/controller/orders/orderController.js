@@ -6,6 +6,7 @@ const MenuItem = require("../../models/menuItem");
 const { Op } = require("sequelize");
 const CoupenCode = require("../../models/coupenCode");
 const CustomResponseHandler = require("../../services/CustomResponseHandler");
+const { otpVerificationMiddleware } = require("../../middlewares/otpMiddleware");
 const orderController = {
   getOrderByUserId: async (req, res, next) => {
     try {
@@ -115,155 +116,173 @@ const orderController = {
     }
   },
   createOrder: async (req, res, next) => {
-    const {
-      username,
-      items,
-      phoneNumber,
-      tableNumber,
-      message,
-      createdAt,
-      updatedAt,
-      userId,
-      name,
-    } = req.body;
+    
 
     try {
-      if (
-        !username ||
-        !items ||
-        !phoneNumber ||
-        !tableNumber ||
-        !userId ||
-        username.trim() === "" ||
-        tableNumber.trim() === "" ||
-        phoneNumber.trim() === ""
-      ) {
-        return res.status(400).send({ message: "Fields missing or invalid" });
-      }
-      var discountedAmount = 0;
-      let fetchedCouponCode = await CoupenCode.findOne({
-        where: {
-          name,
-          userId,
-        },
-      });
-
-      // Get the valid menu items from the database based on the provided menu item IDs
-      const validMenuItems = await MenuItem.findAll({
-        where: {
-          userId,
-          menuItemId: items.map((item) => item.menuItemId),
-        },
-      });
-      if(validMenuItems.length===0){
-        return res.status(404).json(CustomErrorHandler.NotFound("No items found in cart"))
-      }
-      const inactiveItemNames = validMenuItems
-        .filter((item) => !item.isActive)
-        .map((inactiveItem) => inactiveItem.name);
      
-      if (inactiveItemNames.length === 1) {
-        return res
-          .status(404)
-          .json(
-            CustomResponseHandler.negativeResponse(
-              `${inactiveItemNames.join(
-                ", "
-              )} is currently not available in the menu`,
-              404,
-              []
-            )
-          );
-      }
-      if (inactiveItemNames.length > 1) {
-        return res
-          .status(404)
-          .json(
-            CustomResponseHandler.negativeResponse(
-              `${inactiveItemNames.join(
-                ", "
-              )} are currently not available in the menu`,
-              404,
-              []
-            )
-          );
-      }
+     
+      otpVerificationMiddleware(req,res,async()=>{
+        const {
+          username,
+          items,
+          phoneNumber,
+          tableNumber,
+          message,
+          createdAt,
+          updatedAt,
+          userId,
+          name,
+          
+         
+        } = req.body;
+        const { otpVerificationResult } = req;
 
-      if (fetchedCouponCode || fetchedCouponCode?.isActive) {
-        const totalValidItemsPrice = validMenuItems.reduce((sum, item) => {
-          const quantity =
-            items.find((cartItem) => cartItem.menuItemId === item.menuItemId)
-              ?.quantity || 0;
-          return sum + Number(item.price) * quantity;
-        }, 0);
-        var discountPercentage = fetchedCouponCode?.discount;
-        discountedAmount = (discountPercentage / 100) * totalValidItemsPrice;
-      }
-      // Calculate the total amount based on valid menu items and quantities
-      const totalAmount = items.reduce((total, userItem) => {
-        const validMenuItem = validMenuItems.find(
-          (item) => item.menuItemId === userItem.menuItemId
-        );
-
-        if (validMenuItem) {
-          // Use the quantity from the user input
-          const quantity = userItem.quantity;
-          total += validMenuItem.price * quantity;
-        }
-
-        return total;
-      }, 0);
-
-      // Create a new customer in the database
-      const newCustomer = await Customer.create({
-        username: username,
-        phoneNumber: phoneNumber,
-        userId: userId,
-        tableNumber: tableNumber,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      });
-
-      // Create a new order in the database
-      const newOrder = await Order.create({
-        totalAmount: totalAmount - discountedAmount,
-        customerId: newCustomer.customerId,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        message:message
-      });
-
-      // Create OrderItems for valid menu items
-      for (const userItem of items) {
-        const validMenuItem = validMenuItems.find(
-          (item) => item.menuItemId === userItem.menuItemId
-        );
-
-        if (validMenuItem) {
-          // Use the quantity from the user input
-          const quantity = userItem.quantity;
-
-          // Create OrderItem with the correct quantity
-          await OrderItem.create({
-            item_name: validMenuItem.name,
-            quantity: quantity,
-            price: validMenuItem.price,
-            orderId: newOrder.orderId,
+        if (otpVerificationResult.isValid) {
+          if (
+            !username ||
+            !items ||
+            !phoneNumber ||
+            !tableNumber ||
+            !userId ||
+            username.trim() === "" ||
+            tableNumber.trim() === "" ||
+            phoneNumber.trim() === ""
+          ) {
+            return res.status(400).send({ message: "Fields missing or invalid" });
+          }
+          var discountedAmount = 0;
+          let fetchedCouponCode = await CoupenCode.findOne({
+            where: {
+              name,
+              userId,
+            },
           });
+    
+          // Get the valid menu items from the database based on the provided menu item IDs
+          const validMenuItems = await MenuItem.findAll({
+            where: {
+              userId,
+              menuItemId: items.map((item) => item.menuItemId),
+            },
+          });
+          if(validMenuItems.length===0){
+            return res.status(404).json(CustomErrorHandler.NotFound("No items found in cart"))
+          }
+          const inactiveItemNames = validMenuItems
+            .filter((item) => !item.isActive)
+            .map((inactiveItem) => inactiveItem.name);
+         
+          if (inactiveItemNames.length === 1) {
+            return res
+              .status(404)
+              .json(
+                CustomResponseHandler.negativeResponse(
+                  `${inactiveItemNames.join(
+                    ", "
+                  )} is currently not available in the menu`,
+                  404,
+                  []
+                )
+              );
+          }
+          if (inactiveItemNames.length > 1) {
+            return res
+              .status(404)
+              .json(
+                CustomResponseHandler.negativeResponse(
+                  `${inactiveItemNames.join(
+                    ", "
+                  )} are currently not available in the menu`,
+                  404,
+                  []
+                )
+              );
+          }
+    
+          if (fetchedCouponCode || fetchedCouponCode?.isActive) {
+            const totalValidItemsPrice = validMenuItems.reduce((sum, item) => {
+              const quantity =
+                items.find((cartItem) => cartItem.menuItemId === item.menuItemId)
+                  ?.quantity || 0;
+              return sum + Number(item.price) * quantity;
+            }, 0);
+            var discountPercentage = fetchedCouponCode?.discount;
+            discountedAmount = (discountPercentage / 100) * totalValidItemsPrice;
+          }
+          // Calculate the total amount based on valid menu items and quantities
+          const totalAmount = items.reduce((total, userItem) => {
+            const validMenuItem = validMenuItems.find(
+              (item) => item.menuItemId === userItem.menuItemId
+            );
+    
+            if (validMenuItem) {
+              // Use the quantity from the user input
+              const quantity = userItem.quantity;
+              total += validMenuItem.price * quantity;
+            }
+    
+            return total;
+          }, 0);
+    
+          // Create a new customer in the database
+          const newCustomer = await Customer.create({
+            username: username,
+            phoneNumber: phoneNumber,
+            userId: userId,
+            tableNumber: tableNumber,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          });
+    
+          // Create a new order in the database
+          const newOrder = await Order.create({
+            totalAmount: totalAmount ,
+            discountedAmount: discountedAmount,
+            couponDiscountPercentage:fetchedCouponCode?.discount,
+            customerId: newCustomer.customerId,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            message:message
+          });
+          console.log(newOrder)
+          // Create OrderItems for valid menu items
+          for (const userItem of items) {
+            const validMenuItem = validMenuItems.find(
+              (item) => item.menuItemId === userItem.menuItemId
+            );
+    
+            if (validMenuItem) {
+              // Use the quantity from the user input
+              const quantity = userItem.quantity;
+    
+              // Create OrderItem with the correct quantity
+              await OrderItem.create({
+                item_name: validMenuItem.name,
+                quantity: quantity,
+                price: validMenuItem.price,
+                orderId: newOrder.orderId,
+              });
+            }
+          }
+    
+          res.status(200).send({ message: "New order has been created!" });
+    
+          // Broadcast the new customer, new order, and order items to the WebSocket
+          const customer = await Customer.findAll({
+            where: { userId: userId, customerId: newCustomer.customerId },
+            include: {
+              model: Order,
+              include: OrderItem,
+            },
+          });
+          WebSocketServer.broadUpdate(userId, customer, "newOrder");
+        } else {
+          res.status(400).json({ message: otpVerificationResult.message });
         }
+       
       }
-
-      res.status(200).send({ message: "New order has been created!" });
-
-      // Broadcast the new customer, new order, and order items to the WebSocket
-      const customer = await Customer.findAll({
-        where: { userId: userId, customerId: newCustomer.customerId },
-        include: {
-          model: Order,
-          include: OrderItem,
-        },
-      });
-      WebSocketServer.broadUpdate(userId, customer, "newOrder");
+      )
+ 
     } catch (error) {
       console.log("Error", error);
       return next(error);

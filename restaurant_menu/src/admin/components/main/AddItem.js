@@ -302,7 +302,6 @@ export default function AddItem({ preview, clickedItem }) {
                 </div>
               </>
             )}
-            ,
             {currentStep === 2 && (
               <>
                 <div className="form-group">
@@ -332,7 +331,9 @@ export default function AddItem({ preview, clickedItem }) {
                     </option>
                     <option value="BreakFast">Breakfast</option>
                     <option value="Lunch">Lunch</option>
+                    <option value="Snacks">Snacks</option>
                     <option value="Dinner">Dinner</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
               </>

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { createOrder } from '../redux/orders/orderThunk';
 import { useEffect } from 'react';
-import { sendOtp, verifyOtp } from '../redux/auth/authThunks';
+import { sendOtp, } from '../redux/auth/authThunks';
 import { toast } from 'react-toastify';
 import { showToast } from '../services/ToastInstance';
 
@@ -16,10 +16,7 @@ const CheckoutPage = () => {
     const loadingCreateOrder=useSelector((state)=>state.createorder.createorderloading)
     const sendingOtp=useSelector((state)=>state.otpsend.otploading)
     let OtpResponse=useSelector((state)=>state.otpsend.otp)
-    const OtpVerifyResponse=useSelector((state)=>state.otpverify.v_otp)
-    const orderResponse=useSelector((state)=>state.createorder.createorder)
-    // const loadingCreateOrder=useSelector((state)=>state.createorder.createorderloading)
-    const CreateOrderError=useSelector((state)=>state.createorder.createordererror)
+   
   
   const [formData, setFormData] = useState({
     username: '',
@@ -72,7 +69,7 @@ setFormData([])
       return showToast("Empty cart")
      
     }
-    dispatch(verifyOtp(formData))
+   placeOrder()
     }
    const placeOrder=()=>{
     const cartItems= JSON.parse(localStorage.getItem('cart'))
@@ -84,6 +81,8 @@ setFormData([])
      phoneNumber: formData.phoneNumber,
      message:formData.message,
      items: cartItems,
+     enteredOTP:formData.otp,
+     email:formData.email
    };
    
    // Convert 'obj' into the desired format
@@ -91,6 +90,8 @@ setFormData([])
      username: obj.userName,
      phoneNumber: obj.phoneNumber,
      message:obj.message,
+     enteredOTP:obj.enteredOTP,
+     email:obj.email,
      totalAmount: 0, // You would need to calculate the totalAmount based on 'cartItems' and other properties.
      tableNumber: 0, // Set the appropriate table number.
      userId: '', 
@@ -118,13 +119,7 @@ setFormData([])
      dispatch(createOrder(convertedObj))
      
    }
-   useEffect(()=>{
-if(OtpVerifyResponse?.message==="OTP is valid"){
-   placeOrder()
-}else{
- 
-}
-   },[OtpVerifyResponse])
+   
 
  
    
