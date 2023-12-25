@@ -66,7 +66,7 @@ export default function RestaurantContextState(props) {
     const userId = userData?.userId || detailRestro?.userId;
     // const serverAddress = `wss://falconvesionbackend.onrender.com:443/?room=${userId}`;
     // const serverAddress = `ws://127.0.0.1:9090/?room=${userId}`;
-    const serverAddress=`ws://api.falcon-vision.in:9090/?room=${userId}`
+    const serverAddress=`wss://api.falcon-vision.in:9090/?room=${userId}`
 
     const ws = new WebSocket(serverAddress);
 
