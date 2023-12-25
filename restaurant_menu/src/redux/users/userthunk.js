@@ -1,5 +1,6 @@
 import {  ExtendMembership, FetchAllUsers, UpdateUser } from "../../services/Services";
 import { showToast } from "../../services/ToastInstance";
+import { fetchRestraurantDetails } from "../items/itemThunk";
 import { setextendmembership, setextendmembershiperror, setextendmembershiploading } from "./extendMembershipSlice";
 import { setfetchAllUsers, setfetchAllUserserror, setfetchAllUsersloading } from "./fetchAllUsersSlice";
 import { setupdateUser, setupdateUsererror, setupdateUserloading } from "./updateUserSlice";
@@ -21,8 +22,11 @@ export const extendMembership = (userData) => async (dispatch) => {
     try {
       dispatch(setupdateUserloading(true));
       const response = await UpdateUser(userData);  
-      if(response.message==="record has been successfully updated."){
-        fetchAllUsers()
+      if(response.message==="Record has been successfully updated."){
+        
+        dispatch(fetchRestraurantDetails(userData?.userId))
+        showToast("Profile Updated","success")
+
       }
       dispatch(setupdateUser(response));
       dispatch(setupdateUserloading(false));

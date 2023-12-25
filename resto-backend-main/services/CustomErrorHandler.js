@@ -28,7 +28,7 @@ class CustomErrorHandler extends Error {
     static UnAuthorised(message = 'Unauthorized!') {
         return new CustomErrorHandler(message, 401)
     }
-    static MenuItemError(message) {
+    static MenuItemError(message,status) {
         return new CustomErrorHandler(message, status)
     }
     static NotFound(message) {

@@ -85,7 +85,7 @@ export default function RestaurantContextState(props) {
             ...notification
           ]);
       // Handle different update types
-      console.log(dataFromServer);
+      
       switch (updateType) {
         case "updatedMenu":
           // Handle updated menu data

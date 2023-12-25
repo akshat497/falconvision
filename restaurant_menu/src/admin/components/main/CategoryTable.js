@@ -7,6 +7,7 @@ import { updateCategory } from "../../../redux/items/itemThunk";
 
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import NoDatComponent from "../../../components/common/NoDatComponent";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 const CategoryTable = ({ categories, onUpdate, searchedText }) => {
   const loading = useSelector(
@@ -99,17 +100,18 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
     {
       name: "Actions",
       cell: (row) => (
-        <div>
-          <button
+        <div className="d-flex">
+          <div
             onClick={() => handleUpdate(row)}
-            className="btn text-light mx-2 my-2"
-            style={{ backgroundColor: "purple" }}
+            className=" mx-2 "
+            style={{  color:"purple", cursor:"pointer"}}
             disabled={!row.isActive}
           >
-            Update
-          </button>
-          <button
-            className="btn btn-danger mx-2"
+            <FaEdit size={32}/>
+          </div>
+          <div
+            className="text-danger mx-4  "
+            style={{   cursor:"pointer"}}
             onClick={() => {
               handleDelete(row);
             }}
@@ -117,8 +119,8 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
             data-bs-toggle="modal"
             data-bs-target="#deleteModelCategory"
           >
-            Delete
-          </button>
+            <FaTrashAlt size={32}/>
+          </div>
         </div>
       ),
     },
@@ -234,7 +236,8 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-success"
+                  className="btn text-light pl-3 pr-3 pt-2 pb-2"
+                  style={{backgroundColor:"purple"}}
                   data-bs-dismiss="modal"
                   onClick={() => onUpdate(clickedRow, itemData)}
                 >

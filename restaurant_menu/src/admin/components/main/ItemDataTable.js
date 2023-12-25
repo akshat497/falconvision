@@ -8,6 +8,7 @@ import RestaurantContext from "../../../context/RestaurantContext";
 import { useContext } from "react";
 import { useEffect } from "react";
 import NoDatComponent from "../../../components/common/NoDatComponent";
+import { FaEdit, FaTrash, FaTrashAlt } from "react-icons/fa";
 
 export default function ItemDatatable({
   setItemToDelete,
@@ -106,26 +107,27 @@ export default function ItemDatatable({
     {
       name: "Actions",
       cell: (row) => (
-        <div>
-          <button
+        <div className="d-flex">
+          <div
             onClick={() => onRowUpdate(row)}
-            className="btn  text-light mx-2 my-2"
+            className=" mx-2 "
             disabled={!row?.isActive}
             // data-bs-toggle="modal"
             //  data-bs-target="#exampleModal"
-            style={{ backgroundColor: "purple" }}
+            style={{color:"purple", cursor:"pointer"}}
           >
-            Update
-          </button>
-          <button
+            <FaEdit size={32}/>
+          </div>
+          <div
             onClick={() => setItemToDelete(row)}
-            className="btn btn-danger mx-2"
+            className=" text-danger mx-4"
+            style={{   cursor:"pointer"}}
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteModel"
           >
-            Delete
-          </button>
+            <FaTrashAlt size={32}/>
+          </div>
         </div>
       ),
     },

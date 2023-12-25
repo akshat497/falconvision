@@ -27,7 +27,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
   // useEffect(()=>{if(isUpdated!==null){setseen(true)}},[isUpdated])
 
   useEffect(() => {
-    console.log("isExpanded", isExpanded);
+    
   }, [isExpanded]);
   const columns = [
     {
@@ -49,7 +49,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
       name: "Message",
       selector: (row) => {
         // Check if the message has been displayed, and if not, display it
-        console.log("rowdata", row);
+      
 
         return row?.Orders[0]?.message?.length < 1 ||
           row?.Orders[0]?.message === null ? (
@@ -262,7 +262,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     //   // row.data.Orders[0].isActive = false
 
     // }
-    console.log();
+   
 
     if (row.data && row.data.Orders) {
       const orderItems = row.data.Orders.flatMap((order) => order.OrderItems);

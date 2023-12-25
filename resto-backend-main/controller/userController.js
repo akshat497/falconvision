@@ -10,7 +10,10 @@ const userController = {
   getAllUsers: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
-        
+        if(req.user.role!=="superadmin"){
+          return next(CustomErrorHandler.forbiddden())
+
+        }
         const users = await User.findAll();
 
         if (!users) {
@@ -71,31 +74,50 @@ const userController = {
     try {
       authentication(req, res, async () => {
         const { name, address, area, zip, userId, isActive, role } = req.body;
-
-        // hashedPassword = await bcrypt.hash(password, 10);
-        var obj = {
-          name,
-          address,
-          area,
-          zip,
-          isActive,
-          role,
-          isManuallyActivated: true,
-        };
-        console.log(userId)
-        if (req.user.role !== "superadmin") {
-          return next(CustomErrorHandler.forbiddden());
+  
+        if (req.user.role === "superadmin") {
+          var obj = {
+            name,
+            address,
+            area,
+            zip,
+            isActive,
+            role,
+            isManuallyActivated: true,
+          };
+        } else if (req.user.role === "franchise") {
+          var obj = {
+            name,
+            address,
+            area,
+            zip,
+          };
+        } else {
+          // Handle other roles or return an error if needed
+          return next(CustomErrorHandler.MenuItemError("Invalid role",404,[]));
         }
+  
+        // Additional validation for certain fields
+        if (req.user.role !== "superadmin" && (isActive || role || obj.isManuallyActivated)) {
+          return next(CustomErrorHandler.MenuItemError("Access Denied.",400,[]));
+        }
+  
         let newUser = await User.update(obj, { where: { userId: userId } });
         if (!newUser) {
           return next(CustomErrorHandler.UserNotFound());
         }
+  
         // WebSocketServer.broadUpdate(newUser,"userUpdated")
         WebSocketServer.broadUpdate(userId, newUser, "userUpdated");
-        res.send({message:` record has been successfully updated.`});
+        return res.send({ message: `Record has been successfully updated.` });
       });
-    } catch (error) {}
+    } catch (error) {
+      // Handle the error appropriately
+      console.error(error);
+      return next(CustomErrorHandler.InternalServerError());
+    }
   },
+  
   extendTrial: async (req, res, next) => {
     try {
       authentication(req, res, async () => {

@@ -12,6 +12,7 @@ import { updateCoupon } from "../../../redux/coupon/couponCodeThunk";
 import UpdateCouponModel from "./UpdateCouponModel";
 import DeleteCouponModal from "./DeleteCouponModel";
 import NoDatComponent from "../../../components/common/NoDatComponent";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 export default function CoupenDataTable() {
   const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
@@ -101,32 +102,33 @@ export default function CoupenDataTable() {
     {
       name: "Actions",
       cell: (row) => (
-        <div>
-          <button
+        <div className="d-flex">
+          <div
             onClick={() => {
               setclickedRow(row);
             }}
-            className="btn  text-light mx-2 my-2"
+            className=" mx-2 "
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#updatecoupon"
             // data-bs-toggle="modal"
             //  data-bs-target="#exampleModal"
-            style={{ backgroundColor: "purple" }}
+            style={{ color: "purple",cursor:"pointer" }}
           >
-            Update
-          </button>
-          <button
+            <FaEdit size={32}/>
+          </div>
+          <div
             onClick={() => {
               setclickedRow(row);
             }}
-            className="btn btn-danger mx-2"
+            className=" text-danger mx-4"
+            style={{ cursor:"pointer" }}
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteCouponModel"
           >
-            Delete
-          </button>
+            <FaTrashAlt size={32}/>
+          </div>
         </div>
       ),
     },

@@ -9,8 +9,7 @@ const AutoLogout = () => {
           process.env.REACT_APP_BASE_URL + "check-expire"
         );
       } catch (error) {
-        // Handle error, e.g.
-        console.log(error);
+      
         if (error?.response?.data?.message === "jwt expired") {
           // Token is expired, perform logout action
           logout();

@@ -3,6 +3,8 @@ import {
   FaCogs,
   FaEdit,
   FaLink,
+  FaRegSave,
+  FaUndo,
   FaUserAlt,
   FaUserCheck,
   FaUserCog,
@@ -11,11 +13,51 @@ import { useDispatch, useSelector } from "react-redux";
 import { referCodeGenerator } from "../../../../redux/auth/authThunks";
 import { useState } from "react";
 import { useEffect } from "react";
+import { updateUser } from "../../../../redux/users/userthunk";
 
 export default function UserProfile() {
   const dispatch = useDispatch();
-  const [displayReferCode, setdisplayReferCode] = useState(false);
+  
   const restroDetails = useSelector((state) => state.restrodetail.restro);
+  const updatingUser = useSelector((state) => state.updateUser.updateUserloading);
+
+  // updateUser.updateUser.updateUserloading
+
+
+  const [displayReferCode, setdisplayReferCode] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [disabled, setdisabled] = useState(true);
+  const [editedName, setEditedName] = useState(restroDetails?.name);
+  const [editedArea, setEditedArea] = useState(restroDetails?.area);
+  const [editedAddress, setEditedAddress] = useState(restroDetails?.address);
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+ useEffect(()=>{
+  setEditedAddress(restroDetails?.address)
+  setEditedName(restroDetails?.name)
+  setEditedArea(restroDetails?.area)
+
+ },[restroDetails])
+  const handleSaveClick = () => {
+    const userObj={
+      name: editedName,
+      area: editedArea,
+      address: editedAddress,
+      userId:restroDetails?.userId
+    }
+    dispatch(updateUser(userObj))
+    
+  };
+  useEffect(()=>{
+   if(updatingUser!==null){
+    if(updatingUser){
+      setIsEditing(true);
+    }else{
+      setIsEditing(false);
+    }
+   }
+  },[updatingUser])
   const referCode = useSelector(
     (state) => state.generateReferCode.generateReferCode
   );
@@ -31,6 +73,18 @@ export default function UserProfile() {
       setdisplayReferCode(true);
     }
   }, [referCode]);
+  useEffect(() => {
+    if (
+      editedAddress !== restroDetails?.address ||
+      editedArea !== restroDetails?.area ||
+      editedName !== restroDetails?.name
+    ) {
+      setdisabled(false);
+    } else {
+      setdisabled(true);
+    }
+  }, [editedAddress, editedName, editedArea, restroDetails]);
+  
   const date = new Date();
   const trialdate = new Date(restroDetails?.trialExpirationDate);
 
@@ -51,7 +105,15 @@ export default function UserProfile() {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title mt-1">Restaurant Details</h5>
+            <h5 className="modal-title mt-1 ">
+            Restaurant Details 
+            {isEditing ? (
+                    <>{updatingUser===false?<>{disabled===true?<FaRegSave  className="mx-4" style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' }}/>:<FaRegSave onClick={handleSaveClick} className="mx-4" style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' }}/>}<FaUndo onClick={()=>{setIsEditing(false)}} style={{cursor:"pointer"}}/></>:"Saving..."}</>
+                  ) : (
+               <>     <FaEdit onClick={handleEditClick} className="mx-2" style={{cursor:"pointer"}}/></>
+                  )}
+            
+            </h5>
             <button
               type="button"
               data-bs-dismiss="modal"
@@ -65,23 +127,43 @@ export default function UserProfile() {
             <div className="">
               <div className="">
                 <div className="">
-                  <p>
-                    <strong>Name:</strong> {restroDetails?.name}
+                  <p className="d-flex ">
+                    <div className="col-md-4"><strong>Name:</strong></div>
+                    {isEditing ? (
+                      <div className="col-md-8"><input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} className="form-control " style={{height:"25px",width:"50%"}}/></div>
+                    ) : (
+                      restroDetails?.name
+                    )}
                   </p>
-                  <p>
-                    <strong>Address:</strong> {restroDetails?.address}
+                  <p className="d-flex ">
+                  <div className="col-md-4"><strong>Area:</strong></div>
+                    {isEditing ? (
+                      <div className="col-md-8">  <input type="text" value={editedArea} onChange={(e) => setEditedArea(e.target.value)} className="form-control " style={{height:"25px",width:"50%"}}/>
+                    </div>
+                    ) : (
+                      restroDetails?.area
+                    )}
                   </p>
-                  <p>
-                    <strong>Phone:</strong> {restroDetails?.phone}
+                  <p className="d-flex ">
+                  <div className="col-md-4"><strong>Address:</strong></div>
+                    {isEditing ? (
+                      <div className="col-md-8">  <input type="text" value={editedAddress} onChange={(e) => setEditedAddress(e.target.value)} className="form-control " style={{height:"25px",width:"50%"}}/>
+                    </div>
+                    ) : (
+                      restroDetails?.address
+                    )}
                   </p>
-                  <p>
-                    <strong>Email:</strong> {restroDetails?.email}
+                  <p  className="d-flex ">
+                  <div className="col-md-4"><strong>Phone:</strong></div> {restroDetails?.phone}
                   </p>
-                  <p>
-                    <strong>Expire In:</strong> {daysRemain} Days
+                  <p  className="d-flex ">
+                  <div className="col-md-4"><strong>Email:</strong></div>  {restroDetails?.email}
                   </p>
-                  <p>
-                    <strong>Account is:</strong>{" "}
+                  <p  className="d-flex ">
+                  <div className="col-md-4"><strong>Expire-In:</strong></div>  {daysRemain} Days
+                  </p>
+                  <p  className="d-flex ">
+                  <div className="col-md-4"><strong>Account Is:</strong></div> 
                     {restroDetails?.isActive === true ? (
                       <span className="btn bg-success text-light">
                         Active <FaUserCheck />

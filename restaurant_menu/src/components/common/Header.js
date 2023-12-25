@@ -59,7 +59,7 @@ export default function Header({ id }) {
   const filterItems = (items, searchInput) => {
     return items?.filter((item) => {
       const isMatch = deepSearch(item, searchInput?.toLowerCase());
-  console.log(items)
+  
       // Check if the item is veg and the search input is 'veg'
       const isVegMatch = item.veg===true && searchInput.toLowerCase() === 'veg';
       const isNonVegMatch = item.Veg===false && searchInput.toLowerCase() === 'nonveg';
