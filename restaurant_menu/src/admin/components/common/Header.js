@@ -269,7 +269,7 @@ export default function Header() {
 
     dispatch(updateIsActiveOrder(obj));
   };
-  console.log("orders", orders);
+
   const handleMainHeaderSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
     setSearchedText(searchText);
@@ -631,11 +631,26 @@ export default function Header() {
                           </div>
                         )
                       ) : (
-                        <li>
-                          <button className="dropdown-item" type="button">
-                            <div>Notifications will appear here</div>
-                          </button>
-                        </li>
+                        <div>
+                              <div
+                                className=""
+                                style={{
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <img
+                                  src={NotificationBell}
+                                  height={200}
+                                  width={200}
+                                  alt="Notification-Bell"
+                                />
+                              </div>
+                              <div >
+                                Notifications will appear here
+                              </div>
+                            </div>
+                          
                       )}
                     </ul>
                   </div>
