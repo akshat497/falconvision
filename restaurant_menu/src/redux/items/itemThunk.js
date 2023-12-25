@@ -40,6 +40,7 @@ import {
   setFetchedItem,
   setFetchedItemLoading,
   setFetchedItemError,
+  setName,
 } from "./fetchItemSlice";
 import {
   setDeleteItem,
@@ -170,6 +171,7 @@ export const fetchItem = (userData) => async (dispatch) => {
     const response = await FetchItem(userData);
    
     dispatch(setFetchedItem(response?.data));
+    dispatch(setName(response?.message))
     dispatch(setFetchedItemLoading(false));
   } catch (error) {
     showToast(error?.response?.data?.message ||error.message)

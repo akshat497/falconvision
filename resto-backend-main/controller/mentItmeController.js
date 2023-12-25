@@ -147,77 +147,87 @@ const Category = require('../models/category');
 const WebSocketServer = require('../webSoketConnect');
 const CustomErrorHandler = require("../services/CustomErrorHandler");
 const CustomResponseHandler = require("../services/CustomResponseHandler");
+const User = require("../models/user");
 
 const menuItemController = {
   getMenuItemById: async (req, res, next) => {
     const { userId } = req.params;
-  
+
     try {
-      const menuItems = await MenuItem.findAll({
-        where: { userId: userId },
-        include: {
-          model: Category,
-          as: 'Category',
-        },
-      });
-  
-      if (menuItems.length < 1) {
-        return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404, []));
-      }
-  
-      const formattedMenuItems = menuItems.map((menuItem) => {
-        const {
-          menuItemId,
-          price,
-          name,
-          imageUrl,
-          createdAt,
-          updatedAt,
-          categoryId,
-          userId,
-          Category,
-          isActive,
-          veg,
-          type,
-        } = menuItem;
-  
-        const categoryInfo =
-          Category && Category.categoryId
-            ? {
-                categoryId: Category.categoryId,
-                name: Category.name,
-                isActive: Category.isActive,
-                createdAt: Category.createdAt,
-                updatedAt: Category.updatedAt,
-                userId: Category.userId,
-              }
-            : { name: "Category Deleted" }; // Use a custom text for deleted category
-  
-        return {
-          menuItemId,
-          price,
-          name,
-          imageUrl,
-          createdAt,
-          updatedAt,
-          categoryId,
-          userId,
-          Category: categoryInfo,
-          isActive,
-          veg,
-          type,
-        };
-      });
-  
-      res.json(CustomResponseHandler.positiveResponse("Fetched items", formattedMenuItems));
+        // Check if the user exists
+        const user = await User.findOne({where:{userId:userId}});
+
+        if (!user) {
+            return next(CustomErrorHandler.UserNotFound());
+        }
+
+        // If user exists, proceed to fetch menu items
+        const menuItems = await MenuItem.findAll({
+            where: { userId: userId },
+            include: {
+                model: Category,
+                as: 'Category',
+            },
+        });
+
+        if (menuItems.length < 1) {
+            return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404, []));
+        }
+
+        const formattedMenuItems = menuItems.map((menuItem) => {
+            const {
+                menuItemId,
+                price,
+                name,
+                imageUrl,
+                createdAt,
+                updatedAt,
+                categoryId,
+                userId,
+                Category,
+                isActive,
+                veg,
+                type,
+            } = menuItem;
+
+            const categoryInfo =
+                Category && Category.categoryId
+                    ? {
+                          categoryId: Category.categoryId,
+                          name: Category.name,
+                          isActive: Category.isActive,
+                          createdAt: Category.createdAt,
+                          updatedAt: Category.updatedAt,
+                          userId: Category.userId,
+                      }
+                    : { name: "Category Deleted" }; // Use a custom text for deleted category
+
+            return {
+                menuItemId,
+                price,
+                name,
+                imageUrl,
+                createdAt,
+                updatedAt,
+                categoryId,
+                userId,
+                Category: categoryInfo,
+                isActive,
+                veg,
+                type,
+            };
+        });
+
+        res.json(CustomResponseHandler.positiveResponse(user.name, formattedMenuItems));
     } catch (err) {
-      // Handle errors appropriately, e.g., log the error
-      console.error(err);
-  
-      // Send a negative response directly using res.status and res.json
-      return next(err);
+        // Handle errors appropriately, e.g., log the error
+        console.error(err);
+
+        // Send a negative response directly using res.status and res.json
+        return next(err);
     }
-  },
+},
+
   
 
 

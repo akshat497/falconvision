@@ -49,7 +49,7 @@ export const fetchOrders = (userData) => async (dispatch) => {
        
        showToast("Order Placed!","success")
         localStorage.removeItem("coupen")
-         window.location.reload()
+         
         
       }
       dispatch(setcreateorder(response));

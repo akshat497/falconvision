@@ -9,8 +9,7 @@ import {
   FaSearch,
   FaFilter,
   FaEarlybirds,
-  FaCross,
-  FaWindowClose,
+
   FaTimes,
  
 } from "react-icons/fa";
@@ -25,6 +24,8 @@ export default function Header({ id }) {
   // const dispatch=useDispatch()
   // const allItems = useSelector((state) => state.fetchitem.f_item);
   const category = useSelector((state) => state.fetchcategory.fetchedcategory);
+  const Name = useSelector((state) => state.fetchitem.Name);
+
   const { fetcheditems, setFetcheditems,fetcheditemsCopy, setFetcheditemsCopy } = useContext(RestaurantContext);
 
  
@@ -158,9 +159,18 @@ useEffect(() => {
       
    <nav className={`navbar navbar-expand-lg navbar-light bg-light ${visible ? 'bg-light text-dark navbar-show sticky-top' : 'bg-light navbar-hide'} `}>
   <div className="container-fluid">
-    <Link to='/' className="navbar-brand">
-      <span className="fw-bold">FalconVision</span> <FaEarlybirds size={32}/>
-    </Link>
+  <Link to='/' className="navbar-brand  ">
+  <div style={{ justifyContent: "right", textAlign: "right", alignContent: "right" }}>
+  <div>
+    <span className="fw-bold">{Name}</span>
+  </div>
+  <div className="ms-auto" style={{ fontSize: "8px", textAlign: "right", backgroundColor: "whiteSmoke", color: "", width: "6 0%" }}>
+    Powered by falcon-vision<FaEarlybirds size={12}/>
+  </div>
+</div>
+
+</Link>
+
 
     <button
       className="navbar-toggler"
