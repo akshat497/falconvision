@@ -3,11 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DataTable from "react-data-table-component";
 
-import { 
-  FaCheckCircle,
-  FaRupeeSign,
-
-} from "react-icons/fa";
+import { FaCheckCircle, FaRupeeSign } from "react-icons/fa";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
@@ -21,13 +17,18 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
 
   // const allorders = useSelector((state) => state.getOrder.order);
   const allordersLoading = useSelector((state) => state.getOrder.loading);
-  const [isExpanded, setIsExpanded] = useState({isExpanded:false,customerId:""});
- 
+  const [isExpanded, setIsExpanded] = useState({
+    isExpanded: false,
+    customerId: "",
+  });
+
   // const isActiveUpdate=useSelector((state)=> state.updateisactiveorder.isActiveOrder)
 
   // useEffect(()=>{if(isUpdated!==null){setseen(true)}},[isUpdated])
 
-  useEffect(()=>{console.log("isExpanded",isExpanded)},[isExpanded])
+  useEffect(() => {
+    console.log("isExpanded", isExpanded);
+  }, [isExpanded]);
   const columns = [
     {
       name: "Customer Name",
@@ -48,11 +49,13 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
       name: "Message",
       selector: (row) => {
         // Check if the message has been displayed, and if not, display it
-         console.log("rowdata",row)
-         
-          return row?.Orders[0]?.message?.length < 1 || row?.Orders[0]?.message === null ?
-            <b className="">No message</b> :
-            <div
+        console.log("rowdata", row);
+
+        return row?.Orders[0]?.message?.length < 1 ||
+          row?.Orders[0]?.message === null ? (
+          <b className="">No message</b>
+        ) : (
+          <div
             style={{
               maxHeight: "100px",
               overflow: "hidden",
@@ -62,29 +65,34 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               borderRadius: "4px",
             }}
             onClick={() => {
-  setIsExpanded((prev) => ({
-    isExpanded: !prev.isExpanded,
-    customerId: row.Orders[0]?.customerId,
-  }));
-}}
-
+              setIsExpanded((prev) => ({
+                isExpanded: !prev.isExpanded,
+                customerId: row.Orders[0]?.customerId,
+              }));
+            }}
           >
-            {isExpanded.isExpanded===true &&isExpanded.customerId===row.Orders[0]?.customerId? (
+            {isExpanded.isExpanded === true &&
+            isExpanded.customerId === row.Orders[0]?.customerId ? (
               <textarea
                 disabled
-                style={{ width: "100%", minHeight: "60px", border: "none", outline: "none" }}
+                style={{
+                  width: "100%",
+                  minHeight: "60px",
+                  border: "none",
+                  outline: "none",
+                }}
                 rows={3}
-                
               >
                 {row?.Orders[0]?.message}
               </textarea>
             ) : (
               <>
                 {row?.Orders[0]?.message.slice(0, 12)}
-                {row?.Orders[0]?.message?.length > 12 && '...'}
+                {row?.Orders[0]?.message?.length > 12 && "..."}
               </>
             )}
           </div>
+        );
       },
       sortable: true,
     },
@@ -99,7 +107,12 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           <span>
             <b>
               {row.Orders[0]?.isActive ? (
-                <div className="badge text-light" style={{backgroundColor:"purple"}}>New </div>
+                <div
+                  className="badge text-light"
+                  style={{ backgroundColor: "purple" }}
+                >
+                  New{" "}
+                </div>
               ) : row.Orders[0]?.isRejected ? (
                 <div className="badge bg-danger">Rejected </div>
               ) : row.Orders[0]?.isCompleted ? (
@@ -135,29 +148,26 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             ) : (
               ""
             )}
-            { row.Orders[0]?.isActive?
-             <button
-              onDoubleClick={() => rejectOrder(row)}
-              className={
-                row.Orders[0]?.isActive
-                  ? "btn btn-sm btn-outline-danger mx-2 "
-                  : "btn sm btn-danger mx-2 d-none"
-              }
-            >
-              Reject{" "}
-            </button>:
-            <button
-              onDoubleClick={() => UndoOrder(row)}
-              className={
-               
-                   "btn btn-sm btn-outline-danger mx-2 "
-                  
-              }
-            >
-              undo{" "}
-            </button>}
+            {row.Orders[0]?.isActive ? (
+              <button
+                onDoubleClick={() => rejectOrder(row)}
+                className={
+                  row.Orders[0]?.isActive
+                    ? "btn btn-sm btn-outline-danger mx-2 "
+                    : "btn sm btn-danger mx-2 d-none"
+                }
+              >
+                Reject{" "}
+              </button>
+            ) : (
+              <button
+                onDoubleClick={() => UndoOrder(row)}
+                className={"btn btn-sm btn-outline-danger mx-2 "}
+              >
+                undo{" "}
+              </button>
+            )}
 
-           
             <button
               onClick={() => completedOrder(row)}
               className={
@@ -173,12 +183,12 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
       ),
     },
   ];
-  const UndoOrder=(row)=>{
+  const UndoOrder = (row) => {
     var obj = {
       totalamount: row?.Orders[0]?.totalAmount,
       isActive: true,
       isRejected: false,
-      isCompleted:false,
+      isCompleted: false,
       isAccepted: false,
       orderId: row?.Orders[0]?.orderId,
       customerId: row?.Orders[0]?.customerId,
@@ -186,7 +196,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     };
 
     dispatch(updateIsActiveOrder(obj));
-  }
+  };
   const sendNotifucation = (row) => {
     var obj = {
       totalamount: row?.Orders[0]?.totalAmount,
@@ -252,7 +262,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     //   // row.data.Orders[0].isActive = false
 
     // }
-    console.log()
+    console.log();
 
     if (row.data && row.data.Orders) {
       const orderItems = row.data.Orders.flatMap((order) => order.OrderItems);
@@ -273,13 +283,19 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           selector: "quantity",
           sortable: true,
         },
-       
+
         {
           name: "total",
-          selector: (row) => <><small><FaRupeeSign size={17} /></small> {row.quantity * row.price}</>,
+          selector: (row) => (
+            <>
+              <small>
+                <FaRupeeSign size={17} />
+              </small>{" "}
+              {row.quantity * row.price}
+            </>
+          ),
           sortable: true,
         },
-       
       ];
 
       return (
@@ -292,29 +308,28 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             striped
             highlightOnHover
             responsive
-            
           />
-          <table border={1} className="table " style={{padding:"0px"}}>
+          <table border={1} className="table " style={{ padding: "0px" }}>
             <tbody>
               <thead></thead>
               <tr className="text-success ">
-              <td>
-             <b>
-             Discount
-             </b>
+                <td>
+                  <b>Discount</b>
                 </td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-               
-                
-                <td >
-                <b>
-                <FaRupeeSign />  {row.data.Orders[0].couponDiscountPercentage!==0?row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage:row.data.Orders[0].couponDiscountPercentage}
-                </b>
-             
+
+                <td>
+                  <b>
+                    <FaRupeeSign />{" "}
+                    {row.data.Orders[0].couponDiscountPercentage !== 0
+                      ? row.data.Orders[0].totalAmount *
+                        (row.data.Orders[0].couponDiscountPercentage / 100)
+                      : row.data.Orders[0].couponDiscountPercentage}
+                  </b>
                 </td>
               </tr>
               <tr>
@@ -325,11 +340,17 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 <td></td>
                 <td></td>
                 <td></td>
-              
+
                 <td></td>
-               
-                <td className="ml-4">  <FaRupeeSign /> {row.data.Orders[0].couponDiscountPercentage!==0?row.data.Orders[0].totalAmount-(row.data.Orders[0].totalAmount/row.data.Orders[0].couponDiscountPercentage):row.data.Orders[0].totalAmount}</td>
-                
+
+                <td className="ml-4">
+                  <FaRupeeSign />
+                  {row.data.Orders[0].couponDiscountPercentage !== 0
+                    ? row.data.Orders[0].totalAmount -
+                      row.data.Orders[0].totalAmount *
+                        (row.data.Orders[0].couponDiscountPercentage / 100)
+                    : row.data.Orders[0].totalAmount}
+                </td>
               </tr>
             </tbody>
           </table>
