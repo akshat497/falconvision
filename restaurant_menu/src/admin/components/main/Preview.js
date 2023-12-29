@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 // import RestaurantContext from '../../context/RestaurantContext'
-import { FaRupeeSign } from "react-icons/fa";
+import { FaInfoCircle, FaRupeeSign } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { deleteItem, updateItem } from "../../../redux/items/itemThunk";
@@ -25,7 +25,13 @@ export default function Preview() {
   const [fetcheditems, setfetcheditems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [showDataTable, setShowDataTable] = useState(false);
-
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const handlePopoverToggle = (menuItemId) => {
+    setPopoverVisible((prev) => ({
+      ...prev,
+      [menuItemId]: !prev[menuItemId],
+    }));
+  };
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   //    const addItemToCart = () => {
@@ -110,23 +116,25 @@ export default function Preview() {
     </div>
   );
   const handleToggleActive = (row) => {
-    if (row.isActive) {
-      const body = {
-        categoryId: row?.categoryId,
-        userId: row?.userId,
-        isActive: false,
-        menuItemId: row.menuItemId,
-      };
-      dispatch(updateItem(body));
-    } else {
-      const body = {
-        categoryId: row?.categoryId,
-        userId: row?.userId,
-        isActive: true,
-        menuItemId: row.menuItemId,
-      };
-      dispatch(updateItem(body));
-    }
+   
+   
+   
+    const formdata = new FormData(); 
+    
+    // Assuming `itemData` and `restroDetails` are defined
+    
+    formdata.append("name", row.name);
+    formdata.append("userId", row?.userId);
+    formdata.append("categoryId", row?.categoryId);
+    formdata.append("menuItemId", row?.menuItemId);
+    formdata.append("isActive", !row?.isActive);
+   
+  
+
+   
+       dispatch(updateItem({formdata,userId:row?.userId}));
+      
+    
   };
   return (
     <>
@@ -183,12 +191,14 @@ export default function Preview() {
                     }
                     style={{ width: "17rem" }}
                   >
+                   
                     <img
-                      src={data?.imageUrl}
+                      src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
                       className="card-img-top"
                       alt="..."
                       style={{ width: "100%", height: "200px" }}
                     />
+
                     <div className="card-body">
                       <h5 className="card-title">{data?.name}</h5>
 
@@ -229,14 +239,77 @@ export default function Preview() {
                       >
                         Delete
                       </button>
-                      <div className="mt-3">
-                        <ReactSwitch
-                          onChange={() => handleToggleActive(data)}
-                          checked={data?.isActive}
-                          id={`switch-${data?.categoryId}`}
-                          onColor="#800080" // Set the color when the switch is on (purple)
-                          offColor="#d3d3d3"
-                        />
+                      <div
+                        className="d-flex mt-3 "
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <div className="">
+                          <ReactSwitch
+                            onChange={() => handleToggleActive(data)}
+                            checked={data?.isActive}
+                            id={`switch-${data?.categoryId}`}
+                            onColor="#800080" // Set the color when the switch is on (purple)
+                            offColor="#d3d3d3"
+                          />
+                        </div>
+                        <div
+                          className=" "
+                          style={{
+                            position: "relative",
+                            display: "inline-block",
+                          }}
+                        >
+                          <FaInfoCircle
+                            size={22}
+                            onClick={() => handlePopoverToggle(data.menuItemId)}
+                            style={{ cursor: "pointer", color: "purple" }}
+                          />
+
+                          {popoverVisible[data.menuItemId] && (
+                            <div
+                              className="popover"
+                              style={{
+                                position: "absolute",
+                                // Adjust the top position as needed
+                                left: "auto",
+                                minWidth: "200px",
+                                maxWidth: "400px",
+                                right: "120%", // Adjust the right position as needed
+                                transform: "translateY(-50%)", // Center vertically
+                                // backgroundColor: "#fff",
+                                boxShadow: "2px 2px 2px 2px purple",
+                                padding: "10px",
+                                borderColor: "purple",
+                                borderRadius: "10px",
+                                zIndex: "999",
+                                visibility: popoverVisible[data.menuItemId]
+                                  ? "visible"
+                                  : "hidden",
+                                opacity: popoverVisible[data.menuItemId]
+                                  ? 1
+                                  : 0,
+                                transition: "opacity 0.3s, visibility 0.3s",
+                                backgroundColor: "whiteSmoke",
+                              }}
+                            >
+                              {/* Popover content goes here */}
+
+                              <div>{data.description}</div>
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "100%",
+                                  width: 0,
+                                  height: 0,
+                                  borderTop: "8px solid transparent",
+                                  borderBottom: "8px solid transparent",
+                                  borderLeft: "8px solid #fff", // Same as background color of the popover
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

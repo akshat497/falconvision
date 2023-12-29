@@ -38,7 +38,7 @@ export default function Homepage() {
       <Header id={userid} />
       {fetcheditemsCopy?.length===0?(<NoDatComponent/>):(
         <>
-        <div className="d-flex justify-content-between margin">
+        {/* <div className="d-flex justify-content-between margin">
         <ReactSwitch
           checked={vegOnly}
           onChange={() => setVegOnly(!vegOnly)}
@@ -59,7 +59,7 @@ export default function Homepage() {
           onColor="#FF0000" // Set the color when the switch is on (purple)
           offColor="#ffcccb"
         />
-      </div>
+      </div> */}
 
       <Card id={params.userId} veg={vegOnly} nonVeg={nonvegOnly} />
 

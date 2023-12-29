@@ -3,7 +3,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  height: 370px;
+  height: 380px;
   overflow: hidden;
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -1171,4 +1171,13 @@ a {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   background-color: purple !important;
   color: whitesmoke;
+}
+.mainheader {
+  background-color: #fff; /* Set your desired background color */
+  color: black; /* Set your desired text color */
+  padding: 10px; /* Set padding as needed */
+  position: relative;
+  z-index: 9999; /* Ensure the header is on top of other elements */
+  display: flex;
+
 }

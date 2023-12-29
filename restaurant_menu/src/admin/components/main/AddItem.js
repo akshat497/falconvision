@@ -3,13 +3,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import "../../style/adminstyle.css";
 import { FaArrowLeft, FaArrowRight, FaUpload } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addItem,
- 
-  updateItem,
-} from "../../../redux/items/itemThunk";
+import { addItem, fetchItem, updateItem } from "../../../redux/items/itemThunk";
 import RestaurantContext from "../../../context/RestaurantContext";
 import { toast } from "react-toastify";
+import { showToast } from "../../../services/ToastInstance";
 
 export default function AddItem({ preview, clickedItem }) {
   const dispatch = useDispatch();
@@ -18,9 +15,9 @@ export default function AddItem({ preview, clickedItem }) {
   // (clickedItem);
   // const {restroDetails}=useContext(RestaurantContext)
   const restroDetails = useSelector((state) => state.restrodetail.restro);
-
+const addItemReponse=useSelector((state)=>state?.addItem?.item)
   const loading = useSelector((state) => state.addItem.itemloading);
-  const updateLoading=useSelector((state)=>state.updateitem.u_Itemloading)
+  const updateLoading = useSelector((state) => state.updateitem.u_Itemloading);
   const fullFilled = useSelector(
     (state) => state.fetchcategory.fetchedcategory
   );
@@ -29,13 +26,13 @@ export default function AddItem({ preview, clickedItem }) {
     price: "",
     veg: "", // Default to 'Veg'
     dishType: "BreakFast", // Default to 'Breakfast'
+    description: "",
   });
   const [FetchedCategories, setFetchedCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
-  const [base64Image, setbase64Image] = useState(
-    "https://img.freepik.com/free-vector/plate-with-cutlery_23-2147504597.jpg?size=626&ext=jpg&ga=GA1.2.480076137.1690472873&semt=ais"
-  );
+  const [image, setimage] = useState('');
+  const [DisplayImage, setDisplayImage] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const steps = [0, 1, 2];
 
@@ -49,57 +46,96 @@ export default function AddItem({ preview, clickedItem }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setItemData({
-      ...itemData,
-      [name]: value,
-    });
+
+    if (name === "description") {
+      if (value.length <= 200) {
+        setItemData({
+          ...itemData,
+          [name]: value,
+        });
+      }
+    } else if (name === "name") {
+      if (value.length <= 30) {
+        setItemData({
+          ...itemData,
+          [name]: value,
+        });
+      }
+    } else {
+      setItemData({
+        ...itemData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-     
+
     if (!itemData.name) {
       setValidationErrors({ ...validationErrors, name: "Name is required" });
-      toast.error("Name is required");
+      showToast("Name is required");
       return;
     }
 
     if (!itemData.price) {
       setValidationErrors({ ...validationErrors, price: "Price is required" });
-      toast.error("Price is required");
+      showToast("Price is required");
       return;
     }
-    if(!selectedCategory){
-      setValidationErrors({ ...validationErrors, category: "category is required" });
-      toast.error("category is required");
+    if (!selectedCategory) {
+      setValidationErrors({
+        ...validationErrors,
+        category: "category is required",
+      });
+      showToast("category is required");
       return;
     }
-    if(!itemData.veg){
+    if (!itemData.veg) {
       setValidationErrors({ ...validationErrors, type: "type is required" });
-      toast.error("type is required");
+      showToast("type is required");
       return;
     }
-    if(!base64Image){
-      setValidationErrors({ ...validationErrors, image: "image is required" });
-      toast.error("image is required");
+
+    if (!itemData.description) {
+      setValidationErrors({
+        ...validationErrors,
+        type: "description is required",
+      });
+      showToast("image is required");
       return;
     }
+
     if (preview === "preview") {
       // (clickedItem)
-      const body = {
-        name: itemData.name,
-        price:itemData.price,
-        userId: restroDetails?.userId,
-        categoryId: selectedCategory,
-        menuItemId: clickedItem.menuItemId,
-        imageUrl: base64Image,
-        veg: itemData?.veg=== "veg"||itemData?.veg=== "Veg"?true:false ,
-        type: itemData?.type,
-        // price:Number(itemData.price),
-        // imageUrl:base64Image
-      };
+      // const body = {
+      //   name: itemData.name,
+      //   price: itemData.price,
+      //   userId: restroDetails?.userId,
+      //   categoryId: selectedCategory,
+      //   menuItemId: clickedItem.menuItemId,
+      //   imageUrl: image,
+      //   veg: itemData?.veg === "veg" || itemData?.veg === "Veg" ? true : false,
+      //   type: itemData?.type,
+      //   description: itemData?.description,
+      //   // price:Number(itemData.price),
+      //   // imageUrl:image
+      // };
+      const formdata = new FormData();
 
-      dispatch(updateItem(body));
+      // Assuming `itemData` and `restroDetails` are defined
+
+      formdata.append("name", itemData.name);
+      formdata.append("userId", restroDetails?.userId);
+      formdata.append("categoryId", selectedCategory);
+      formdata.append("menuItemId",clickedItem.menuItemId,);
+      formdata.append("price",  parseFloat(itemData.price));
+      formdata.append("imageUrl", image);
+      formdata.append("veg", itemData?.veg === "veg" ? true : false);
+      formdata.append("type", itemData?.dishType);
+      formdata.append("description", itemData?.description);
+      
+      dispatch(updateItem({formdata,userId:restroDetails?.userId}));
     }
     if (
       preview === "" ||
@@ -107,17 +143,30 @@ export default function AddItem({ preview, clickedItem }) {
       preview === null ||
       preview === undefined
     ) {
-      const body = {
-        name: itemData.name,
-        userId: restroDetails?.userId,
-        categoryId: selectedCategory,
-        price: Number(itemData.price),
-        imageUrl: base64Image,
-        veg: itemData?.veg === "veg" ? true : false,
-        type: itemData?.dishType,
-      };
+      const formdata = new FormData();
 
-      dispatch(addItem(body));
+      // Assuming `itemData` and `restroDetails` are defined
+
+      formdata.append("name", itemData.name);
+      formdata.append("userId", restroDetails?.userId);
+      formdata.append("categoryId", selectedCategory);
+      formdata.append("price",  parseFloat(itemData.price));
+      formdata.append("imageUrl", image);
+      formdata.append("veg", itemData?.veg === "veg" ? true : false);
+      formdata.append("type", itemData?.dishType);
+      formdata.append("description", itemData?.description);
+      // const body = {
+      //   name: itemData.name,
+      //   userId: restroDetails?.userId,
+      //   categoryId: selectedCategory,
+      //   price: Number(itemData.price),
+      //   imageUrl: image,
+      //   veg: itemData?.veg === "veg" ? true : false,
+      //   type: itemData?.dishType,
+      //   description:itemData?.description
+      // };
+
+      dispatch(addItem({formdata,userId:restroDetails?.userId}));
     }
     resetForm();
     // setItemData({
@@ -126,7 +175,7 @@ export default function AddItem({ preview, clickedItem }) {
     //   dishType: "",
     //   veg: "",
     // });
-    // setbase64Image("")
+    // setimage("")
     // setCategory("")
   };
   const resetForm = () => {
@@ -135,42 +184,51 @@ export default function AddItem({ preview, clickedItem }) {
       price: "",
       dishType: "",
       veg: "",
+      description: "",
     });
-  
-    setbase64Image("");
+
+    setimage("");
     setSelectedCategory("");
     setValidationErrors({});
   };
 
   useEffect(() => {
-    
     if (preview) {
       setItemData({
         name: clickedItem?.name,
         price: clickedItem?.price,
         dishType: clickedItem?.type,
-        veg: clickedItem?.veg ? "Veg" : "Non-Veg",
-
+        veg: clickedItem?.veg===true ? "veg" : "Non-Veg",
+        description: clickedItem?.description,
       });
       // (itemData)
     }
     setSelectedCategory(clickedItem?.Category?.categoryId);
-    setbase64Image(clickedItem?.imageUrl);
+    setimage(clickedItem?.imageUrl);
   }, [clickedItem]);
-  const convertimage = (e) => {
-    ;
+
+  const convertImage = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
 
-    reader.onload = (event) => {
-      const base64String = event.target.result;
-      // Now, `base64String` contains the base64 encoded image data
-      // (base64String);
-      setbase64Image(base64String);
-    };
+    // Check if the selected file is a PNG image
+    if (file && file.type === "image/png") {
+      
+      setimage(file);
+      const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+      // Define the onLoad callback function
+      reader.onload = (event) => {
+        // Set the data URL to the state
+        setDisplayImage(event.target.result);
+      };
+
+      // Read the file as a data URL
+      reader.readAsDataURL(file);
+    } else {
+      showToast("Please select a PNG image.");
+    }
   };
+
   // useEffect(() => {
 
   //    if(restroDetails!==null){
@@ -178,7 +236,7 @@ export default function AddItem({ preview, clickedItem }) {
   //    }
   //   }, [restroDetails]);
   // useEffect(() => {
-  //   
+  //
   //   dispatch(fetchCategory(clickedItem?.userId));
   // }, [clickedItem]);
 
@@ -189,44 +247,42 @@ export default function AddItem({ preview, clickedItem }) {
   }, [fullFilled]);
 
   const handleCategoryChange = (e) => {
-    
     const selectedCategoryId = e.target.value;
     // (selectedCategoryId)
     setSelectedCategory(selectedCategoryId);
   };
-
+// useEffect(()=>{
+//     if(addItemReponse!==null){
+      
+//       console.log(addItemReponse)
+//       if(addItemReponse?.status===200){
+//         dispatch(fetchItem(restroDetails?.userId))
+//       }
+//     }
+    
+// },[addItemReponse,dispatch,restroDetails?.userId])
   //   (fullFilled)
   return (
     <>
       {/* {preview === "preview" ? "" : <Header />} */}
       {loading ? <div className="overlay"></div> : null}
-      <section
-        className={
-          preview === "preview"
-            ? ""
-            : expanded
-            ? " "
-            : ""
-        }
-      >
-        <div
-          className={preview ? "add-item-container" : "add-item-container"}
-         
-        >
-         
+      <section className={preview === "preview" ? "" : expanded ? " " : ""}>
+        <div className={preview ? "add-item-container" : "add-item-container"}>
           <form onSubmit={handleSubmit}>
             {/* Render the form fields based on the current step */}
 
             {currentStep === 0 && (
               <>
-              <h2>{preview === "preview" ? "Update Item" : "Add Item"}</h2>
+                <h2>{preview === "preview" ? "Update Dish" : "Add Dish"}</h2>
                 <div className="form-group">
                   <label htmlFor="name">Name:</label>
                   <input
                     type="text"
                     id="name"
+                    className="form-control"
                     name="name"
                     value={itemData?.name}
+                    placeholder="Enter Dish Name"
                     onChange={handleInputChange}
                     required
                   />
@@ -236,19 +292,30 @@ export default function AddItem({ preview, clickedItem }) {
                   <input
                     type="number"
                     id="price"
+                    className="form-control"
                     name="price"
+                    placeholder="Enter Price"
                     value={itemData?.price}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
-               
               </>
             )}
-            {currentStep===1&&(
+            {currentStep === 1 && (
               <>
-              <div className="form-group">
-                  <label htmlFor="category">Upload Image:</label>
+                <div className="form-group">
+                  <div className="d-flex">
+                    <div>
+                      {" "}
+                      <label htmlFor="category">Upload Image:</label>
+                    </div>
+                    <div className="mt-2 mx-2">
+                      <small>
+                        <b>(Only .png images are allowed)</b>
+                      </small>
+                    </div>
+                  </div>
                   <div style={{ display: "flex" }}>
                     <div
                       onClick={() => {
@@ -258,27 +325,28 @@ export default function AddItem({ preview, clickedItem }) {
                     >
                       <FaUpload />
                     </div>
-                  <div  className="mt-2" style={{marginLeft:"50%"}}>
-                  <img
-                      src={preview ? clickedItem?.imageUrl : base64Image}
-                      alt="..."
-                      style={{ borderRadius: "60px" }}
-                      height={70}
-                      width={70}
-                      className="mb-2 ms-5"
-                    />
-                  </div>
+                    <div className="mt-2" style={{ marginLeft: "50%" }}>
+                      <img
+                        src={preview ? DisplayImage?DisplayImage:`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${image}` : DisplayImage}
+                        alt="..."
+                        style={{ borderRadius: "60px" }}
+                        height={70}
+                        width={70}
+                        className="mb-2 ms-5"
+                      />
+                    </div>
                   </div>
                   <input
                     type="file"
                     ref={fileRef}
                     className="d-none"
-                    onChange={convertimage}
+                    onChange={convertImage}
                   />
-                   <label htmlFor="category">Category:</label>
+                  <label htmlFor="category">Category:</label>
                   <select
                     id="category"
                     name="category"
+                    className="form-control"
                     onChange={handleCategoryChange}
                   >
                     <option value={""}>
@@ -299,31 +367,36 @@ export default function AddItem({ preview, clickedItem }) {
                       </option>
                     ))}
                   </select>
+                  <div className="form-group">
+                    <label htmlFor="veg">Veg/Non-Veg:</label>
+                    <select
+                      id="veg"
+                      name="veg"
+                      onChange={handleInputChange}
+                      className="form-control"
+                    >
+                      <option value={""}>
+                        {preview
+                          ? clickedItem?.veg
+                            ? "veg"
+                            : "non veg"
+                          : "Select a veg/nonveg"}
+                      </option>
+                      <option value="veg">Veg</option>
+                      <option value="nonveg">Non-Veg</option>
+                    </select>
+                  </div>
                 </div>
               </>
             )}
             {currentStep === 2 && (
               <>
                 <div className="form-group">
-                 
-                  <label htmlFor="veg">Veg/Non-Veg:</label>
-                  <select id="veg" name="veg" onChange={handleInputChange}>
-                    <option value={""}>
-                      {preview
-                        ? clickedItem?.veg
-                          ? "veg"
-                          : "non veg"
-                        : "Select a veg/nonveg"}
-                    </option>
-                    <option value="veg">Veg</option>
-                    <option value="nonveg">Non-Veg</option>
-                  </select>
-                </div>
-                <div className="form-group">
                   <label htmlFor="dishType">Type of Dish:</label>
                   <select
                     id="dishType"
                     name="dishType"
+                    className="form-control"
                     onChange={handleInputChange}
                   >
                     <option value={""}>
@@ -335,6 +408,19 @@ export default function AddItem({ preview, clickedItem }) {
                     <option value="Dinner">Dinner</option>
                     <option value="Others">Others</option>
                   </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="price">Description:</label>
+                  <textarea
+                    rows={6}
+                    id="description"
+                    name="description"
+                    value={itemData?.description}
+                    className="form-control"
+                    placeholder="Enter Description"
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </>
             )}
@@ -356,55 +442,48 @@ export default function AddItem({ preview, clickedItem }) {
                 : " Add Item"}
             </button> */}
             <div className="bottom-buttons mx-3 mb-2">
-  {currentStep >= 0 && (
-    <button
-      type="button"
-      className=" btn-back"
-      onClick={goToPreviousStep}
-      disabled={currentStep===0}
-    >
-      <FaArrowLeft/>
-    </button>
-  )}
-  {currentStep < steps.length - 1 && (
-    <button
-      type="button"
-      className="btn "
-      onClick={goToNextStep}
-    >
-     <FaArrowRight/>
-    </button>
-  )}
-  {currentStep === steps.length - 1 && (
-    <button
-  type=""
-  className="btn"
-  style={{ backgroundColor: "purple" }}
-  disabled={
-    itemData.name.trim() === "" ||
-    itemData.veg.trim() === "" ||
-    itemData.dishType.trim() === "" ||
-    itemData.price.trim() === "" ||
-    base64Image.trim() === "" ||
-    selectedCategory.trim() === ""||
-    updateLoading||
-    loading
-  }
->
-  {preview === "preview"
-    ? updateLoading
-      ? "Updating Item..."
-      : "Update Item"
-    : loading
-    ? "Adding Item..."
-    : "Add Item"}
-</button>
-
-  )}
-</div>
+              {currentStep >= 0 && (
+                <button
+                  type="button"
+                  className=" btn-back"
+                  onClick={goToPreviousStep}
+                  disabled={currentStep === 0}
+                >
+                  <FaArrowLeft />
+                </button>
+              )}
+              {currentStep < steps.length - 1 && (
+                <button type="button" className="btn " onClick={goToNextStep}>
+                  <FaArrowRight />
+                </button>
+              )}
+              {currentStep === steps.length - 1 && (
+                <button
+                  type=""
+                  className="btn"
+                  style={{ backgroundColor: "purple" }}
+                  disabled={
+                    itemData?.name?.trim() === "" ||
+                    itemData?.veg?.trim() === "" ||
+                    itemData?.dishType?.trim() === "" ||
+                    itemData?.price?.trim() === "" ||
+                   
+                    selectedCategory?.trim() === "" ||
+                    updateLoading ||
+                    loading
+                  }
+                >
+                  {preview === "preview"
+                    ? updateLoading
+                      ? "Updating Item..."
+                      : "Update Item"
+                    : loading
+                    ? "Adding Item..."
+                    : "Add Item"}
+                </button>
+              )}
+            </div>
           </form>
-   
-
         </div>
       </section>
     </>

@@ -26,11 +26,14 @@ export default function Header({ id }) {
   const category = useSelector((state) => state.fetchcategory.fetchedcategory);
   const Name = useSelector((state) => state.fetchitem.Name);
 
-  const { fetcheditems, setFetcheditems,fetcheditemsCopy, setFetcheditemsCopy } = useContext(RestaurantContext);
+  const { fetcheditems, setFetcheditems,fetcheditemsCopy, setFetcheditemsCopy,nonvegOnly, setnontVegOnly,vegOnly,setVegOnly,activeCategoryId, setActiveCategoryId } = useContext(RestaurantContext);
 
  
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
+ 
+
+ 
   // const [allItems, setallItems] = useState([]);
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset;
@@ -95,6 +98,8 @@ export default function Header({ id }) {
   
 useEffect(() => {
   const filteredData = filterItems(fetcheditems, searchInput);
+  setVegOnly(null)
+  setnontVegOnly(null)
 
   setFetcheditemsCopy(filteredData);
 
@@ -106,9 +111,9 @@ useEffect(() => {
   
   
 
-  const handleFilter = (e) => {
-    ;
-    const categoryId = e.target.id;
+  const handleFilter = (categoryId) => {
+    
+    setActiveCategoryId(categoryId);
     const filterData = fetcheditems?.filter((data) => {
       return data?.Category?.categoryId?.includes(categoryId);
     });
@@ -148,7 +153,11 @@ useEffect(() => {
       setFetcheditemsCopy(sortedData);
     }
   };
-
+  const handleAllClick = () => {
+    setFetcheditemsCopy(fetcheditems);
+    setActiveCategoryId(null); // Set activeCategoryId to null to deactivate all buttons
+    // Add your logic for when "All" is clicked
+  };
   // useEffect(()=>{
   //   dispatch(setFetchedItem(allItemaCopy))
   // },[allItemaCopy])
@@ -157,7 +166,8 @@ useEffect(() => {
     <>
    
       
-   <nav className={`navbar navbar-expand-lg navbar-light bg-light ${visible ? 'bg-light text-dark navbar-show sticky-top' : 'bg-light navbar-hide'} `}>
+  <div>
+  <nav className={`navbar navbar-expand-lg navbar-light bg-light ${visible ? 'bg-light text-dark navbar-show sticky-top' : 'bg-light navbar-hide'} `}>
   <div className="container-fluid">
   <Link to='/' className="navbar-brand  ">
   <div style={{ justifyContent: "right", textAlign: "right", alignContent: "right" }}>
@@ -204,7 +214,7 @@ useEffect(() => {
           </a>
         </li>
 
-        <li className="nav-item dropdown">
+        {/* <li className="nav-item dropdown">
       <a
         className="nav-link dropdown-toggle"
         id="navbarDropdown"
@@ -243,7 +253,7 @@ useEffect(() => {
           All
         </li>
       </ul>
-    </li>
+    </li> */}
 
         <li className="nav-item">
           <li
@@ -293,6 +303,8 @@ useEffect(() => {
     </div>
   </div>
 </nav>
+  </div>
+
       <div>
         {/* <button type="button" className="btn btn-primary "  data-bs-toggle="modal" data-bs-target="#exampleModal">
     Launch demo modal
@@ -300,6 +312,41 @@ useEffect(() => {
         {/* Modal */}
         <FilterModal />
       </div>
+      <div className="card-container mt-5 d-flex">
+      <div
+        className={`mx-1 ${activeCategoryId === null ? 'btn-active' : ''}`}
+        style={{
+          maxHeight: "100px",
+          marginTop: "6%",
+          cursor: "pointer",
+          border: "1px solid #ccc",
+          padding: "8px",
+          borderRadius: "10px",
+        }}
+        onClick={handleAllClick}
+      >
+        <span className="text-dark mt-5 mx-1">All</span>
+      </div>
+      {category?.map((categoryItem, index) => (
+        <div
+          key={categoryItem?.categoryId}
+          className={`mx-1 ${activeCategoryId === categoryItem.categoryId ? 'btn-active' : ''}`}
+          style={{
+            maxHeight: "100px",
+            marginTop: "6%",
+            cursor: "pointer",
+            border: "1px solid #ccc",
+            padding: "8px",
+            borderRadius: "10px",
+          }}
+          
+          id={categoryItem.categoryId}
+        >
+          {categoryItem?.isActive===true?<span className="text-dark mt-5" onClick={() => handleFilter(categoryItem.categoryId)}>{categoryItem.name}</span>:<span className="text-dark mt-5" style={{cursor:"not-allowed",opacity:"0.5"}}>{categoryItem.name}</span>}
+        </div>
+      ))}
+     
+    </div>
      
     </>
   );

@@ -7,7 +7,7 @@ import {
   FaUndo,
   FaUserAlt,
   FaUserCheck,
-  FaUserCog,
+  
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { referCodeGenerator } from "../../../../redux/auth/authThunks";
@@ -108,9 +108,9 @@ export default function UserProfile() {
             <h5 className="modal-title mt-1 ">
             Restaurant Details 
             {isEditing ? (
-                    <>{updatingUser===false?<>{disabled===true?<FaRegSave  className="mx-4" style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' }}/>:<FaRegSave onClick={handleSaveClick} className="mx-4" style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' }}/>}<FaUndo onClick={()=>{setIsEditing(false)}} style={{cursor:"pointer"}}/></>:"Saving..."}</>
+                    <>{updatingUser===false?<>{disabled===true?<FaRegSave  className="mx-4" size={32} style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' ,color:"purple"}}/>:<FaRegSave onClick={handleSaveClick} size={32} className="mx-4" style={{ cursor: disabled===true ? 'not-allowed' : 'pointer' ,color:"purple"}}/>}<FaUndo onClick={()=>{setIsEditing(false)}} style={{cursor:"pointer"}}/></>:"Saving..."}</>
                   ) : (
-               <>     <FaEdit onClick={handleEditClick} className="mx-2" style={{cursor:"pointer"}}/></>
+               <>     <FaEdit onClick={handleEditClick} className="mx-2" style={{cursor:"pointer"}} size={32}/></>
                   )}
             
             </h5>

@@ -124,10 +124,8 @@ import {
   FaRupeeSign,
   FaPlus,
   FaMinus,
-  FaJediOrder,
-  FaFirstOrder,
-  FaShoppingBag,
-  FaPlusCircle,
+
+  FaInfoCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -141,8 +139,9 @@ export default function Card({ veg, nonVeg }) {
   const {
     fetcheditemsCopy,
     setFetcheditemsCopy,
-    fetcheditems,
-    setFetcheditems,
+ 
+    activeCategoryId, setActiveCategoryId
+    
   } = useContext(RestaurantContext);
 
   const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
@@ -150,7 +149,18 @@ export default function Card({ veg, nonVeg }) {
   // const [fetcheditems, setFetcheditems] = useState([]);
   const restroLoading = useSelector((state) => state.restrodetail.loading);
   const [isAnimating, setIsAnimating] = useState(false);
+  
   const [cart, setCart] = useState([]); // New cart state
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const handlePopoverToggle = (menuItemId) => {
+   
+    setPopoverVisible((prev) => ({
+      ...prev,
+      [menuItemId]: !prev[menuItemId],
+    }));
+  };
+  
+
 
   // useEffect(() => {
   //     if (restroDetails !== null) {
@@ -167,21 +177,44 @@ export default function Card({ veg, nonVeg }) {
   // Load the cart from localStorage when the component mounts
   
   useEffect(() => {
-    
-    let filteredItems = fetcheditems; // Initialize with the original list
+    let filteredItems = originalItems;
 
+    // Apply category filter
+    if (activeCategoryId) {
+      filteredItems = filteredItems.filter(
+        (data) => data.Category.categoryId === activeCategoryId
+      );
+    }
+
+    // Apply veg filter
     if (veg) {
-      filteredItems = filteredItems.filter((data) => data.veg === veg);
+      filteredItems = filteredItems.filter((data) => data.veg);
     }
 
+    // Apply non-veg filter
     if (nonVeg) {
-      filteredItems = filteredItems.filter((data) => data.veg !== nonVeg);
+      filteredItems = filteredItems.filter((data) => !data.veg);
     }
 
-    // Update the state with the filtered items
     setFetcheditemsCopy(filteredItems);
-    // setFetcheditems(filteredItems);
-  }, [veg, nonVeg, originalItems, setFetcheditemsCopy]);
+  }, [activeCategoryId, veg, nonVeg, originalItems, setFetcheditemsCopy]);
+
+  // useEffect(() => {
+  //   activeCategoryId
+  //   let filteredItems = fetcheditems; // Initialize with the original list
+
+  //   if (veg) {
+  //     filteredItems = filteredItems.filter((data) => data.veg === veg);
+  //   }
+
+  //   if (nonVeg) {
+  //     filteredItems = filteredItems.filter((data) => data.veg !== nonVeg);
+  //   }
+
+  //   // Update the state with the filtered items
+  //   setFetcheditemsCopy(filteredItems);
+  //   // setFetcheditems(filteredItems);
+  // }, [veg, nonVeg, originalItems, setFetcheditemsCopy]);
   const savedCart = JSON.parse(localStorage.getItem("cart"));
   useEffect(() => {
     if (savedCart) {
@@ -295,7 +328,7 @@ export default function Card({ veg, nonVeg }) {
       </div>
     </div>
   );
-
+ 
   return (
     <>
       {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
@@ -323,9 +356,9 @@ export default function Card({ veg, nonVeg }) {
                   }}
                 >
                   <img
-                    src={data.imageUrl}
+                   src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`} 
                     className="card-img-left"
-                    alt="Food Image"
+                    alt="FoodImage"
                     style={{
                       width: "40%",
                       height: "200px",
@@ -339,15 +372,19 @@ export default function Card({ veg, nonVeg }) {
                     style={{ width: "60%", padding: "1rem" }}
                   >
                     <div
-                      className="card-title"
+                      className="card-title d-flex"
                       style={{
                         fontSize: "1.25rem",
                         fontWeight: "bold",
                         marginBottom: "0.5rem",
                         color: "#333",
+                        
                       }}
                     >
+                      <div className="col-md-12">
                       {data?.name}
+                      </div>
+                      <div className="col-md-1">
                       <small
                         className={
                           data?.veg
@@ -358,6 +395,7 @@ export default function Card({ veg, nonVeg }) {
                       >
                         {data?.veg ? "veg" : "nonveg"}
                       </small>
+                      </div>
                     </div>
                     <p
                       style={{
@@ -377,7 +415,7 @@ export default function Card({ veg, nonVeg }) {
                     >
                       <FaRupeeSign /> {data.price}
                     </p>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center" style={{justifyContent:"space-between"}}>
                       {cart?.find(
                         (item) => item.menuItemId === data.menuItemId
                       ) ? (
@@ -462,7 +500,66 @@ export default function Card({ veg, nonVeg }) {
                           )}
                         </div>
                       )}
-                    </div>
+                      <div
+      className="mt-5 "
+      style={{ position: "relative", display: "inline-block" }}
+          
+          
+    >
+      <FaInfoCircle
+  size={22}
+  onClick={() => handlePopoverToggle(data.menuItemId)}
+  style={{ cursor: "pointer",color:"purple" }}
+/>
+
+
+{popoverVisible[data.menuItemId] && (
+                            <div
+                              className="popover"
+                              style={{
+  position: "absolute",
+  left: "auto",
+  minWidth: "200px",
+  minHeight: "40px",
+  maxHeight: "100px",
+  overflowY: "scroll", // Enable vertical scrolling
+  WebkitOverflowScrolling: "touch", // Enable smooth scrolling on touch devices
+  maxWidth: "260px",
+  right: "120%",
+  transform: "translateY(-50%)",
+  boxShadow: "2px 2px 2px 2px purple",
+  padding: "10px",
+  borderColor: "purple",
+  borderRadius: "10px",
+  zIndex: "999",
+  visibility: popoverVisible[data.menuItemId] ? "visible" : "hidden",
+  opacity: popoverVisible[data.menuItemId] ? 1 : 0,
+  transition: "opacity 0.3s, visibility 0.3s",
+  backgroundColor: "whiteSmoke",
+}}
+
+                            >
+                              {/* Popover content goes here */}
+
+                              <div>{data.description}</div>
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "100%",
+                                  width: 0,
+                                  height: 0,
+                                  borderTop: "8px solid transparent",
+                                  borderBottom: "8px solid transparent",
+                                  borderLeft: "8px solid #fff", // Same as background color of the popover
+                                }}
+                              />
+                            </div>
+                          )}
+
+    </div> 
+    </div>
+                    
                   </div>
                 </div>
               </div>

@@ -364,10 +364,7 @@ export default function Header() {
               style={{ cursor: "pointer" }}
             />
             <div className="container-fluid">
-              <a className="navbar-brand mx-2 fs-4" href="#">
-                <FaEarlybirds size={40} />
-              </a>
-              <button
+            {/* <button
                 className="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
@@ -377,19 +374,25 @@ export default function Header() {
                 aria-label="Toggle navigation"
               >
                 <span className="navbar-toggler-icon" />
-              </button>
+              </button> */}
+               
+              
+             
              
               <div
-                className="collapse navbar-collapse"
+                className="collapse navbar-collapse "
                 id="navbarSupportedContent"
+                style={{justifyContent:"space-between",display:"flex"}}
               >
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+               <div>
+                <FaEarlybirds size={40} />
+                </div>
+                <div className="">
                   {/* ... other JSX code ... */}
                   <div
                     style={{
-                      marginLeft: "50%",
-                      width: "55vw",
                       borderRadius: "30px",
+                      width:"40vw"
                     }}
                   >
                     <input
@@ -423,9 +426,12 @@ export default function Header() {
                     )}
                   </div>
                   {/* ... other JSX code ... */}
-                </ul>
+                </div>
 
-                <div className="btn-group dropstart ">
+               
+
+                <div className="d-flex">
+                <div className=" nav-item dropdown">
                   <FaCog
                     className={`dropdown-toggle gear-icon mx-3 my-2 ${
                       isRotated ? "clockwise" : "anticlockwise"
@@ -541,8 +547,6 @@ export default function Header() {
                     </div>
                   </div>
                 </div>
-
-                <form className="d-flex">
                   <div className="notification-center dropstart">
                     <FaBell
                       size={25}
@@ -586,7 +590,7 @@ export default function Header() {
                         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
                         borderRadius: "4px",
                         backgroundColor: "#fff",
-                        width: "400px",
+                        maxWidth: "350px",
                       }}
                     >
                       {/* Your list items go here */}
@@ -666,7 +670,7 @@ export default function Header() {
                       alt="..."
                     />
                   </div>
-                </form>
+                </div>
               </div>
          
             </div>

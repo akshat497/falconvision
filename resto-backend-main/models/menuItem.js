@@ -31,9 +31,13 @@ const MenuItem = sequelize.define('menuItem', {
         allowNull: false,
     },
     price: {
-        type: DataTypes.DECIMAL(5, 2), // Use DECIMAL to store decimal numbers
+        type: DataTypes.DECIMAL(10, 2), // Use DECIMAL to store decimal numbers
         allowNull: false,
     },
+    description:{
+        type : DataTypes.TEXT,
+        allowNull: false,
+    }
    
 }, {
     tableName: 'menu_items'

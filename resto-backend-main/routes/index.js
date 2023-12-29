@@ -8,7 +8,33 @@ const contactUsController = require('../controller/contactUsData/contactUsContro
 const coupenCodeController = require('../controller/coupenCodeController')
 const authentication = require('../middlewares/authentication')
 const router = express.Router()
-const app = express();
+const multer = require('multer');
+const fs =require("fs")
+const crypto=require("crypto")
+const path=require("path")
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const userId = req.body.userId; // Assuming you have user information in the request
+      const userUploadsPath = `./uploads/${userId}`;
+  
+      // Ensure the directory exists or create it
+      fs.mkdir(userUploadsPath, { recursive: true }, (err) => {
+        if (err) {
+          return cb(err, null);
+        }
+        cb(null, userUploadsPath);
+      });
+    },
+    filename: (req, file, cb) => {
+      // Generate a unique filename
+      const uniqueFilename = crypto.randomBytes(16).toString('hex') + '-' + Date.now() + path.extname(file.originalname);
+      cb(null, uniqueFilename);
+    },
+  });
+  const upload = multer({ storage: storage})
+
+
+
 
 //expiration check
 router.get("/check-expire", authentication)
@@ -45,8 +71,8 @@ router.delete("/deleteCoupenCodeById/:CoupenCodeId/:userId", coupenCodeControlle
 
 //Menu Items Routes
 router.get("/MenuItemsByUserId/:userId", menuItemController.getMenuItemById)
-router.put("/updateMenuItemById", menuItemController.updateMenuItem)
-router.post("/addMenuItems", menuItemController.addMenuItem)
+router.put("/updateMenuItemById",  upload.single('imageUrl'),menuItemController.updateMenuItem)
+router.post("/addMenuItems", upload.single('imageUrl'),menuItemController.addMenuItem)
 router.delete("/deleteMenuItemsById/:menuItemId/:userId", menuItemController.deleteMenuItem)
 //password reset routes
 router.post("/resetpassword", userController.resetPassword)

@@ -24,6 +24,9 @@ export default function RestaurantContextState(props) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [orders, setOrders] = useState([]);
   const [notification, setnotification] = useState([]);
+  const [vegOnly, setVegOnly] = useState(false);
+  const [nonvegOnly, setnontVegOnly] = useState(false);
+  const [activeCategoryId, setActiveCategoryId] = useState(null);
   const allorders = useSelector((state) => state.getOrder.order);
   const allFetchedItems = useSelector((state) => state.fetchitem.f_item);
   // const isActiveUpdate=useSelector((state)=> state.updateisactiveorder.isActiveOrder)
@@ -273,6 +276,12 @@ export default function RestaurantContextState(props) {
         setnotification,
         fetchedCoupens,
         setfetchedCoupens,
+        vegOnly, 
+        setVegOnly,
+        nonvegOnly, 
+        setnontVegOnly,
+        activeCategoryId,
+         setActiveCategoryId
       }}
     >
       {props.children}

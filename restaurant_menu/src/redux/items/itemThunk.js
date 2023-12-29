@@ -52,7 +52,7 @@ import {
   setRestroLoading,
   setRestroError,
 } from "./fetchRestroSlice";
-import { toast } from "react-toastify";
+
 import { fetchOrders } from "../orders/orderThunk";
 import { getCouponCode } from "../coupon/couponCodeThunk";
 import { showToast } from "../../services/ToastInstance";
@@ -60,14 +60,15 @@ import { showToast } from "../../services/ToastInstance";
 export const addItem = (userData) => async (dispatch) => {
   try {
     dispatch(setItemLoading(true));
-    const response = await AddItem(userData);
+    const response = await AddItem(userData.formdata);
     if(response?.success===true){
-      showToast("The menu item has been successfully added.","success");
-
+      showToast("Successfully added.","success");
+      dispatch(fetchItem(userData?.userId))
+      dispatch(setItem(response));
+      dispatch(setItemLoading(false));
     }
-    dispatch(fetchItem(userData?.userId));
-    dispatch(setItem(response));
-    dispatch(setItemLoading(false));
+    
+    
   } catch (error) {
     showToast(error?.response?.data?.message ||error.message)
 
@@ -80,7 +81,7 @@ export const addCategory = (userData) => async (dispatch) => {
     dispatch(setCategoryloading(true));
     const response = await AddCategory(userData); // Call your API function here
     if(response){
-      showToast("New category has been successfully added.","success");
+      showToast("Successfully added.","success");
 
     }
     dispatch(fetchCategory(userData?.userId));
@@ -149,7 +150,7 @@ export const updateItem = (userData) => async (dispatch) => {
   try {
     dispatch(setupdateItemloading(true));
 
-    const response = await UpdateItem(userData);
+    const response = await UpdateItem(userData.formdata);
     if(response.success===true){
       showToast(response.message,"success")
       dispatch(fetchItem(userData?.userId));

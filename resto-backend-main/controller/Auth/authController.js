@@ -532,6 +532,7 @@ const authController = {
       }
     });
   },
+  
 };
 
 function generateOTP() {

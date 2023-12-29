@@ -1295,8 +1295,7 @@ p {
   color: #555; /* You can customize the color */
 }
 
-element.style {
-}
+
 .form-control-validate-week{
     display: block;
     width: 100%;
@@ -1321,4 +1320,51 @@ element.style {
 .search-icon{
   height: inherit;
   background-color: black;
+}
+/* YourComponent.css */
+
+.card-container {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS devices */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 80vw; /* Adjust the width of each card as needed */
+  margin-right: 10px; /* Adjust the margin between cards as needed */
+  scroll-snap-align: start;
+}
+
+/* Add additional styles as needed */
+.card-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+.popover {
+  position: absolute;
+  right: 120%; /* Adjust the right position as needed */
+/* Adjust the top position as needed */
+  transform: translateY(-50%); /* Center vertically */
+  min-width: 200px;
+  max-width: 400px;
+  min-height: 50px;
+  max-height: 100px;
+  box-shadow: 1px 1px 1px 1px purple;
+  padding: 10px;
+  border-color: purple;
+  border-radius: 10px;
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+  background-color: whiteSmoke;
+  margin-top: -15px;
+}
+
+.popover.active {
+  visibility: visible;
+  opacity: 1;
 }

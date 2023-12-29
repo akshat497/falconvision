@@ -52,23 +52,25 @@ export default function ItemDatatable({
   }, [searchText, fetcheditemsCopy, setFetcheditems]);
   
   const handleToggleActive = (row) => {
-    if (row.isActive) {
-      const body = {
-        categoryId: row?.categoryId,
-        userId: row?.userId,
-        isActive: false,
-        menuItemId: row.menuItemId,
-      };
-      dispatch(updateItem(body));
-    } else {
-      const body = {
-        categoryId: row?.categoryId,
-        userId: row?.userId,
-        isActive: true,
-        menuItemId: row.menuItemId,
-      };
-      dispatch(updateItem(body));
-    }
+   
+    
+   
+    const formdata = new FormData(); 
+    
+    // Assuming `itemData` and `restroDetails` are defined
+    
+    formdata.append("name", row.name);
+    formdata.append("userId", row?.userId);
+    formdata.append("categoryId", row?.categoryId);
+    formdata.append("menuItemId", row?.menuItemId);
+    formdata.append("isActive", !row?.isActive);
+   
+  
+
+   
+       dispatch(updateItem({formdata,userId:row?.userId}));
+      
+    
   };
   
   const columns = [
