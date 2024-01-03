@@ -210,7 +210,7 @@ export default function ItemDatatable({
         <NoDatComponent />
       ) : (
         <div
-          className={isDarkMode ? "bg-dark text-light " : "bg-dark text-light "}
+          
         >
           {/* <ReactSwitch
      checked={showDataTable}

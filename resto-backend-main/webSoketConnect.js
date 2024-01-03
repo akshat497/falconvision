@@ -31,12 +31,23 @@ wsServer.on('request', (request) => {
     if (message.type === 'utf8') {
       console.log('Received Message:', message.utf8Data);
       // Process the message here
+    } else if (message.type === 'ping') {
+      console.log('Received Ping');
+      connection.pong(); // Respond with a pong frame
     }
   });
 
   connection.on('close', () => {
     roomClients.get(room).delete(connection);
   });
+  const pingInterval = setInterval(() => {
+    if (connection.connected) {
+      connection.ping();
+    } else {
+      clearInterval(pingInterval);
+    }
+  }, 30000);
+
 });
 
 function broadUpdate(room, updatedItem, updateType) {

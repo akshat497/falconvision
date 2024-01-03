@@ -169,7 +169,7 @@ useEffect(()=>{
 
     setcategoryCopy(filteredOrders);
   }, [searchText]);
-  useEffect(()=>{console.log(selectedRows)},[selectedRows])
+
   return (
     <>
       <div className="my-3">

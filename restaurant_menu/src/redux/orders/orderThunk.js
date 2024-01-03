@@ -45,13 +45,7 @@ export const fetchOrders = (userData) => async (dispatch) => {
       dispatch(setcreateorderloading(true));
       const response = await CreateOrder(userData);  
      
-      if(response.message==="New order has been created!"){
-       
-       showToast("Order Placed!","success")
-        localStorage.removeItem("coupen")
-         
-        
-      }
+      
       dispatch(setcreateorder(response));
       dispatch(setcreateorderloading(false));
     } catch (error) {

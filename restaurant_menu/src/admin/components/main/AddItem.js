@@ -107,20 +107,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
     }
 
     if (preview === "preview") {
-      // (clickedItem)
-      // const body = {
-      //   name: itemData.name,
-      //   price: itemData.price,
-      //   userId: restroDetails?.userId,
-      //   categoryId: selectedCategory,
-      //   menuItemId: clickedItem.menuItemId,
-      //   imageUrl: image,
-      //   veg: itemData?.veg === "veg" || itemData?.veg === "Veg" ? true : false,
-      //   type: itemData?.type,
-      //   description: itemData?.description,
-      //   // price:Number(itemData.price),
-      //   // imageUrl:image
-      // };
+      
       const formdata = new FormData();
 
       // Assuming `itemData` and `restroDetails` are defined
@@ -168,15 +155,8 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
       dispatch(addItem({formdata,userId:restroDetails?.userId}));
     }
-    // resetForm();
-    // setItemData({
-    //   name: "",
-    //   price: "",
-    //   dishType: "",
-    //   veg: "",
-    // });
-    // setimage("")
-    // setCategory("")
+    resetForm();
+  
   };
   const resetForm = () => {
     setItemData({
@@ -187,8 +167,9 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
       description: "",
     });
 
-    setimage("");
-    setSelectedCategory("");
+    setimage('');
+    setDisplayImage('')
+    setSelectedCategory('');
     setValidationErrors({});
   };
 
@@ -229,17 +210,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
     }
   };
   
-
-  // useEffect(() => {
-
-  //    if(restroDetails!==null){
-  //     dispatch(fetchCategory(restroDetails?.userId));
-  //    }
-  //   }, [restroDetails]);
-  // useEffect(() => {
-  //
-  //   dispatch(fetchCategory(clickedItem?.userId));
-  // }, [clickedItem]);
+  
 
   useEffect(() => {
     if (fullFilled !== null) {
@@ -249,23 +220,13 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
   const handleCategoryChange = (e) => {
     const selectedCategoryId = e.target.value;
-    // (selectedCategoryId)
+  
     setSelectedCategory(selectedCategoryId);
   };
-// useEffect(()=>{
-//     if(addItemReponse!==null){
-      
-//       console.log(addItemReponse)
-//       if(addItemReponse?.status===200){
-//         dispatch(fetchItem(restroDetails?.userId))
-//       }
-//     }
-    
-// },[addItemReponse,dispatch,restroDetails?.userId])
-  //   (fullFilled)
+
   return (
     <>
-      {/* {preview === "preview" ? "" : <Header />} */}
+    
       {loading ? <div className="overlay"></div> : null}
       <section className={preview === "preview" ? "" : expanded ? " " : ""}>
         <div className={preview ? "add-item-container" : "add-item-container"}>
@@ -287,6 +248,8 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     onChange={handleInputChange}
                     required
                   />
+                    <small>{itemData?.name?.length===30?<b>{itemData?.name?.length}</b>:itemData?.name?.length}<span>/</span><b>30</b></small>
+                
                 </div>
                 <div className="form-group">
                   <label htmlFor="price">Price:</label>
@@ -419,6 +382,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     onChange={handleInputChange}
                     required
                   />
+                  <small>{itemData?.description?.length===200?<b>{itemData?.description?.length}</b>:itemData?.description?.length}<span>/</span><b>200</b></small>
                 </div>
               </>
             )}

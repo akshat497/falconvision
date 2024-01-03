@@ -117,6 +117,10 @@ export default function RestaurantContextState(props) {
           // dispatch(fetchItem(userData?.userId))
 
           break;
+          case "newCategory":
+            dispatch(fetchCategory(userData?.userId));
+            dispatch(fetchItem(userData?.userId));
+          break;
         case "deletedMenu":
           dispatch(fetchItem(detailRestro?.userId));
 

@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { applyCoupon } from "../redux/coupon/couponCodeThunk";
+import { fetchItem } from "../redux/items/itemThunk";
 const CartPage = () => {
   const dispatch = useDispatch();
   const [cart, setCart] = useState([]);
@@ -102,6 +103,22 @@ const CartPage = () => {
     }, 300); // Adjust the delay (300ms) to match your transition duration
   };
 
+ useEffect(()=>{
+  const params = JSON.parse(localStorage.getItem("params"));
+  dispatch(fetchItem(params?.userId));
+  if(fetchedItem!==null){
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function updateCartWithAvailableItems() {
+      cart = cart.filter(cartItem => fetchedItem.some(menuItem => menuItem.menuItemId === cartItem.menuItemId));
+      saveCartToLocalStorage();
+    }
+    function saveCartToLocalStorage() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+    updateCartWithAvailableItems();
+  }
+ 
+ },[fetchedItem])
   return (
     <main className="container" style={{ backgroundColor: "whitesmoke" }}>
       <section className="shopping-cart">

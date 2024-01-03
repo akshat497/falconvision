@@ -16,8 +16,24 @@ const CheckoutPage = () => {
     const loadingCreateOrder=useSelector((state)=>state.createorder.createorderloading)
     const sendingOtp=useSelector((state)=>state.otpsend.otploading)
     let OtpResponse=useSelector((state)=>state.otpsend.otp)
+    let response=useSelector((state)=>state.createorder.createorder)
+
+  
    
   
+
+    useEffect(()=>{
+      if(response?.message==="New order has been created!"){
+       
+        showToast("Order Placed!","success")
+         localStorage.removeItem("coupen");
+         localStorage.setItem("previous Order",localStorage.getItem('cart'));
+         localStorage.removeItem('cart')
+         window.location.reload();
+          
+         
+       }
+    },[response])
   const [formData, setFormData] = useState({
     username: '',
     phoneNumber: '',
