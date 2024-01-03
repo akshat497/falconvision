@@ -132,7 +132,7 @@ export const updateCategory = (userData) => async (dispatch) => {
     dispatch(setupdateCategoryloading(true));
 
     const response = await UpdateCategory(userData);
-    if(response.success===true){
+    if(response?.success===true){
       showToast(response.message,"success")
       dispatch(fetchItem(userData?.userId))
       dispatch(fetchCategory(userData?.userId));
