@@ -60,7 +60,9 @@ export const AddItem = async (body) => {
 };
 export const FetchItem = async (ID) => {
   try {
-  
+    if(ID===undefined||ID===null){
+      return;
+    }
     const response = await createAxiosInstance().get(`${FETCHITEM_URL}/${ID}`);
 
     return response.data;
@@ -91,7 +93,7 @@ export const UpdateItem = async (body) => {
 export const AddCategory = async (body) => {
   try {
     if(body?.userId===undefined||body?.userId===null){
-      return
+      return ;
     }
     const response = await createAxiosInstance().post(ADDCATEGORY_URL, body);
     return response.data;
@@ -102,7 +104,9 @@ export const AddCategory = async (body) => {
 export const FetchCategory = async (ID) => {
  
   try {
-  
+    if(ID===undefined||ID===null){
+      return;
+    }
     const response = await createAxiosInstance().get(`${FETCHCATEGORY_URL}/${ID}`);
     return response.data;
   } catch (error) {
@@ -123,7 +127,7 @@ export const UpdateCategory = async (body) => {
   
   try {
     if(body?.userId===undefined||body?.userId===null){
-      return
+      return ;
     }
     const response = await createAxiosInstance().put(UPDATE_CATEGORY_URL, body);
     return response.data;
