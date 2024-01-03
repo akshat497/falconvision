@@ -90,7 +90,9 @@ export const UpdateItem = async (body) => {
 };
 export const AddCategory = async (body) => {
   try {
-  
+    if(body?.userId===undefined||body?.userId===null){
+      return
+    }
     const response = await createAxiosInstance().post(ADDCATEGORY_URL, body);
     return response.data;
   } catch (error) {
@@ -120,6 +122,9 @@ export const DeleteCategory = async (body) => {
 export const UpdateCategory = async (body) => {
   
   try {
+    if(body?.userId===undefined||body?.userId===null){
+      return
+    }
     const response = await createAxiosInstance().put(UPDATE_CATEGORY_URL, body);
     return response.data;
   } catch (error) {
