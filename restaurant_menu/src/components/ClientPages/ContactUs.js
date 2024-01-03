@@ -5,6 +5,7 @@ import { createContact } from "../../redux/contactus/contactusthunk";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import Footer from "../common/Footer";
+import { showToast } from "../../services/ToastInstance";
 
 function ContactUs() {
   const dispatch=useDispatch();
@@ -31,23 +32,15 @@ function ContactUs() {
     };
     if (!data.name || !data.email || !data.message) {
       // Check if any of the fields are empty
-      toast.warn("Please fill in all the fields.",{
-        autoClose:false,
-        closeButton:false,
-        closeOnClick:true
-      });
+     
+      showToast("Please fill in all the fields.","warn")
       return;
     }
   
     if (!isValidEmail(data.email)) {
       // Check if the email is in a valid format
-      toast("Please enter a valid email address.",{
-        autoClose:false,
-        closeButton:false,
-        closeOnClick:true
       
-
-      });
+      showToast("Please enter a valid email address.")
       return;
     }
     dispatch(createContact(data))
@@ -74,7 +67,7 @@ function ContactUs() {
   return (
     <>
       <ClientHeader />
-      <div className="container" style={{height:"100vh"}}>
+      <div className="container" style={{minHeight:"100vh"}}>
   <div className="row" style={{ marginTop: "10%" }}>
     <div className="col-md-6 contact-info" style={contactInfoStyles}>
       <h2 className="mb-4">Contact Information</h2>

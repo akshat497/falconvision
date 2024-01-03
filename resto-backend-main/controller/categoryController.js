@@ -113,8 +113,9 @@ const categoryController = {
     }
   },
   
+  
   deleteCategory: async (req, res, next) => {
-    const { categoryId, userId } = req.params;
+    const { categoryIds, userId } = req.body;
   
     try {
       authentication(req, res, async () => {
@@ -122,40 +123,47 @@ const categoryController = {
           return next(CustomErrorHandler.UnAuthorised());
         }
   
-        // Validate if the category exists
-        const categoryToDelete = await Category.findOne({
-          where: { categoryId, userId },
-        });
+        console.log("categoryIds", categoryIds);
   
-        if (!categoryToDelete) {
-          return res.status(404).json(CustomResponseHandler.negativeResponse("Category not found", 404));
+        for (const categoryId of categoryIds) {
+          console.log("Processing categoryId:", categoryId);
+  
+          const categoryToDelete = await Category.findOne({
+            where: { categoryId, userId },
+          });
+  
+          console.log("categoryToDelete", categoryToDelete);
+  
+          if (!categoryToDelete) {
+            return res.status(404).json(CustomResponseHandler.negativeResponse("Category not found", 404));
+          }
+  
+          // Find all menu items with the specified categoryId
+          const menuItemsToDelete = await MenuItem.findAll({
+            where: { categoryId, userId },
+          });
+  
+          // Delete each menu item
+          await Promise.all(
+            menuItemsToDelete.map(async (menuItem) => {
+              await menuItem.destroy();
+              // Optionally, you can broadcast the menu item deletion using WebSocket
+              // WebSocketServer.broadUpdate(userId, menuItem.menuItemId, "deleteMenuItem");
+            })
+          );
+  
+          // Now, delete the category
+          await Category.destroy({
+            where: { categoryId, userId },
+          });
+  
+          // Optionally, broadcast the category deletion using WebSocket
+       
+  
+          console.log("Category deleted successfully:", categoryId);
         }
-  
-        // Find all menu items with the specified categoryId
-        const menuItemsToDelete = await MenuItem.findAll({
-          where: { categoryId, userId },
-        });
-  
-        
-  
-        // Delete each menu item
-        await Promise.all(
-          menuItemsToDelete.map(async (menuItem) => {
-            await menuItem.destroy();
-            // Optionally, you can broadcast the menu item deletion using WebSocket
-            WebSocketServer.broadUpdate(userId, menuItem.menuItemId, "deleteMenuItem");
-          })
-        );
-  
-        // Now, delete the category
-        await Category.destroy({
-          where: { categoryId, userId },
-        });
-  
-        // Optionally, broadcast the category deletion using WebSocket
-        WebSocketServer.broadUpdate(userId, categoryId, "deleteCategory");
-  
-        res.json(CustomResponseHandler.positiveResponse("Category and associated menu items deleted successfully"));
+        WebSocketServer.broadUpdate(userId, categoryIds, "deleteCategory");
+        res.json(CustomResponseHandler.positiveResponse("Categories and associated menu items deleted successfully"));
       });
     } catch (err) {
       // Handle errors appropriately, e.g., log the error
@@ -165,6 +173,8 @@ const categoryController = {
       return res.status(500).json(CustomResponseHandler.negativeResponse("Internal Server Error", 500));
     }
   },
+  
+  
   
   
 };

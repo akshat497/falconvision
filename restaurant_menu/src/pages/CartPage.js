@@ -131,7 +131,7 @@ const CartPage = () => {
                         <div className="col-md-3 col-4">
                           <img
                             className="img-fluid mx-auto d-block image"
-                            src={data?.imageUrl}
+                            src={process.env.REACT_APP_BASE_URL_FOR_IMAGES +data?.imageUrl}
                             alt={data?.name}
                           />
                         </div>
@@ -267,7 +267,7 @@ const CartPage = () => {
                 <Link to="/checkoutpage">
                   <button
                     type="button"
-                    className="btn btn-primary btn-lg btn-block checkout-button"
+                    className="btn  btn-lg btn-block checkout-button"
                   >
                     Checkout
                   </button>
@@ -275,7 +275,7 @@ const CartPage = () => {
                 <Link to={`/customer`}>
                   <button
                     type="button"
-                    className="btn btn-secondary btn-lg btn-block continue-shopping-button"
+                    className="btn btn-success btn-lg btn-block "
                   >
                     Continue Shopping
                   </button>

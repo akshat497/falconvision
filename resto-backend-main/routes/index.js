@@ -31,7 +31,10 @@ const storage = multer.diskStorage({
       cb(null, uniqueFilename);
     },
   });
-  const upload = multer({ storage: storage})
+  const upload = multer({ 
+    storage: storage,
+   
+  })
 
 
 
@@ -60,20 +63,22 @@ router.put("/extendTrial",userController.extendTrial )
 router.get("/categoryByUserId/:userId", categoryController.getAllCategoryByUserId)
 router.put("/updateCategoryById", categoryController.updateCategory)
 router.post("/addCategory", categoryController.addCategory)
-router.delete("/deleteCategoryById/:categoryId/:userId", categoryController.deleteCategory)
+router.post("/deleteCategoryById", categoryController.deleteCategory)
+// router.post("/deleteAllCategories", categoryController.deleteAllCategories)
+
 
 //coupens routes
 router.get("/CoupenCodeByUserId/:userId", coupenCodeController.getCoupenCode)
 router.put("/updateCoupenCodeById", coupenCodeController.updateCoupenCode)
 router.post("/createCoupenCode", coupenCodeController.createCoupenCode)
 router.post("/applyCoupenCode", coupenCodeController.applyCoupenCode)
-router.delete("/deleteCoupenCodeById/:CoupenCodeId/:userId", coupenCodeController.deleteCoupenCode)
+router.post("/deleteCoupenCodeByIds", coupenCodeController.deleteCoupenCode)
 
 //Menu Items Routes
 router.get("/MenuItemsByUserId/:userId", menuItemController.getMenuItemById)
 router.put("/updateMenuItemById",  upload.single('imageUrl'),menuItemController.updateMenuItem)
 router.post("/addMenuItems", upload.single('imageUrl'),menuItemController.addMenuItem)
-router.delete("/deleteMenuItemsById/:menuItemId/:userId", menuItemController.deleteMenuItem)
+router.post("/deleteMenuItemsByIds", menuItemController.deleteMenuItem)
 //password reset routes
 router.post("/resetpassword", userController.resetPassword)
 //Order Routes
@@ -85,6 +90,6 @@ router.delete("/deleteOrdersById/:orderId", orderController.deleteOrder)
 //contact us routes
 router.get("/getcontactus", contactUsController.getContactUs)
 router.post("/createcontactus", contactUsController.createContactUs)
-router.delete("/deletecontactus/:contactUsId", contactUsController.deleteContactUsById)
+router.post("/deletecontactus", contactUsController.deleteContactUsById)
 //
 module.exports = router

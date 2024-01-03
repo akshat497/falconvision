@@ -1,131 +1,11 @@
-// import React, { useContext, useEffect, useRef, useState } from 'react';
-// import { FaShoppingCart, FaRupeeSign } from 'react-icons/fa';
-// import { useNavigate } from 'react-router-dom';
-// import Header from '../common/Header';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { deleteItem, fetchItem, updateItem } from '../../redux/items/itemThunk';
-// import RestaurantContext from '../../context/RestaurantContext';
-
-// export default function Card() {
-//     const navigate = useNavigate();
-//     const dispatch = useDispatch();
-//     const ref = useRef();
-//     const response = useSelector((state) => state.fetchitem.f_item);
-//     const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
-//     const [fetcheditems, setFetcheditems] = useState([]);
-//     const restroDetails = useSelector((state) => state.restrodetail.restro);
-
-//     const [cart, setCart] = useState([]); // New cart state
-
-//     useEffect(() => {
-//         if (restroDetails !== null) {
-//             dispatch(fetchItem(restroDetails?.userId));
-//         }
-//     }, [restroDetails]);
-
-//     useEffect(() => {
-//         if (response !== null) {
-//             setFetcheditems(response);
-//         }
-//     }, [response, fetchLoading]);
-
-//     const addToCart = (item) => {
-//       const updatedCart = [...cart];
-//       const index = updatedCart.findIndex((cartItem) => cartItem.menuItemId === item.menuItemId);
-//       if (index === -1) {
-//           updatedCart.push({ ...item, quantity: 1 });
-//       } else {
-//           updatedCart[index].quantity++;
-//       }
-//       setCart(updatedCart);
-//   };
-
-//   const removeFromCart = (item) => {
-//       const updatedCart = [...cart];
-//       const index = updatedCart.findIndex((cartItem) => cartItem.menuItemId === item.menuItemId);
-//       if (index !== -1) {
-//           if (updatedCart[index].quantity > 1) {
-//               updatedCart[index].quantity--;
-//           } else {
-//               updatedCart.splice(index, 1);
-//           }
-//           setCart(updatedCart);
-//       }
-//   }
-
-//     const SkeletonItem = () => (
-//         <div className={`card mx-3 my-2 bg-`} style={{ width: '18rem' }}>
-//             <div className="skeleton-thumbnail"></div>
-//             <div className="card-body">
-//                 <div className="skeleton-title"></div>
-//                 <div className="skeleton-subtitle"></div>
-//                 <div className="skeleton-text"></div>
-//                 <div className="skeleton-button"></div>
-//                 <div className="skeleton-button"></div>
-//             </div>
-//         </div>
-//     );
-
-//     return (
-//         <>
-
-//            <div style={{ display: "flex", flexWrap: "wrap" }}>
-//                 {fetcheditems?.map((data) => (
-//                     <div className="card mx-5 my-2" style={{ width: '18rem' }}>
-//                         <img src={data.imageUrl} className="card-img-top" alt="..." />
-//                         <div className="card-body">
-//                             <h5 className="card-title">{data.name}</h5>
-//                             <h7 className="card-text">{data.Category.name}</h7>
-//                             <p><FaRupeeSign />{data.price}</p>
-
-//                             <div className="d-flex align-items-center">
-//                                 {cart.find((item) => item.menuItemId === data.menuItemId) ? (
-//                                     // If the item is in the cart, show "+" and "-" buttons
-//                                     <div className="quantity-controls">
-//                                         <button
-//                                             className="btn btn-sm btn-primary"
-//                                             onClick={() => removeFromCart(data)}
-//                                         >
-//                                             -
-//                                         </button>
-//                                         <span className="mx-2">{cart.find((item) => item.menuItemId === data.menuItemId)?.quantity || 0}</span>
-//                                         <button
-//                                             className="btn btn-sm btn-primary"
-//                                             onClick={() => addToCart(data)}
-//                                         >
-//                                             +
-//                                         </button>
-//                                     </div>
-//                                 ) : (
-//                                     // If the item is not in the cart, show the "Add to Cart" button
-//                                     <button
-//                                         className="btn btn-success"
-//                                         onClick={() => addToCart(data)}
-//                                     >
-//                                         Add to Cart
-//                                     </button>
-//                                 )}
-//                             </div>
-//                         </div>
-//                     </div>
-//                 ))}
-
-//                 {fetchLoading
-//                     ? fetcheditems.map((index) => <SkeletonItem key={index} />)
-//                     : null}
-//             </div>
-
-//         </>
-//     );
-// }
 import React, { useContext, useEffect, useState } from "react";
 import {
   FaShoppingCart,
   FaRupeeSign,
   FaPlus,
   FaMinus,
-
   FaInfoCircle,
+  FaPenAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -133,15 +13,16 @@ import { useSelector } from "react-redux";
 
 import RestaurantContext from "../../context/RestaurantContext";
 import NoDatComponent from "../common/NoDatComponent";
-
+import FeedbackModal from "../modals/FeedbackModal";
+import feedback from "../../images/feedback-removebg-preview.png";
 export default function Card({ veg, nonVeg }) {
   const navigate = useNavigate();
   const {
     fetcheditemsCopy,
     setFetcheditemsCopy,
- 
-    activeCategoryId, setActiveCategoryId
-    
+
+    activeCategoryId,
+    setActiveCategoryId,
   } = useContext(RestaurantContext);
 
   const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
@@ -149,18 +30,15 @@ export default function Card({ veg, nonVeg }) {
   // const [fetcheditems, setFetcheditems] = useState([]);
   const restroLoading = useSelector((state) => state.restrodetail.loading);
   const [isAnimating, setIsAnimating] = useState(false);
-  
+
   const [cart, setCart] = useState([]); // New cart state
   const [popoverVisible, setPopoverVisible] = useState(false);
   const handlePopoverToggle = (menuItemId) => {
-   
     setPopoverVisible((prev) => ({
       ...prev,
       [menuItemId]: !prev[menuItemId],
     }));
   };
-  
-
 
   // useEffect(() => {
   //     if (restroDetails !== null) {
@@ -175,7 +53,7 @@ export default function Card({ veg, nonVeg }) {
   // }, [response]);
 
   // Load the cart from localStorage when the component mounts
-  
+
   useEffect(() => {
     let filteredItems = originalItems;
 
@@ -328,11 +206,12 @@ export default function Card({ veg, nonVeg }) {
       </div>
     </div>
   );
- 
+
   return (
     <>
       {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
       {fetchLoading ? <div className="overlay"></div> : null}
+      <FeedbackModal />
       <div
         style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
       >
@@ -344,7 +223,8 @@ export default function Card({ veg, nonVeg }) {
                   width: "100%",
                   maxWidth: "350px",
                   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                  opacity:data?.isActive || data?.Category?.isActive ? "1" : "0.5",
+                  opacity:
+                    data?.isActive || data?.Category?.isActive ? "1" : "0.5",
                   transition: "opacity 0.3s ease-in-out",
                 }}
               >
@@ -356,7 +236,7 @@ export default function Card({ veg, nonVeg }) {
                   }}
                 >
                   <img
-                   src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`} 
+                    src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
                     className="card-img-left"
                     alt="FoodImage"
                     style={{
@@ -378,34 +258,46 @@ export default function Card({ veg, nonVeg }) {
                         fontWeight: "bold",
                         marginBottom: "0.5rem",
                         color: "#333",
-                        
                       }}
                     >
-                      <div className="col-md-12">
-                      {data?.name}
-                      </div>
-                      <div className="col-md-1">
-                      <small
-                        className={
-                          data?.veg
-                            ? "badge bg-success mx-2 "
-                            : "badge bg-danger mx-2"
-                        }
-                        style={{ fontSize: "0.7rem" }}
+                      <div
+                        style={{
+                          justifyContent: "space-between",
+                          display: "flex",
+                        }}
                       >
-                        {data?.veg ? "veg" : "nonveg"}
-                      </small>
+                        <div className="col-md-12">{data?.name}</div>
+                        <div
+                          className="col-md-1 "
+                          style={{ alignContent: "right" }}
+                        >
+                          {data?.veg ? (
+                            <div
+                              className="badge bg-success "
+                              style={{ fontSize: "0.7rem" }}
+                            >
+                              Veg
+                            </div>
+                          ) : (
+                            <div
+                              className="badge bg-danger "
+                              style={{ fontSize: "0.7rem" }}
+                            >
+                              NonVeg
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <p
+                    {/* <p
                       style={{
                         color: "#f84f40",
                         fontSize: "1rem",
                         marginBottom: "1rem",
                       }}
                     >
-                      {/* {data?.Category?.name} */}
-                    </p>
+                      {data?.Category?.name}
+                    </p> */}
                     <p
                       style={{
                         fontSize: "1.25rem",
@@ -415,7 +307,10 @@ export default function Card({ veg, nonVeg }) {
                     >
                       <FaRupeeSign /> {data.price}
                     </p>
-                    <div className="d-flex align-items-center" style={{justifyContent:"space-between"}}>
+                    <div
+                      className="d-flex align-items-center"
+                      style={{ justifyContent: "space-between" }}
+                    >
                       {cart?.find(
                         (item) => item.menuItemId === data.menuItemId
                       ) ? (
@@ -501,65 +396,48 @@ export default function Card({ veg, nonVeg }) {
                         </div>
                       )}
                       <div
-      className="mt-5 "
-      style={{ position: "relative", display: "inline-block" }}
-          
-          
-    >
-      <FaInfoCircle
-  size={22}
-  onClick={() => handlePopoverToggle(data.menuItemId)}
-  style={{ cursor: "pointer",color:"purple" }}
-/>
+                        className="mt-5 "
+                        style={{
+                          position: "relative",
+                          display: "inline-block",
+                        }}
+                      >
+                        <FaInfoCircle
+                          size={22}
+                          onClick={() => handlePopoverToggle(data.menuItemId)}
+                          style={{ cursor: "pointer", color: "purple" }}
+                        />
 
+                        {popoverVisible[data.menuItemId] && (
+                          <div
+                            className="popover"
+                            style={{
+                              visibility: popoverVisible[data.menuItemId]
+                                ? "visible"
+                                : "hidden",
+                              opacity: popoverVisible[data.menuItemId] ? 1 : 0,
+                              // "auto" may be used depending on the browser
+                            }}
+                          >
+                            {/* Popover content goes here */}
 
-{popoverVisible[data.menuItemId] && (
+                            <div>{data.description}</div>
                             <div
-                              className="popover"
                               style={{
-  position: "absolute",
-  left: "auto",
-  minWidth: "200px",
-  minHeight: "40px",
-  maxHeight: "100px",
-  overflowY: "scroll", // Enable vertical scrolling
-  WebkitOverflowScrolling: "touch", // Enable smooth scrolling on touch devices
-  maxWidth: "260px",
-  right: "120%",
-  transform: "translateY(-50%)",
-  boxShadow: "2px 2px 2px 2px purple",
-  padding: "10px",
-  borderColor: "purple",
-  borderRadius: "10px",
-  zIndex: "999",
-  visibility: popoverVisible[data.menuItemId] ? "visible" : "hidden",
-  opacity: popoverVisible[data.menuItemId] ? 1 : 0,
-  transition: "opacity 0.3s, visibility 0.3s",
-  backgroundColor: "whiteSmoke",
-}}
-
-                            >
-                              {/* Popover content goes here */}
-
-                              <div>{data.description}</div>
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: "50%",
-                                  left: "100%",
-                                  width: 0,
-                                  height: 0,
-                                  borderTop: "8px solid transparent",
-                                  borderBottom: "8px solid transparent",
-                                  borderLeft: "8px solid #fff", // Same as background color of the popover
-                                }}
-                              />
-                            </div>
-                          )}
-
-    </div> 
-    </div>
-                    
+                                position: "absolute",
+                                top: "50%",
+                                left: "100%",
+                                width: 0,
+                                height: 0,
+                                borderTop: "8px solid transparent",
+                                borderBottom: "8px solid transparent",
+                                borderLeft: "8px solid #fff", // Same as background color of the popover
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -572,16 +450,27 @@ export default function Card({ veg, nonVeg }) {
             ))
           : null}
       </div>
-      <div
-        className="floating-cart-icon"
-        onClick={() => {
-          navigate("/cart");
-        }}
-      >
-        <FaShoppingCart size={32} />
-        {savedCart?.length > 0 && (
-          <div className="item-count">{savedCart?.length}</div>
-        )}
+
+      <div className="d-flex">
+        <div
+          className="floating-cart-icon "
+          style={{ right: "80px" ,backgroundColor:"purple",color:"purple"}}
+          data-bs-toggle="modal"
+          data-bs-target="#FeedbackModal"
+        >
+          <img src={feedback} alt="Feedback-icon" height={40} width={40} style={{color:"purple"}}/>
+        </div>
+        <div
+          className="floating-cart-icon"
+          onClick={() => {
+            navigate("/cart");
+          }}
+        >
+          <FaShoppingCart size={32} />
+          {savedCart?.length > 0 && (
+            <div className="item-count">{savedCart?.length}</div>
+          )}
+        </div>
       </div>
     </>
   );

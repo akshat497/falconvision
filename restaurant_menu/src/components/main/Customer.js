@@ -6,17 +6,21 @@ import ReactSwitch from "react-switch";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategory, fetchItem } from "../../redux/items/itemThunk";
 import RestaurantContext from "../../context/RestaurantContext";
-import { FaRegDotCircle } from "react-icons/fa";
+import { FaFilter, FaRegDotCircle, FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
+import FilterModal from "./FilterModal";
+
 
 export default function Customer() {
   // let params = useParams();
   let dispatch = useDispatch();
-  const { fetcheditemsCopy ,nonvegOnly, setnontVegOnly,vegOnly,setVegOnly,} = useContext(RestaurantContext);
-  
+  const { fetcheditemsCopy,setFetcheditemsCopy, nonvegOnly, setnontVegOnly, vegOnly, setVegOnly ,fetcheditems} =
+    useContext(RestaurantContext);
+
   const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
   const fetchdItem = useSelector((state) => state.fetchitem.f_item);
-
+  const [sortOrder, setsortOrder] = useState("");
   const params = JSON.parse(localStorage.getItem("params"));
+  const [categoryName, setcategoryName] = useState(false);
   useEffect(() => {
     if (fetchdItem === null) {
       dispatch(fetchItem(params.userId));
@@ -24,9 +28,40 @@ export default function Customer() {
     }
   }, [fetchdItem]);
 
+  const sort = () => {
+    const neutralCase=fetcheditems;
+    const sortedData = [...fetcheditems]?.sort((a, b) => {
+      const priceA = Number(a?.price);
+      const priceB = Number(b?.price);
+  
+      if (sortOrder === "ace") {
+        
+        setsortOrder("dec");
+        return priceA - priceB;
+      } else if (sortOrder === "dec") {
+        setsortOrder("");
+        return neutralCase
+        
+      } else if(sortOrder===""){
+        setsortOrder("ace");
+        return priceB - priceA;
+       
+      
+      }
+    });
+  
+    // If sortOrder is not "ace" or "dec", set it to an empty string (neutral state)
+   
+  
+    setFetcheditemsCopy(sortedData);
+  };
+  
+  
+
   return (
     <>
       {fetchLoading ? <div className="overlay"></div> : null}
+      <FilterModal />
       <Header />
       {/* <div className="d-flex justify-content-between margin ">
   <div className="d-flex ">
@@ -56,105 +91,10 @@ export default function Customer() {
         />
       </div>
   </div> */}
-      <div className="d-flex  mt-4 p-2">
-        {nonvegOnly===true
-        ?
-        <>
-        <div
-          className="d-flex btn mr-2"
-          style={{
-            maxHeight: "100px",
-            cursor: "pointer",
-            border: "1px solid #ccc",
-            padding: "5px 10px 5px 10px",
-            borderRadius: "30px",
-            opacity:"0.5"
-          }}
-         
-          
-        >
-          <div>
-            <FaRegDotCircle className="text-success mx-1" size={20} />
-          </div>
-          <div> 
-          veg
-          </div>
-        </div>
-        </>
-        :
-        <>
-        <div
-          className="d-flex btn mr-2"
-          style={{
-            maxHeight: "100px",
-            cursor: "pointer",
-            border: "1px solid #ccc",
-            padding: "5px 10px 5px 10px",
-            borderRadius: "30px",
-            backgroundColor:vegOnly===true?"#fff":"",
-            color:vegOnly===true?"green":"",
-            boxShadow:vegOnly===true?"2px 2px 1px 1px green":""
-          }}
-          onClick={() => setVegOnly(vegOnly === false ? true : false)}
-          
-        >
-          <div>
-            <FaRegDotCircle className="text-success mx-1" size={20} />
-          </div>
-          <div> 
-          veg
-          </div>
-        </div>
-        </>}
-        {
-          vegOnly===true
-          ?<>
-          <div
-          className="d-flex btn"
-          style={{
-            maxHeight: "100px",
-            cursor: "pointer",
-            border: "1px solid #ccc",
-            padding: "5px 10px 5px 10px",
-            borderRadius: "30px",
-            opacity:"0.5",
-           
-          }}
-          
-        >
-          <div>
-            <FaRegDotCircle className="text-danger mx-1" size={20} />
-          </div>
-          <div>non veg</div>
-        </div>
-          </>
-          :
-          <>
-          <div
-          className="d-flex btn"
-          style={{
-            maxHeight: "100px",
-            cursor: "pointer",
-            border: "1px solid #ccc",
-            padding: "5px 10px 5px 10px",
-            borderRadius: "30px",
-            backgroundColor:nonvegOnly===true?"#fff":"",
-            color:nonvegOnly===true?"red":"",
-            boxShadow:nonvegOnly===true?"2px 2px 1px 1px red":""
-          }}
-          onClick={() => setnontVegOnly(nonvegOnly === true ? false : true)}
-        >
-          <div>
-            <FaRegDotCircle className="text-danger mx-1" size={20} />
-          </div>
-          <div>non veg</div>
-        </div>
-          </>
-        }
-      </div>
+      
 
       <Card id={params.userId} veg={vegOnly} nonVeg={nonvegOnly} />
-
+    
       {/* <footer style={{textAlign: 'center', background: '#333', color: '#fff'}}>
   Powered by FalconVision <FaEarlybirds size={32}/>
 </footer> */}

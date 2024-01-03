@@ -6,7 +6,9 @@ import RestaurantContext from "../../../context/RestaurantContext";
 import { useParams } from "react-router-dom";
 import qrimage from "../../../images/qr-code-concept-illustration_114360-5933.jpg"
 export default function QrGenerator() {
-  const [tables, setTables] = useState("");
+  // const [tables, setTables] = useState("");
+  const [startNumber, setStartNumber] = useState("");
+  const [endNumber, setEndNumber] = useState("");
   const dispatch = useDispatch();
   const params = useParams();
   const { expanded } = useContext(RestaurantContext);
@@ -16,7 +18,8 @@ export default function QrGenerator() {
 
   const createQr = () => {
     const obj = {
-      tableCount: tables,
+      start:startNumber,
+      end:endNumber,
       // url:"https://ordermanagementbyfalconvesion.netlify.app/",
       URL: window.location.origin,
       userId: restroDetails?.userId,
@@ -60,15 +63,37 @@ export default function QrGenerator() {
         <h2 className="text-center mt-3 mb-4">QR Code Generator</h2>
 
         <div className="input-group mb-3">
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Number of tables"
-            value={tables}
-            style={{ width: "60%", margin: "2%" }}
-            onChange={(e) => setTables(e.target.value)}
-          />
-        </div>
+  {/* First Dropdown */}
+  <select
+    className="form-control"
+    style={{ width: "30%", margin: "2%" }}
+    value={startNumber}
+    onChange={(e) => setStartNumber(e.target.value)}
+  >
+    <option value="" disabled>Start table/room number</option>
+    {Array.from({ length: 1000 }, (_, index) => (
+      <option key={index} value={index + 1}>
+        {index + 1}
+      </option>
+    ))}
+  </select>
+
+  {/* Second Dropdown */}
+  <select
+   className="form-control"
+    style={{ width: "30%", margin: "2%" }}
+    value={endNumber}
+    onChange={(e) => setEndNumber(e.target.value)}
+  >
+    <option value="" disabled>End table/room number </option>
+    {Array.from({ length: 1000 }, (_, index) => (
+      <option key={index} value={index + 1} >
+        {index + 1}
+      </option>
+    ))}
+  </select>
+</div>
+
 
         <div id="qrCodesContainer" className="generated-qrs ">
           {Qrcodes?.length === 0 || Qrcodes === null ? (
@@ -99,7 +124,8 @@ export default function QrGenerator() {
                         src={data}
                         alt="QR Code"
                         className="img-fluid"
-                        title={"table number " + Number(index + 1)}
+                        title={`table number ${Number(startNumber) + Number(index)}`}
+
                       />
                     </div>
                   </>
@@ -115,7 +141,7 @@ export default function QrGenerator() {
               className="btn text-light mx-2"
               onClick={createQr}
               disabled={
-                QrcodesLoading || tables?.length === 0 || tables === null||tables.trim()===""
+                QrcodesLoading || (startNumber.length===0&&endNumber?.length === 0 )|| (startNumber&&endNumber === null)||(startNumber.trim===""&&endNumber.trim()==="")
               }
               style={{ backgroundColor: "purple" }}
             >

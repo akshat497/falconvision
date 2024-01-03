@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
@@ -8,13 +8,19 @@ import { updateCoupon } from '../../../redux/coupon/couponCodeThunk';
 
 export default function UpdateCouponModel({row}) {
     const [name, setname] = useState('')
-    const [discount, setdiscount] = useState('')
+    const [discount, setdiscount] = useState('');
+    const closeUpdateCoupen=useRef()
     const dispatch=useDispatch()
     // const restroDetails = useSelector((state) => state.restrodetail.restro);
     const updatingCoupon = useSelector((state) => state.updatecoupon.updatecouponloading);
     const updatedCoupon = useSelector((state) => state.updatecoupon.updatecoupon);
    
-
+   useEffect(()=>{
+    if(updatedCoupon?.success===true){
+      closeUpdateCoupen.current.click();
+   
+    }
+   },[updatedCoupon])
     useEffect(()=>{
        
         setdiscount(row?.discount)
@@ -53,7 +59,7 @@ export default function UpdateCouponModel({row}) {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Update Coupon</h5>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ref={closeUpdateCoupen}></button>
           </div>
           <div className="modal-body">
           <div>

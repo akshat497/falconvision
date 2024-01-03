@@ -1,23 +1,40 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCategory, deleteItem } from "../../../redux/items/itemThunk";
 
 const DeleteConfirmationModal = ({
   categories,
   itemToDelete,
-  show,
-  onDelete,
-  onCancel,
+  
 }) => {
   const dispatch = useDispatch();
+  const categoryCloseref=useRef();
+  const itemCloseref=useRef()
+
   const deleteLoading = useSelector((state) => state.deleteitem.d_itemLoading);
+  const deleteCategoryResponse = useSelector((state) => state.deletecategory.d_category);
+  const deleteItemResponse = useSelector((state) => state.deleteitem.d_item);
   const deleteLoadingCategory = useSelector(
     (state) => state.deletecategory.d_categoryLoading
   );
+  useEffect(()=>{
 
+    if(deleteCategoryResponse?.success===true){
+      categoryCloseref.current.click()
+    }
+    if(deleteItemResponse?.success===true){
+      itemCloseref.current.click()
+    }
+
+  },[deleteCategoryResponse,deleteItemResponse])
   const deleteitem = () => {
     // (itemToDelete)
-    dispatch(deleteItem(itemToDelete));
+   
+      const obj={
+          menuItemIds:[itemToDelete.menuItemId],
+          userId:itemToDelete.userId
+      }
+      dispatch(deleteItem(obj));
   };
 
   return (
@@ -38,6 +55,7 @@ const DeleteConfirmationModal = ({
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 className="close"
+                ref={itemCloseref}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -81,6 +99,7 @@ const DeleteConfirmationModal = ({
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 className="close"
+                ref={categoryCloseref}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -101,7 +120,11 @@ const DeleteConfirmationModal = ({
                 type="button"
                 className="btn btn-danger"
                 onClick={() => {
-                  dispatch(deleteCategory(categories));
+                  const obj={
+        categoryIds:[categories.categoryId],
+        userId:categories.userId
+    };
+                  dispatch(deleteCategory(obj));
                 }}
               >
                 {deleteLoadingCategory ? "Deleting..." : "Delete"}

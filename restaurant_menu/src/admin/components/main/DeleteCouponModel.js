@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { deleteCoupon } from '../../../redux/coupon/couponCodeThunk';
 
 const DeleteCouponModal = ({row }) => {
 
-   const dispatch= useDispatch()
+   const dispatch= useDispatch();
+   const DeletecoupenRef=useRef()
     const deleteLoading=useSelector((state)=>state.deletecoupon.deletecouponLoading)
+    const deleteCoupenResponse=useSelector((state)=>state.deletecoupon.deletecoupon)
+   
     // const updatingCoupon = useSelector((state) => state.updatecoupon.updatecouponloading);
     
     // const deleteLoadingCategory=useSelector((state)=>state.deletecategory.d_categoryLoading)
 
+   useEffect(()=>{
 
+    if(deleteCoupenResponse?.success===true){
+      DeletecoupenRef.current.click()
+    }
+   },[deleteCoupenResponse])
     const deleteitem=()=>{
         // (itemToDelete)
         const obj={
-            CoupenCodeId:row?.CoupenCodeId,
+          CoupenCodeIds:[row?.CoupenCodeId],
             userId:row?.userId
         }
         dispatch(deleteCoupon(obj))
@@ -28,7 +36,7 @@ const DeleteCouponModal = ({row }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Confirm Deletion</h5>
-            <button type="button" data-bs-dismiss="modal" aria-label="Close" className='close'>
+            <button type="button" data-bs-dismiss="modal" aria-label="Close" className='close' ref={DeletecoupenRef}>
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

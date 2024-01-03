@@ -8,6 +8,7 @@ import { fetchCategory, fetchItem } from "../redux/items/itemThunk";
 import RestaurantContext from "../context/RestaurantContext";
 import { useContext } from "react";
 import NoDatComponent from "../components/common/NoDatComponent";
+import { FaCommentDots, FaShoppingCart } from "react-icons/fa";
 
 export default function Homepage() {
   const navigate=useNavigate()
@@ -31,7 +32,7 @@ export default function Homepage() {
     }
   },[fetchdItem])
   const userid = JSON.stringify(params?.userId);
- 
+
   return (
     <>
       {fetchLoading ? <div className="overlay"></div> : null}
@@ -63,7 +64,7 @@ export default function Homepage() {
 
       <Card id={params.userId} veg={vegOnly} nonVeg={nonvegOnly} />
 
-     
+    
         </>
       )}
       

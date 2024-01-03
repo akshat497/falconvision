@@ -7,16 +7,22 @@ import { updateCategory } from "../../../redux/items/itemThunk";
 
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import NoDatComponent from "../../../components/common/NoDatComponent";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaInfo, FaInfoCircle, FaTrashAlt } from "react-icons/fa";
+import AlertBox from "./alert/AlertBox";
 
 const CategoryTable = ({ categories, onUpdate, searchedText }) => {
+  const categoryCloseRef=useRef()
   const loading = useSelector(
     (state) => state.fetchcategory.fetchedcategoryloading
+  );
+  const updateCategoryResponse = useSelector(
+    (state) => state.updatecategory.u_category
   );
   const [itemData, setItemData] = useState({ name: "" });
   const [clickedRow, setClickedRow] = useState({});
   const [searchText, setSearchText] = useState("");
   const [categoryCopy, setcategoryCopy] = useState("");
+  const [selectedRows, setselectedRows] = useState([]);
   useEffect(() => {
     setcategoryCopy(categories);
   }, [categories]);
@@ -27,7 +33,11 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
   // Object to store deleting status
   const ref = useRef();
   const dispatch = useDispatch();
-
+useEffect(()=>{
+  if(updateCategoryResponse?.success===true){
+    categoryCloseRef.current.click()
+  }
+},[updateCategoryResponse])
   const handleUpdate = (row) => {
     setClickedRow(row);
     ref.current.click();
@@ -159,6 +169,7 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
 
     setcategoryCopy(filteredOrders);
   }, [searchText]);
+  useEffect(()=>{console.log(selectedRows)},[selectedRows])
   return (
     <>
       <div className="my-3">
@@ -169,6 +180,9 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
           value={searchText} // Bind the input value to the searchText state
           onChange={handleSearch} // Call handleSearch function on input change
         />
+         {selectedRows.length > 0 && (
+          <AlertBox selectedRows={selectedRows}/>
+        )}
       </div>
       {loading ? (
         CustomTableSkeleton()
@@ -178,11 +192,16 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
             <NoDatComponent />
           ) : (
             <DataTable
+            
               columns={columns}
               data={categoryCopy}
               highlightOnHover
               pagination
               responsive
+              selectableRows
+              onSelectedRowsChange={(state) => {
+                  setselectedRows(state.selectedRows);
+                }}
             />
           )}
         </div>
@@ -215,6 +234,7 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
                   className="btn-close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
+                  ref={categoryCloseRef}
                 />
               </div>
               <div className="modal-body">

@@ -56,6 +56,7 @@ import {
 import { fetchOrders } from "../orders/orderThunk";
 import { getCouponCode } from "../coupon/couponCodeThunk";
 import { showToast } from "../../services/ToastInstance";
+import { fetchContact } from "../contactus/contactusthunk";
 
 export const addItem = (userData) => async (dispatch) => {
   try {
@@ -111,7 +112,7 @@ export const deleteCategory = (userData) => async (dispatch) => {
     dispatch(setDeleteCategoryloading(true));
 
     const response = await DeleteCategory(userData);
-    if(response){
+    if(response.success===true){
       showToast(response.message,"success");
 
     }
@@ -213,6 +214,7 @@ export const fetchRestraurantDetails = () => async (dispatch) => {
       dispatch(fetchItem(response?.userId));
       dispatch(fetchCategory(response?.userId));
       dispatch(getCouponCode(response?.userId));
+      dispatch(fetchContact())
     }
     dispatch(setRestro(response));
     dispatch(setRestroLoading(false));

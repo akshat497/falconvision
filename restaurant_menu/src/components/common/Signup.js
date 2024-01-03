@@ -172,11 +172,7 @@ function Signup() {
 
   const SendOtp = () => {
     if (formData.phoneNumber.length < 10) {
-      return toast.error("Invalid phone number", {
-        autoClose: false,
-        closeOnClick: true,
-        closeButton: false,
-      });
+     showToast("Invalid phone number")
     }
     const obj = {
       email: formData.email,

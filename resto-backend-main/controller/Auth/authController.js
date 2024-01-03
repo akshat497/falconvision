@@ -280,28 +280,40 @@ const authController = {
         to: email,
         subject: "One-Time Password (OTP) Notification",
         html: `
-          <html>
-            <body>
-              <p>Dear ${name},</p>
-              <p>We trust this message finds you well. As part of our secure authentication process, we have generated a One-Time Password (OTP) for your account. Your OTP details are as follows:</p>
-          
-              <p><strong>OTP:</strong> ${otp}</p>
-          
-              <p>This additional layer of security ensures the protection of your account and sensitive information. Please use the provided OTP promptly to complete your desired action.</p>
-          
-              <p>Please note that the OTP will expire in 7 minutes. If you did not request this OTP or have any concerns regarding your account security, kindly reach out to our support team immediately at ${process.env.falcon_vision_Email}.</p>
-          
-              <p>Thank you for choosing Falcon Vision. We appreciate your continued trust in our services.</p>
-          
-              <p>Best regards,</p>
-              <p>Falcon Vision</p>
-              
-              
-            </body>
-          </html>
+        <!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>One-Time Password (OTP) Notification</title>
+        </head>
+        
+        <body style="font-family: Arial, sans-serif;">
+        
+          <h2>One-Time Password (OTP) Notification</h2>
+        
+          <p>Dear ${name},</p>
+        
+          <p>We trust this message finds you well. As part of our secure authentication process, we have generated a One-Time Password (OTP) for your account. Your OTP details are as follows:</p>
+        
+          <p><strong>OTP:</strong> ${otp}</p>
+        
+          <p>This additional layer of security ensures the protection of your account and sensitive information. Please use the provided OTP promptly to complete your desired action.</p>
+        
+          <p>Please note that the OTP will expire in 7 minutes. If you did not request this OTP or have any concerns regarding your account security, kindly reach out to our support team immediately at ${process.env.falcon_vision_Email}.</p>
+        
+          <p>Thank you for choosing Falcon Vision. We appreciate your continued trust in our services.</p>
+        
+          <p>Best regards,</p>
+          <p>Falcon Vision Team 🚀</p>
+        
+        </body>
+        
+        </html>
+        
         `,
       });
-      
 
       // Send OTP via SMS
       sendMessage({
@@ -410,45 +422,61 @@ const authController = {
           },
           to: trimmedEmail,
           subject: "Password Reset - Falcon Vision",
-          text: `
-          Dear ${name},
+          html: `
+            <!DOCTYPE html>
+<html lang="en">
 
-          We hope this message finds you well. It has come to our attention that you have requested to reset your password. Please follow the link below to proceed with the password reset:
-      
-          ${resetUrl}
-      
-          Please note that this link is only valid for 30 minutes. If you did not initiate this password reset or have any concerns, please contact our support team immediately at ${process.env.falcon_vision_Email}.
-      
-          Your security is our top priority, and we appreciate your prompt attention to this matter.
-      
-          Best regards,
-      
-          Falcon-vision
-  `,
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset - Falcon Vision</title>
+</head>
+
+<body style="font-family: Arial, sans-serif;">
+
+  <h2>Password Reset - Falcon Vision</h2>
+
+  <p>Dear ${name},</p>
+
+  <p>🔐 We hope this message finds you well. It has come to our attention that you have requested to reset your password. Please follow the link below to proceed with the password reset:</p>
+
+  <p><a href=${resetUrl}>Password Reset Link</a></p>
+
+  <p>Please note that this link is only valid for 30 minutes. If you did not initiate this password reset or have any concerns, please contact our support team immediately at ${process.env.falcon_vision_Email}.</p>
+
+  <p>Your security is our top priority, and we appreciate your prompt attention to this matter.</p>
+
+  <p>Best regards,</p>
+  <p>Falcon Vision Team 🚀</p>
+
+</body>
+
+</html>
+`,
         });
       }
 
       // Send SMS
-      if (trimmedPhoneNumber) {
-        var smsReq = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
+      // if (trimmedPhoneNumber) {
+      //   var smsReq = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
 
-        smsReq.headers({
-          authorization: process.env.QUICK_SMS_API,
-        });
+      //   smsReq.headers({
+      //     authorization: process.env.QUICK_SMS_API,
+      //   });
 
-        smsReq.form({
-          message: `Click on the following link to reset your password: ${resetUrl}`,
-          language: "english",
-          route: "q",
-          numbers: trimmedPhoneNumber,
-        });
+      //   smsReq.form({
+      //     message: `Click on the following link to reset your password: ${resetUrl}`,
+      //     language: "english",
+      //     route: "q",
+      //     numbers: trimmedPhoneNumber,
+      //   });
 
-        smsReq.end(function (smsRes) {
-          if (smsRes.error) throw new Error(smsRes.error);
+      //   smsReq.end(function (smsRes) {
+      //     if (smsRes.error) throw new Error(smsRes.error);
 
-          console.log(smsRes.body);
-        });
-      }
+      //     console.log(smsRes.body);
+      //   });
+      // }
 
       return res.json({ message: "Password reset link sent" });
     } catch (error) {
@@ -532,7 +560,6 @@ const authController = {
       }
     });
   },
-  
 };
 
 function generateOTP() {

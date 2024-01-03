@@ -52,9 +52,9 @@ const FAQPage = () => {
      
      <ClientHeader />
       
-      <div className="faq-section " >
+      <div className="faq-section " style={{minHeight:"100vh"}}>
         {faqData.map((item, index) => (
-          <div key={index} className="faq-item">
+          <div key={index} className="faq-item" >
             <div
               className={`faq-question ${index === expandedIndex ? "active" : ""}`}
               onClick={() => handleToggle(index)}

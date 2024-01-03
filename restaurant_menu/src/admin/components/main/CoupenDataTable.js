@@ -3,7 +3,6 @@ import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSwitch from "react-switch";
 
-
 import RestaurantContext from "../../../context/RestaurantContext";
 import { useContext } from "react";
 import { useEffect } from "react";
@@ -12,7 +11,8 @@ import { updateCoupon } from "../../../redux/coupon/couponCodeThunk";
 import UpdateCouponModel from "./UpdateCouponModel";
 import DeleteCouponModal from "./DeleteCouponModel";
 import NoDatComponent from "../../../components/common/NoDatComponent";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrash, FaTrashAlt } from "react-icons/fa";
+import AlertBox from "./alert/AlertBox";
 
 export default function CoupenDataTable() {
   const fetchLoading = useSelector((state) => state.fetchitem.f_itemloading);
@@ -20,7 +20,7 @@ export default function CoupenDataTable() {
 
   const {
     isDarkMode,
-   
+
     fetchedCoupens,
     setfetchedCoupens,
   } = useContext(RestaurantContext);
@@ -29,6 +29,7 @@ export default function CoupenDataTable() {
 
   const [searchText, setSearchText] = useState("");
   const [clickedRow, setclickedRow] = useState([]);
+  const [selectedRows, setselectedRows] = useState([]);
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     setSearchText(searchTerm);
@@ -36,16 +37,17 @@ export default function CoupenDataTable() {
   useEffect(() => {
     const filteredOrders = couponCodes?.filter((item) => {
       const lowerCaseSearchText = searchText.toLowerCase();
-  
+
       return (
         item.name.toLowerCase().includes(lowerCaseSearchText) ||
-        (typeof item.discount === 'number' && item.discount.toString().includes(lowerCaseSearchText))
+        (typeof item.discount === "number" &&
+          item.discount.toString().includes(lowerCaseSearchText))
       );
     });
-  
+
     setfetchedCoupens(filteredOrders);
   }, [searchText, couponCodes, setfetchedCoupens]);
-  
+
   const handleToggleActive = (row) => {
     if (row.isActive) {
       const body = {
@@ -71,6 +73,7 @@ export default function CoupenDataTable() {
     {
       name: "Name",
       selector: "name",
+
       sortable: true,
     },
 
@@ -94,7 +97,6 @@ export default function CoupenDataTable() {
             id={`switch-${row?.categoryId}`}
             onColor="#800080" // Set the color when the switch is on (purple)
             offColor="#d3d3d3"
-            
           />
         </div>
       ),
@@ -113,21 +115,21 @@ export default function CoupenDataTable() {
             data-bs-target="#updatecoupon"
             // data-bs-toggle="modal"
             //  data-bs-target="#exampleModal"
-            style={{ color: "purple",cursor:"pointer" }}
+            style={{ color: "purple", cursor: "pointer" }}
           >
-            <FaEdit size={32}/>
+            <FaEdit size={32} />
           </div>
           <div
             onClick={() => {
               setclickedRow(row);
             }}
             className=" text-danger mx-4"
-            style={{ cursor:"pointer" }}
+            style={{ cursor: "pointer" }}
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteCouponModel"
           >
-            <FaTrashAlt size={32}/>
+            <FaTrashAlt size={32} />
           </div>
         </div>
       ),
@@ -211,8 +213,12 @@ export default function CoupenDataTable() {
           value={searchText}
           onChange={handleSearch}
         />
+
+        {selectedRows.length > 0 && (
+          <AlertBox selectedRows={selectedRows}/>
+        )}
       </div>
-      {fetchedCoupens?.length === 0 || fetchedCoupens === null ? (
+      {couponCodes?.length === 0 || couponCodes === null ? (
         <NoDatComponent />
       ) : (
         <div
@@ -221,14 +227,20 @@ export default function CoupenDataTable() {
           {fetchLoading ? (
             CustomTableSkeleton()
           ) : (
-            <DataTable
-              columns={columns}
-              data={fetchedCoupens || []}
-              customStyles={customStyles}
-              highlightOnHover
-              pagination
-              responsive
-            />
+            <>
+              <DataTable
+                columns={columns}
+                data={fetchedCoupens || []}
+                customStyles={customStyles}
+                highlightOnHover
+                pagination
+                responsive
+                selectableRows
+                onSelectedRowsChange={(state) => {
+                  setselectedRows(state.selectedRows);
+                }}
+              />
+            </>
           )}
         </div>
       )}

@@ -10,13 +10,7 @@ export const createContact = (userdata) => async (dispatch) => {
     dispatch(setContactusloading(true));
     const response = await CreateContactus(userdata);
     if(response.message==="Contact Us created successfully"){
-        toast.success("Thank you for contacting us",{
-            autoClose:false,
-            closeOnClick:true,
-            closeButton:true
-    
-            
-          })
+       showToast("Thank you for contacting us","success")
     }
     dispatch(setContactusloading(false));
     dispatch(setContactus(response));
@@ -43,7 +37,11 @@ export const deleteContact = (userdata) => async (dispatch) => {
   try {
     dispatch(setdeleteContactusloading(true));
     const response = await DeleteFeedback(userdata);
-  
+     if(response?.success===true){
+      showToast("Successfully deleted.","success");
+      
+      dispatch(fetchContact())
+     }
     dispatch(setdeleteContactusloading(false));
     dispatch(setdeleteContactus(response));
   } catch (error) {

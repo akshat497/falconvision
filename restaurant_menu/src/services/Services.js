@@ -68,11 +68,11 @@ export const FetchItem = async (ID) => {
     throw error;
   }
 };
-export const DeleteItem = async (data) => {
+export const DeleteItem = async (obj) => {
   
   try {
   
-    const response = await createAxiosInstance().delete(`${DELETEITEM_URL}/${data.menuItemId}/${data.userId}`);
+    const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+"deleteMenuItemsByIds",obj);
     return response.data;
   } catch (error) {
     throw error;
@@ -111,7 +111,7 @@ export const DeleteCategory = async (body) => {
   
   try {
     
-    const response = await createAxiosInstance().delete(`${DELETE_CATEGORY_URL}/${body.categoryId}/${body.userId}`);
+    const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+"deleteCategoryById",body);
     return response.data;
   } catch (error) {
     throw error;
@@ -323,7 +323,7 @@ export const DeleteCouponCode = async (obj) => {
  
   try {
  
-    const response = await createAxiosInstance().delete(process.env.REACT_APP_BASE_URL+`deleteCoupenCodeById/${obj.CoupenCodeId}/${obj.userId} `);
+    const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+`deleteCoupenCodeByIds`,obj);
  
     return response.data;
   } catch (error) {
@@ -367,11 +367,11 @@ export const FetchFeedbacks = async (obj) => {
 
 };
 
-export const DeleteFeedback = async (Id) => {
+export const DeleteFeedback = async (obj) => {
  
   try {
  
-    const response = await createAxiosInstance().delete(process.env.REACT_APP_BASE_URL+`deletecontactus/${Id}`);
+    const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+`deletecontactus`,obj);
  
     return response.data;
   } catch (error) {

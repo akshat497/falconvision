@@ -11,6 +11,7 @@ import {
   FaEarlybirds,
 
   FaTimes,
+  FaRegDotCircle,
  
 } from "react-icons/fa";
 import FilterModal from "../main/FilterModal";
@@ -162,14 +163,15 @@ useEffect(() => {
   //   dispatch(setFetchedItem(allItemaCopy))
   // },[allItemaCopy])
   // (id)
+  
   return (
     <>
    
-      
-  <div>
-  <nav className={`navbar navbar-expand-lg navbar-light bg-light ${visible ? 'bg-light text-dark navbar-show sticky-top' : 'bg-light navbar-hide'} `}>
-  <div className="container-fluid">
-  <Link to='/' className="navbar-brand  ">
+ 
+  
+  <div className="d-flex " style={{justifyContent:"space-between",backgroundColor:"whiteSmoke",padding:"10px"}}>
+      <div className="">
+      <Link to='/' className="navbar-brand  ">
   <div style={{ justifyContent: "right", textAlign: "right", alignContent: "right" }}>
   <div>
     <span className="fw-bold">{Name}</span>
@@ -180,144 +182,48 @@ useEffect(() => {
 </div>
 
 </Link>
-
-
-    <button
-      className="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span className="navbar-toggler-icon" />
-    </button>
-
-    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-        <li className="nav-item">
-          <a
-            className="nav-link active"
-            aria-current="page"
-            href="#"
-            onClick={sort}
-          >
-            <span className="fw-bold">Sort</span>
-            {sortOrder === "" ? (
-              <FaSort />
-            ) : sortOrder === "ace" ? (
-              <FaSortDown />
-            ) : (
-              <FaSortUp />
-            )}
-          </a>
-        </li>
-
-        {/* <li className="nav-item dropdown">
-      <a
-        className="nav-link dropdown-toggle"
-        id="navbarDropdown"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {categoryName ? fetcheditemsCopy[0]?.Category?.name : 'Category'}
-      </a>
-      <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-        {category?.map((data) => (
-          <li key={data?.categoryId}>
-            {data?.isActive ? (
-              <li
-                className="dropdown-item"
-                onClick={handleFilter}
-                id={data?.categoryId}
-              >
-                {data?.name}
-              </li>
-            ) : (
-              <li className="dropdown-item" id={data?.categoryId}>
-                {data?.name + ' (Currently Unavailable)'}
-              </li>
-            )}
-          </li>
-        ))}
-        <li
-          className="dropdown-item ml-3"
-          onClick={() => {
-            setcategoryName(false);
-            setFetcheditemsCopy(fetcheditems);
-            setsortOrder('');
-          }}
-        >
-          All
-        </li>
-      </ul>
-    </li> */}
-
-        <li className="nav-item">
-          <li
-            className="nav-link active"
-            aria-current="page"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            <span className="fw-bold"><FaFilter /> Filter</span>
-          </li>
-        </li>
-      </ul>
-
-      <form className="d-flex">
-        <div className="input-group " style={{borderRight:"none"}}>
-          <input
-            className="form-control"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-            onChange={handleSearch}
-            value={searchInput}
-          />
-          <div className="mt-1">
-            {!searchInput.length > 0 ? (
-             
-                <div className="btn text-light" style={{backgroundColor:"purple",borderLeft:"none"}}>
-                <FaSearch />
-                </div>
-             
-            ) : (
-              <div
-              className="btn text-light" 
-              style={{backgroundColor:"purple",borderLeft:"none"}}
-                   onClick={() => {
-                  setsearchInput("");
-                  
-                }}
-             
-              >
-                <FaTimes />
-              </div>
-            )}
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</nav>
-  </div>
-
-      <div>
-        {/* <button type="button" className="btn btn-primary "  data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-  </button> */}
-        {/* Modal */}
-        <FilterModal />
+  
+       
+          
+        
       </div>
-      <div className="card-container mt-5 d-flex">
+      <div className="d-flex">
+            <div className="input-group" >
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                onChange={handleSearch}
+                value={searchInput}
+                style={{ borderRight: "none" ,height:"35px"}}
+              />
+              <div className="mt-1">
+                {!searchInput.length > 0 ? (
+                  <div className="btn text-light" style={{ backgroundColor: "purple", borderLeft: "none" }}>
+                    <FaSearch  />
+                  </div>
+                ) : (
+                  <div
+                    className="btn text-light"
+                    style={{ backgroundColor: "purple", borderLeft: "none" }}
+                    onClick={() => {
+                      setsearchInput("");
+                    }}
+                  >
+                    <FaTimes />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+    </div>
+    <div className="card-container d-flex mt-2">
       <div
         className={`mx-1 ${activeCategoryId === null ? 'btn-active' : ''}`}
         style={{
           maxHeight: "100px",
-          marginTop: "6%",
+          
           cursor: "pointer",
           border: "1px solid #ccc",
           padding: "8px",
@@ -333,7 +239,7 @@ useEffect(() => {
           className={`mx-1 ${activeCategoryId === categoryItem.categoryId ? 'btn-active' : ''}`}
           style={{
             maxHeight: "100px",
-            marginTop: "6%",
+           
             cursor: "pointer",
             border: "1px solid #ccc",
             padding: "8px",
@@ -347,6 +253,146 @@ useEffect(() => {
       ))}
      
     </div>
+ 
+
+    <div
+        className="d-flex  mt-4 p-2"
+        style={{ justifyContent: "space-between" }}
+      >
+        <div className="d-flex">
+          {nonvegOnly === true ? (
+            <>
+              <div
+                className="d-flex btn mr-2"
+                style={{
+                  maxHeight: "100px",
+                  cursor: "not-allowed",
+                  border: "1px solid #ccc",
+                  padding: "5px 10px 5px 10px",
+                  borderRadius: "30px",
+                  opacity: "0.5",
+                }}
+              >
+                <div>
+                  <FaRegDotCircle className="text-success mx-1" size={20} />
+                </div>
+                <div>veg</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="d-flex btn mr-2"
+                style={{
+                  maxHeight: "100px",
+                  cursor: nonvegOnly===true?"not-allowed":"pointer",
+                  border: "1px solid #ccc",
+                  padding: "5px 10px 5px 10px",
+                  borderRadius: "30px",
+                  backgroundColor: vegOnly === true ? "#fff" : "",
+                  color: vegOnly === true ? "green" : "",
+                  boxShadow: vegOnly === true ? "2px 2px 1px 1px green" : "",
+                  
+                }}
+                onClick={() => setVegOnly(vegOnly === false ? true : false)}
+              >
+                <div>
+                  <FaRegDotCircle className="text-success mx-1" size={20} />
+                </div>
+                <div>veg</div>
+              </div>
+            </>
+          )}
+          {vegOnly === true ? (
+            <>
+              <div
+                className="d-flex btn"
+                style={{
+                  maxHeight: "100px",
+                  cursor: "not-allowed",
+                  border: "1px solid #ccc",
+                  padding: "5px 10px 5px 10px",
+                  borderRadius: "30px",
+                  opacity: "0.5",
+                }}
+              >
+                <div>
+                  <FaRegDotCircle className="text-danger mx-1" size={20} />
+                </div>
+                <div>non veg</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="d-flex btn"
+                style={{
+                  maxHeight: "100px",
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                  padding: "5px 10px 5px 10px",
+                  borderRadius: "30px",
+                  backgroundColor: nonvegOnly === true ? "#fff" : "",
+                  color: nonvegOnly === true ? "red" : "",
+                  boxShadow: nonvegOnly === true ? "2px 2px 1px 1px red" : "",
+                }}
+                onClick={() =>
+                  setnontVegOnly(nonvegOnly === true ? false : true)
+                }
+              >
+                <div>
+                  <FaRegDotCircle className="text-danger mx-1" size={20} />
+                </div>
+                <div>non veg</div>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="d-flex ">
+          <div
+            className="mx-2"
+            style={{
+              maxHeight: "100px",
+              cursor: "pointer",
+              border: "1px solid #ccc",
+              padding: "5px 10px 5px 10px",
+              borderRadius: "30px",
+            
+            }}
+            data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+          >
+            <FaFilter
+              size={20}
+              style={{ color: "purple" }}
+            
+            />
+            Filter
+          </div>
+          <div
+            style={{
+              maxHeight: "100px",
+              cursor: "pointer",
+              border: "1px solid #ccc",
+              padding: "5px 10px 5px 10px",
+              borderRadius: "30px",
+            
+            }}
+            onClick={()=>{sort()}}
+          >
+           {sortOrder === "" ? (
+            <FaSort size={20} style={{ color: "purple" }} />
+            ) : sortOrder === "ace" ? (
+              <FaSortDown  size={20} style={{ color: "purple" }}/>
+            ) : (
+              <FaSortUp  size={20} style={{ color: "purple" }} />
+            )}
+            
+            Sort
+          </div>
+        </div>
+      </div>
+    
      
     </>
   );

@@ -24,6 +24,14 @@ const ContactUs = sequelize.define('contactus', {
         allowNull:false,
         defaultValue:false
         
+    },
+    userId:{
+        type : DataTypes.UUID ,
+        references: {
+            model: 'users',
+            key: 'userId'  // reference to the unique identifier field in users table
+            }
+
     }
 }, {
     tableName: 'contactus'

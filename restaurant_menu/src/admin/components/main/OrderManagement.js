@@ -150,7 +150,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             )}
             {row.Orders[0]?.isActive ? (
               <button
-                onDoubleClick={() => rejectOrder(row)}
+                onClick={() => rejectOrder(row)}
                 className={
                   row.Orders[0]?.isActive
                     ? "btn btn-sm btn-outline-danger mx-2 "
@@ -161,7 +161,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               </button>
             ) : (
               <button
-                onDoubleClick={() => UndoOrder(row)}
+                onClick={() => UndoOrder(row)}
                 className={"btn btn-sm btn-outline-danger mx-2 "}
               >
                 undo{" "}

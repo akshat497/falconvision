@@ -8,6 +8,7 @@ const CustomErrorHandler = require("../services/CustomErrorHandler");
 const CustomResponseHandler = require("../services/CustomResponseHandler");
 const User = require("../models/user");
 const fs =require("fs")
+
 const deleteImage = async (imagePath) => {
   try {
     await fs.promises.unlink(path.normalize(imagePath));
@@ -17,6 +18,7 @@ const deleteImage = async (imagePath) => {
     // Handle error appropriately, such as logging or returning an error response
   }
 };
+
 const menuItemController = {
   getMenuItemById: async (req, res, next) => {
     const { userId } = req.params;
@@ -39,7 +41,7 @@ const menuItemController = {
         });
 
         if (menuItems.length < 1) {
-            return res.json(CustomResponseHandler.negativeResponse("No Item Found", 404, []));
+            return res.json(CustomResponseHandler.negativeResponse(user.name, 404, []));
         }
 
         const formattedMenuItems = menuItems.map((menuItem) => {
@@ -197,9 +199,10 @@ const menuItemController = {
     }
   },
   addMenuItem: async (req, res, next) => {
-    
+    console.log("file:",req.file)
     try {
       authentication(req, res, async () => {
+        
         const { name, imageUrl, price, isActive, userId, categoryId, veg, type,description } = req.body;
        
        
@@ -227,6 +230,11 @@ const menuItemController = {
         //   return res.status(403).json({message:"Your account does't have permission to perform this action"});
         // }
         // Create a new menu item in the database
+       
+       if(req.file.size>512000){
+        await deleteImage(req.file.path);
+        return res.status(500).json({message:"Image size should be under 500kb"})
+       }
         const newItem = await MenuItem.create({
           name,
           userId,
@@ -272,41 +280,44 @@ const menuItemController = {
         res.json(CustomResponseHandler.positiveResponse("Menu Item Added Successfully",formattedDoc));
       });
     } catch (err) {
+      console.error(err.stack);
       return next(err);
     }
   },
   deleteMenuItem: async (req, res, next) => {
-    const { menuItemId,userId } = req.params;
+    const { menuItemIds,userId } = req.body;
     try {
     authentication(req,res,async()=>{
       if (req.user.userId !== userId) {
         return next(CustomErrorHandler.UnAuthorised());
       }
-      if (!menuItemId || !userId) {
-        return next(CustomErrorHandler.MenuItemError("Invalid input!", 400));
+      for(const menuItemId of menuItemIds){
+        if (!menuItemId || !userId) {
+          return next(CustomErrorHandler.MenuItemError("Invalid input!", 400));
+        }
+  
+        const existingMenuItem = await MenuItem.findOne({
+          where: { menuItemId: menuItemId, userId: userId },
+        });
+  
+        if (!existingMenuItem) {
+          return next(CustomErrorHandler.NotFound('No such Item Found'));
+        }
+  
+        let newImageUrl = existingMenuItem.imageUrl;
+       
+        await deleteImage(newImageUrl);
+        
+  
+        // Delete the associated menu item from the database
+        const response = await MenuItem.destroy({ where: { menuItemId: menuItemId, userId: userId } });
+  
+        if (response === 0) {
+          return next(CustomErrorHandler.NotFound('No such Item Found'));
+        }
       }
 
-      const existingMenuItem = await MenuItem.findOne({
-        where: { menuItemId: menuItemId, userId: userId },
-      });
-
-      if (!existingMenuItem) {
-        return next(CustomErrorHandler.NotFound('No such Item Found'));
-      }
-
-      let newImageUrl = existingMenuItem.imageUrl;
-      console.log('Deleting image at:', newImageUrl);
-      await deleteImage(newImageUrl);
-      
-
-      // Delete the associated menu item from the database
-      const response = await MenuItem.destroy({ where: { menuItemId: menuItemId, userId: userId } });
-
-      if (response === 0) {
-        return next(CustomErrorHandler.NotFound('No such Item Found'));
-      }
-
-      WebSocketServer.broadUpdate(userId, response, 'deletedMenu');
+      WebSocketServer.broadUpdate(userId, menuItemIds, 'deletedMenu');
         res.json(CustomResponseHandler.positiveResponse("Menu Item Deleted Successfully",[]));
     })
     } catch (err) {

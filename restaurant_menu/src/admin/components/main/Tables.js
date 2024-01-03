@@ -10,8 +10,10 @@ import { useContext } from "react";
 import RestaurantContext from "../../../context/RestaurantContext";
 import { useLocation, useParams } from "react-router-dom";
 import CoupenDataTable from "./CoupenDataTable";
+import Feedback from "./Feedback";
 
 export default function Tables() {
+  const closeItemRef=useRef()
   const fullFilled = useSelector(
     (state) => state.fetchcategory.fetchedcategory
   );
@@ -23,11 +25,13 @@ export default function Tables() {
   const { expanded, isDarkMode } = useContext(RestaurantContext);
   const ref = useRef();
   const dispatch = useDispatch();
+
   const [FetchedCategories, setFetchedCategories] = useState([]);
   const [fetcheditems, setFetchedItems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [showDataTable, setShowDataTable] = useState(false);
   const [showCouponTable, setShowCouponTable] = useState(false);
+  const [showFeedbackTable, setshowFeedbackTable] = useState(false);
   const [showMenuDataTable, setShowMenuDataTable] = useState(true); // Initialize CategoryTable as visible
   const [Categories, setCategories] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -36,6 +40,11 @@ export default function Tables() {
   const location = useLocation();
 
   // Log the item to check if it's correctly received
+  useEffect(()=>{
+    if(response?.success===true){
+      closeItemRef.current.click()
+    }
+  },[response])
   useEffect(() => {
     const data = location?.state?.item;
    
@@ -131,7 +140,8 @@ export default function Tables() {
           onClick={() => {
             setShowMenuDataTable(true);
             setShowDataTable(false);
-            setShowCouponTable(false)
+            setShowCouponTable(false);
+            setshowFeedbackTable(false)
           }}
         >
           
@@ -142,7 +152,8 @@ export default function Tables() {
           onClick={() => {
             setShowDataTable(true);
             setShowMenuDataTable(false);
-            setShowCouponTable(false)
+            setShowCouponTable(false);
+            setshowFeedbackTable(false)
           }}
         >
           {" "}
@@ -153,11 +164,25 @@ export default function Tables() {
           onClick={() => {
             setShowDataTable(false);
             setShowMenuDataTable(false);
-            setShowCouponTable(true)
+            setShowCouponTable(true);
+            setshowFeedbackTable(false);
+           
           }}
         >
           {" "}
           Coupons 
+        </button>
+        <button
+          className={showFeedbackTable ? `btn-active` : "btn"}
+          onClick={() => {
+            setShowDataTable(false);
+            setShowMenuDataTable(false);
+            setShowCouponTable(false);
+            setshowFeedbackTable(true);
+          }}
+        >
+          {" "}
+          Feedbacks 
         </button>
         
 
@@ -185,6 +210,13 @@ export default function Tables() {
         {showCouponTable ? (
           <CoupenDataTable/>
         ) : ""}
+        {
+          showFeedbackTable&&(<>
+            {
+              <Feedback/>
+            }
+          </>)
+        }
       </div>
       <button
         type="button"
@@ -212,6 +244,7 @@ export default function Tables() {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                ref={closeItemRef}
               />
             </div>
             <div className="modal-body">

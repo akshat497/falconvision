@@ -172,12 +172,13 @@ const coupenCodeController = {
   },
 
   deleteCoupenCode: async (req, res, next) => {
-    const { CoupenCodeId, userId } = req.params;
+    const { CoupenCodeIds, userId } = req.body;
     try {
       authentication(req, res, async () => {
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }
+       for(const CoupenCodeId of CoupenCodeIds){
         if (!CoupenCodeId || !userId) {
           return next(CustomErrorHandler.MenuItemError("invalid input!", 400));
         }
@@ -190,6 +191,7 @@ const coupenCodeController = {
         if (response === 0) {
           return next(CustomErrorHandler.NotFound("No such Item Found"));
         }
+       }
         // WebSocketServer.broadUpdate(userId, response, "deletedMenu");
         res.status(200).json(CustomResponseHandler.positiveResponse("Coupon deleted successfully."));
       });

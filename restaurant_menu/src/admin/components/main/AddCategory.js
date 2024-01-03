@@ -105,6 +105,8 @@ if(fullFilled!==null){
             type="text"
             id="name"
             name="name"
+            className='form-control'
+            placeholder='Enter Category Name'
             value={itemData.name}
             onChange={handleInputChange}
             required

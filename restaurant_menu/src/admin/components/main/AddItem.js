@@ -168,7 +168,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
       dispatch(addItem({formdata,userId:restroDetails?.userId}));
     }
-    resetForm();
+    // resetForm();
     // setItemData({
     //   name: "",
     //   price: "",
@@ -209,25 +209,26 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
   const convertImage = (e) => {
     const file = e.target.files[0];
-
-    // Check if the selected file is a PNG image
-    if (file && file.type === "image/png") {
-      
+  
+    // Check if the selected file is an image
+    if (file && file.type.startsWith("image/")) {
       setimage(file);
+      
       const reader = new FileReader();
-
+  
       // Define the onLoad callback function
       reader.onload = (event) => {
         // Set the data URL to the state
         setDisplayImage(event.target.result);
       };
-
+  
       // Read the file as a data URL
       reader.readAsDataURL(file);
     } else {
-      showToast("Please select a PNG image.");
+      showToast("Please select an image.");
     }
   };
+  
 
   // useEffect(() => {
 
@@ -310,11 +311,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                       {" "}
                       <label htmlFor="category">Upload Image:</label>
                     </div>
-                    <div className="mt-2 mx-2">
-                      <small>
-                        <b>(Only .png images are allowed)</b>
-                      </small>
-                    </div>
+                  
                   </div>
                   <div style={{ display: "flex" }}>
                     <div
@@ -341,6 +338,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     ref={fileRef}
                     className="d-none"
                     onChange={convertImage}
+                    accept="image/*"
                   />
                   <label htmlFor="category">Category:</label>
                   <select

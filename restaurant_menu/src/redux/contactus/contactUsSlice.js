@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const contactUsSlice=createSlice({
-    name:"contactus",
+    name:"contactus",   
     initialState: {
         contactus: null,
         contactusloading: false,

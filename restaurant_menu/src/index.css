@@ -910,7 +910,7 @@
   
   /* Checkout button */
   .checkout-button {
-    background-color: #333; /* Dark gray */
+    background-color:purple; /* Dark gray */
     color: #fff; /* White */
     font-size: 24px;
     border: none;
@@ -933,9 +933,7 @@
   }
   
   /* Hover styles for buttons */
-  .apply-coupon-button:hover,
-  .checkout-button:hover,
-  .continue-shopping-button:hover {
+  .apply-coupon-button:hover{
     background-color: #ff1a1a; /* Slightly darker red */
   }
   
@@ -956,7 +954,9 @@
       font-size: 20px;
       padding: 8px 16px;
     }
+    
   }
+ 
   .product-image {
     max-height: 100px; /* Adjust the height as needed */
     width: auto;
@@ -1107,6 +1107,7 @@
   .margin{
     margin-top: 20%;
   }
+ 
 }
 .floating-cart-icon {
   position: fixed;
@@ -1345,16 +1346,15 @@ p {
 }
 .popover {
   position: absolute;
-  right: 120%; /* Adjust the right position as needed */
-/* Adjust the top position as needed */
-  transform: translateY(-50%); /* Center vertically */
+  right: 120%;
+  transform: translateY(-50%);
   min-width: 200px;
-  max-width: 400px;
+  max-width: 200px;
   min-height: 50px;
   max-height: 100px;
   box-shadow: 1px 1px 1px 1px purple;
   padding: 10px;
-  border-color: purple;
+  border-color: black;
   border-radius: 10px;
   z-index: 999;
   visibility: hidden;
@@ -1362,9 +1362,75 @@ p {
   transition: opacity 0.5s, visibility 0.5s;
   background-color: whiteSmoke;
   margin-top: -15px;
+  
+ 
+  left: auto;
+  /* Hide the scrollbar but enable scrolling */
+  overflow: scroll;
+  
 }
+
+/* Customize the scrollbar appearance for webkit browsers */
+.popover::-webkit-scrollbar {
+  width: 0px;  /* Adjust as needed */
+  height: 0px;
+}
+
+.popover::-webkit-scrollbar-thumb {
+  background-color: transparent;  /* Make the scrollbar thumb transparent */
+}
+
 
 .popover.active {
   visibility: visible;
   opacity: 1;
 }
+.custom-dropdown-toggle {
+  cursor: pointer;
+}
+
+.custom-dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  z-index: 1;
+}
+
+.custom-dropdown-item {
+  display: flex;
+}
+
+.custom-dropdown-item .col-md-1 {
+  margin-right: 10px;
+}
+
+.custom-dropdown-item button {
+  cursor: pointer;
+  padding: 8px;
+  transition: background-color 0.3s;
+  border: none;
+  background: none;
+}
+
+.custom-dropdown-item button:hover {
+  background-color: #ddd;
+}
+
+.custom-dropdown-divider {
+  border: 0.5px solid #ddd;
+  margin: 5px 0;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Apply Poppins to specific elements if needed */
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ... add more styles ... */

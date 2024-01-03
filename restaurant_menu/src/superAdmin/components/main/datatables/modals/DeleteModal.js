@@ -11,7 +11,12 @@ const DeleteModal = ({ itemToDelete }) => {
 
     const deleteitem=()=>{
         // (itemToDelete)
-        dispatch(deleteContact(itemToDelete?.contactUsId))
+        const obj={
+          contactUsIds: [itemToDelete?.contactUsId],
+          
+      }
+      dispatch(deleteContact(obj))
+      
     }
    
   return (

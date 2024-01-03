@@ -199,18 +199,19 @@ const userController = {
   },
   qrgeneratorL: (req, res, next) => {
     try {
-      const { tableCount, userId, URL } = req.body;
+      const {start,end, userId, URL } = req.body;
       authentication(req, res, async () => {
         const qrCodes = [];
-        console.log(URL)
+       
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }
-        for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
+        for (let tableNumber = start; tableNumber <= end; tableNumber++) {
           const url = `${URL}/${userId}/${tableNumber}`;
           const qr = QRCode(0, "L");
           qr.addData(url);
           qr.make();
+          console.log(URL)
           qrCodes.push(qr.createDataURL(4));
         }
         res.json(qrCodes);

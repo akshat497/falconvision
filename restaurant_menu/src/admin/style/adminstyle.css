@@ -899,21 +899,51 @@ a {
 /* a:hover {
   background-color: #f5f5f5;
 } */
+/* Add these styles to your existing stylesheet or component */
+
+.search-container {
+  position: relative;
+}
+
+.search-input-container {
+  position: relative;
+  
+}
+
 .search-dropdown {
   position: absolute;
-  top: 65%;
-  left: 48.5%;
-  transform: translateX(-50%);
+  top: 100%;
+  left: 0;
   z-index: 1000;
-  width: 26.5%;
+  width: 100%;
   max-height: 200px;
   overflow-y: auto;
   background-color: #fff;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
 }
+
+.dropdown-item {
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.type-indicator {
+  color: #666;
+  font-size: 12px;
+}
+
 
 
 /* Media query for smaller screens */
@@ -1181,3 +1211,125 @@ a {
   display: flex;
 
 }
+/* CustomTooltip.css */
+
+.custom-tooltip {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+ 
+}
+
+.tooltip-icon {
+  color: #007bff; /* Blue color for the info circle */
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  max-width: 250px;
+  max-height: 50px;
+  overflow-x: auto;
+  background-color: #f2f2f2; /* Light gray background */
+  color: #333; /* Dark text color for better readability */
+  border: 1px solid #ccc; /* Light gray border */
+  text-align: center;
+  border-radius: 8px; /* Slightly increased border radius */
+  padding: 10px; /* Increased padding for better spacing */
+  position: absolute;
+  z-index: 1;
+  bottom: 80%;
+  left: 50%;
+  transform: translateX(-50%); /* Centering using transform */
+  opacity: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle box shadow for depth */
+  transition: opacity 0.3s;
+}
+
+.tooltip-text:hover {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.custom-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+input[type="checkbox"]:checked {
+  background-color: purple;
+  border-color: purple;
+}
+input[type="checkbox"]::before {
+  content: '\2713'; /* Unicode character for a checkmark */
+  color: white; /* Change this color to the desired color for the check mark */
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+input[type="checkbox"]:checked::before {
+  opacity: 1;
+}
+input[type="checkbox"] {
+  appearance: none; /* Remove default checkbox appearance */
+  width: 16px;
+  height: 16px;
+  border: 2px solid purple;
+  border-radius: 3px;
+  outline: none;
+  transition: 0.3s;
+  position: relative;
+}
+/* Unchecked state */
+input[type="checkbox"]::before {
+  content: '−'; /* Unicode character for a minus symbol */
+  color: white; /* Change this color for the minus symbol in the unchecked state */
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1; /* Change this to 1 for the unchecked state */
+  transition: opacity 0.3s;
+}
+
+/* Checked state */
+input[type="checkbox"]:checked::before {
+  content: '\2713'; /* Unicode character for a checkmark */
+  color: white; /* Change this color for the check mark in the checked state */
+  opacity: 1;
+}
+/* Add your styling here */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dropbtn {
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  
+  
+ 
+}
+
+

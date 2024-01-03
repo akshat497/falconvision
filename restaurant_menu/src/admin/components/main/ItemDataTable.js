@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import NoDatComponent from "../../../components/common/NoDatComponent";
 import { FaEdit, FaTrash, FaTrashAlt } from "react-icons/fa";
+import AlertBox from "./alert/AlertBox";
 
 export default function ItemDatatable({
   setItemToDelete,
@@ -25,13 +26,14 @@ export default function ItemDatatable({
   } = useContext(RestaurantContext);
   // const [fetcheditems, setfetcheditems] = useState([])
   const dispatch = useDispatch();
-
+  const allFetchedItems = useSelector((state) => state.fetchitem.f_item);
   // useEffect(() => {
   //   if (searchedText?.type === "menu") {
   //     setSearchText(searchedText?.name);
   //   }
   // }, [searchedText]);
   const [searchText, setSearchText] = useState("");
+  const [selectedRows, setselectedRows] = useState([]);
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     setSearchText(searchTerm);
@@ -39,46 +41,38 @@ export default function ItemDatatable({
   useEffect(() => {
     const filteredOrders = fetcheditemsCopy?.filter((item) => {
       const searchTerm = searchText.toLowerCase();
-  
+
       return (
         item.name.toLowerCase().includes(searchTerm) ||
-        (item.Category && item.Category.name.toLowerCase().includes(searchTerm)) ||
+        (item.Category &&
+          item.Category.name.toLowerCase().includes(searchTerm)) ||
         (item.price && item.price.toString().includes(searchTerm)) ||
-        (item.isActive && item.isActive.toString().toLowerCase().includes(searchTerm))
+        (item.isActive &&
+          item.isActive.toString().toLowerCase().includes(searchTerm))
       );
     });
-  
+
     setFetcheditems(filteredOrders);
   }, [searchText, fetcheditemsCopy, setFetcheditems]);
-  
+
   const handleToggleActive = (row) => {
-   
-    
-   
-    const formdata = new FormData(); 
-    
+    const formdata = new FormData();
+
     // Assuming `itemData` and `restroDetails` are defined
-    
+
     formdata.append("name", row.name);
     formdata.append("userId", row?.userId);
     formdata.append("categoryId", row?.categoryId);
     formdata.append("menuItemId", row?.menuItemId);
     formdata.append("isActive", !row?.isActive);
-   
-  
-
-   
-       dispatch(updateItem({formdata,userId:row?.userId}));
-      
-    
+    dispatch(updateItem({ formdata, userId: row?.userId }));
   };
-  
+
   const columns = [
     {
       name: "Name",
       selector: "name",
       sortable: true,
-     
     },
     {
       name: "Category",
@@ -116,19 +110,19 @@ export default function ItemDatatable({
             disabled={!row?.isActive}
             // data-bs-toggle="modal"
             //  data-bs-target="#exampleModal"
-            style={{color:"purple", cursor:"pointer"}}
+            style={{ color: "purple", cursor: "pointer" }}
           >
-            <FaEdit size={32}/>
+            <FaEdit size={32} />
           </div>
           <div
             onClick={() => setItemToDelete(row)}
             className=" text-danger mx-4"
-            style={{   cursor:"pointer"}}
+            style={{ cursor: "pointer" }}
             disabled={!row?.isActive}
             data-bs-toggle="modal"
             data-bs-target="#deleteModel"
           >
-            <FaTrashAlt size={32}/>
+            <FaTrashAlt size={32} />
           </div>
         </div>
       ),
@@ -202,22 +196,21 @@ export default function ItemDatatable({
   };
   return (
     <>
-     <div className="my-3">
-     <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search ..."
-                  value={searchText} // Bind the input value to the searchText state
-                  onChange={handleSearch} // Call handleSearch function on input change
-                />
-     </div>
-      {fetcheditems?.length === 0 || fetcheditems === null ? (
+      <div className="my-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search ..."
+          value={searchText} // Bind the input value to the searchText state
+          onChange={handleSearch} // Call handleSearch function on input change
+        />
+        {selectedRows.length > 0 && <AlertBox selectedRows={selectedRows} />}
+      </div>
+      {allFetchedItems?.length === 0 || allFetchedItems === null ? (
         <NoDatComponent />
       ) : (
         <div
-          className={
-            isDarkMode ? "bg-dark text-light " : "bg-dark text-light "
-          }
+          className={isDarkMode ? "bg-dark text-light " : "bg-dark text-light "}
         >
           {/* <ReactSwitch
      checked={showDataTable}
@@ -228,13 +221,17 @@ export default function ItemDatatable({
             CustomTableSkeleton()
           ) : (
             <DataTable
+            
               columns={columns}
               data={fetcheditems || []}
               customStyles={customStyles}
               highlightOnHover
               pagination
               responsive
-              
+              selectableRows
+              onSelectedRowsChange={(state) => {
+                setselectedRows(state.selectedRows);
+              }}
             />
           )}
         </div>

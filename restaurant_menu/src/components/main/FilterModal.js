@@ -9,7 +9,10 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
 
   const category = useSelector((state) => state.fetchcategory.fetchedcategory);
   const allItems = useSelector((state) => state.fetchitem.f_item);
-  const { fetcheditems, setFetcheditems,fetcheditemsCopy, setFetcheditemsCopy } = useContext(RestaurantContext);
+  const { fetcheditems, setFetcheditems,fetcheditemsCopy, setFetcheditemsCopy, vegOnly, 
+    setVegOnly,
+    nonvegOnly, 
+    setnontVegOnly, } = useContext(RestaurantContext);
   const [rangeValue, setRangeValue] = useState([20, 800]);
   const [categoryName, setcategoryName] = useState("");
   const [type, settype] = useState("Both");
@@ -41,6 +44,8 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
         return a?.price - b?.price
       })
       setFetcheditemsCopy(filteredData);
+      setVegOnly(null)
+      setnontVegOnly(null)
       // onClose();
   }
   
@@ -125,13 +130,19 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
         
         <span  style={{marginLeft:"75%"}}> {rangeValue[1]}</span>
       </div>
-      <Slider
+    <div style={{color:"purple"}}>
+    <Slider
         min={20}
         max={1000}
         range
         value={rangeValue}
         onChange={handleSliderChange}
+        trackStyle={{ backgroundColor: 'purple' }} // Change color of the track
+      handleStyle={{ borderColor: 'purple' }} // Change color of the handles
+      railStyle={{ backgroundColor: 'lightgray' }} 
+        
       />
+    </div>
      
     
      

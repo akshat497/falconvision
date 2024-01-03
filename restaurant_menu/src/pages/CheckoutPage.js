@@ -159,8 +159,8 @@ setFormData([])
     }
   return (
  <>
-       <Link to="/cart" className="btn btn-info ">
-          <FaBackward/>
+       <Link to="/cart"  style={{color:"purple"}}>
+          <FaBackward size={26}/>
         </Link>
     <div className="checkout-container">
      
@@ -215,6 +215,7 @@ setFormData([])
             onChange={handleInputChange}
             
           />
+          <small>{formData?.message?.length===100?<b>{formData?.message?.length}</b>:formData?.message?.length}<span>/</span><b>100</b></small>
         </div>
         <div className={OtpResponse!==null?"form-group ":"form-group d-none" }>
           <label htmlFor="phoneNumber">Enter Otp:</label>
