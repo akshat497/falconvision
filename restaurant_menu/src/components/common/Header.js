@@ -169,7 +169,8 @@ useEffect(() => {
    
  
   
-  <div className="d-flex " style={{justifyContent:"space-between",backgroundColor:"whiteSmoke",padding:"10px"}}>
+ <div  className="sticky-top" style={{backgroundColor:"white"}}>
+ <div className="d-flex " style={{justifyContent:"space-between",backgroundColor:"whiteSmoke",padding:"10px"}}>
       <div className="">
       <Link to='/' className="navbar-brand  ">
   <div style={{ justifyContent: "right", textAlign: "right", alignContent: "right" }}>
@@ -392,6 +393,7 @@ useEffect(() => {
           </div>
         </div>
       </div>
+ </div>
     
      
     </>

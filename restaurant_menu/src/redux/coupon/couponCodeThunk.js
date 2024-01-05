@@ -82,9 +82,10 @@ export const generateCoupen= (userData) => async (dispatch) => {
       
       const response = await DeleteCouponCode(userData); 
       if(response?.success===true){
-        showToast(response.message,"success")
+        showToast(response?.message,"success")
+        dispatch(getCouponCode(userData?.userId));
       }
-      dispatch(getCouponCode(userData?.userId));
+      
       dispatch(setDeleteCoupon(response));
       dispatch(setDeleteCouponloading(false));
     } catch (error) {

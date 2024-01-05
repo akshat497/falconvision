@@ -6,6 +6,8 @@ import {
   FaMinus,
   FaInfoCircle,
   FaPenAlt,
+  FaDotCircle,
+  FaRegDotCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -209,194 +211,63 @@ export default function Card({ veg, nonVeg }) {
 
   return (
     <>
-      {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
+    <div style={{height:"100vh",overflow:"",paddingTop:"10%"}}>
+       {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
       {fetchLoading ? <div className="overlay"></div> : null}
       <FeedbackModal />
+     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+  {!fetchLoading &&
+    fetcheditemsCopy?.map((data) => (
       <div
-        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+        className="card mx-4 my-4"
+        style={{
+          width: "100%",
+          maxWidth: "350px",
+          borderRadius: "8px",
+          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          opacity: data?.isActive || data?.Category?.isActive ? "1" : "0.5",
+          transition: "opacity 0.3s ease-in-out",
+        }}
       >
-        {!fetchLoading
-          ? fetcheditemsCopy?.map((data) => (
-              <div
-                className="card mx-4 my-4"
-                style={{
-                  width: "100%",
-                  maxWidth: "350px",
-                  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                  opacity:
-                    data?.isActive || data?.Category?.isActive ? "1" : "0.5",
-                  transition: "opacity 0.3s ease-in-out",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
-                    className="card-img-left"
-                    alt="FoodImage"
-                    style={{
-                      width: "40%",
-                      height: "200px",
-                      objectFit: "cover",
-                      borderTopLeftRadius: "8px",
-                      borderBottomLeftRadius: "8px",
-                    }}
-                  />
-                  <div
-                    className="card-body"
-                    style={{ width: "60%", padding: "1rem" }}
-                  >
-                    <div
-                      className="card-title d-flex"
-                      style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                        marginBottom: "0.5rem",
-                        color: "#333",
-                      }}
-                    >
-                      <div
-                        style={{
-                          justifyContent: "space-between",
-                          display: "flex",
-                        }}
-                      >
-                        <div className="col-md-12">{data?.name}</div>
-                        <div
-                          className="col-md-1 "
-                          style={{ alignContent: "right" }}
-                        >
-                          {data?.veg ? (
-                            <div
-                              className="badge bg-success "
-                              style={{ fontSize: "0.7rem" }}
-                            >
-                              Veg
-                            </div>
-                          ) : (
-                            <div
-                              className="badge bg-danger "
-                              style={{ fontSize: "0.7rem" }}
-                            >
-                              NonVeg
-                            </div>
-                          )}
-                        </div>
-                      </div>
+        <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden" }}>
+          <img
+            src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
+            className="card-img-left"
+            alt="FoodImage"
+            style={{
+              width: "40%",
+              height: "200px",
+              objectFit: "cover",
+              borderTopLeftRadius: "8px",
+              borderBottomLeftRadius: "8px",
+            }}
+          />
+          <div className="card-body" style={{ width: "60%", padding: "1rem" }}>
+            <div className="card-title d-flex  ">
+              <div className="d-flex justify-content-between" style={{width:"120%"}}>
+             
+             
+              <div className="">
+              <h5 className="card-title">{data?.name}</h5>
+               
+              
+              </div>
+             
+                
+               <div className="d-flex">
+               <div className="badge-container  ">
+                  {data?.veg ? (
+                    <div className="badge " style={{ fontSize: "0.7rem" }}>
+                      <FaRegDotCircle className="text-success" size={20}/>
                     </div>
-                    {/* <p
-                      style={{
-                        color: "#f84f40",
-                        fontSize: "1rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      {data?.Category?.name}
-                    </p> */}
-                    <p
-                      style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                        color: "#333",
-                      }}
-                    >
-                      <FaRupeeSign /> {data.price}
-                    </p>
-                    <div
-                      className="d-flex align-items-center"
-                      style={{ justifyContent: "space-between" }}
-                    >
-                      {cart?.find(
-                        (item) => item.menuItemId === data.menuItemId
-                      ) ? (
-                        <>
-                          {!data?.isActive || !data?.Category?.isActive ? (
-                            <button
-                              className="btn btn-secondary"
-                              disabled
-                              style={{
-                                cursor: "not-allowed",
-                                padding: "12px",
-                                borderRadius: "8px",
-                                width: "100%",
-                                fontWeight: "750",
-                                backgroundColor: "#eee",
-                                color: "#666",
-                                border: "none",
-                              }}
-                            >
-                              Not Available
-                            </button>
-                          ) : (
-                            <div className="quantity-controls d-flex align-items-center mt-4">
-                              <button
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => removeFromCart(data)}
-                                style={{ fontSize: "1.5rem" }}
-                              >
-                                <FaMinus />
-                              </button>
-                              <span
-                                className="mx-3 quantity-value"
-                                style={{ fontSize: "1.25rem" }}
-                              >
-                                {cart?.find(
-                                  (item) => item.menuItemId === data.menuItemId
-                                )?.quantity || 0}
-                              </span>
-                              <button
-                                className="btn btn-sm btn-success add-to-cart-btn"
-                                onClick={() => addToCart(data)}
-                                style={{ fontSize: "1.5rem" }}
-                              >
-                                <FaPlus />
-                              </button>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div>
-                          {!data?.isActive || !data?.Category?.isActive ? (
-                            <button
-                              className="btn btn-secondary"
-                              disabled
-                              style={{
-                                cursor: "not-allowed",
-                                padding: "12px",
-                                borderRadius: "8px",
-                                width: "100%",
-                                fontWeight: "750",
-                                backgroundColor: "#eee",
-                                color: "#666",
-                                border: "none",
-                              }}
-                            >
-                              Not Available
-                            </button>
-                          ) : (
-                            <button
-                              className="btn text-light mt-4"
-                              style={{
-                                padding: "10px",
-                                borderRadius: "8px",
-                                width: "100%",
-                                fontWeight: "750",
-                                backgroundColor: "purple",
-                              }}
-                              onClick={() => addToCart(data)}
-                            >
-                              Add
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      <div
-                        className="mt-5 "
+                  ) : (
+                    <div className="badge " style={{ fontSize: "0.7rem" }}>
+                    <FaRegDotCircle className="text-danger" size={20}/>
+                    </div>
+                  )}
+                </div>
+                <div
+                       className=""
                         style={{
                           position: "relative",
                           display: "inline-block",
@@ -437,19 +308,114 @@ export default function Card({ veg, nonVeg }) {
                           </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-                </div>
+               </div>
+              
               </div>
-            ))
-          : ""}
-
-        {fetchLoading || restroLoading
-          ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((index) => (
-              <SkeletonItem key={index} />
-            ))
-          : null}
+              <p className="card-rating">{data?.rating}</p>
+            </div>
+            <p className="card-price">
+              <FaRupeeSign /> {data.price}
+            </p>
+            <div className="card-buttons">
+              {cart?.find((item) => item.menuItemId === data.menuItemId) ? (
+                <>
+                  {!data?.isActive || !data?.Category?.isActive ? (
+                    <button
+                      className="btn btn-secondary"
+                      disabled
+                      style={{
+                        cursor: "not-allowed",
+                        padding: "12px",
+                        borderRadius: "8px",
+                        width: "100%",
+                        fontWeight: "750",
+                        backgroundColor: "#eee",
+                        color: "#666",
+                        border: "none",
+                      }}
+                    >
+                      Not Available
+                    </button>
+                  ) : (
+                    <div className="quantity-controls d-flex align-items-center mt-4" style={{
+                        padding: "8px",
+                        borderRadius: "8px",
+                        width: "80%",
+                        fontWeight: "750",
+                        
+                       
+                      }}>
+                      <button
+                        className="btn btn-sm "
+                        onClick={() => removeFromCart(data)}
+                        style={{ fontSize: "1.5rem",borderColor:"purple" ,color:"purple"}}
+                      >
+                        <FaMinus />
+                      </button>
+                      <span className="mx-3 quantity-value " style={{ fontSize: "1.25rem" ,color:"purple"}}>
+                        {cart?.find((item) => item.menuItemId === data.menuItemId)?.quantity || 0}
+                      </span>
+                      <button
+                        className="btn btn-sm  add-to-cart-btn"
+                        onClick={() => addToCart(data)}
+                        style={{ fontSize: "1.5rem",borderColor:"purple" ,color:"purple" }}
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div>
+                  {!data?.isActive || !data?.Category?.isActive ? (
+                    <button
+                      className="btn btn-secondary"
+                      disabled
+                      style={{
+                        cursor: "not-allowed",
+                        padding: "12px",
+                        borderRadius: "8px",
+                        width: "100%",
+                        fontWeight: "750",
+                        backgroundColor: "#eee",
+                        color: "#666",
+                        border: "none",
+                      }}
+                    >
+                      Not Available
+                    </button>
+                  ) : (
+                    <button
+                      className="btn  mt-4"
+                      style={{
+                        padding: "10px",
+                        borderRadius: "8px",
+                        width: "100%",
+                        fontWeight: "750",
+                        // backgroundColor: "purple",
+                        borderColor:"purple",
+                        color:"purple"
+                      }}
+                      onClick={() => addToCart(data)}
+                    >
+                      Add
+                    </button>
+                  )}
+                </div>
+              )}
+             
+            </div>
+          </div>
+        </div>
       </div>
+    ))}
+  {fetchLoading || restroLoading
+    ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((index) => <SkeletonItem key={index} />)
+    : null}
+</div>
+    </div>
+     
+
 
       <div className="d-flex">
         <div

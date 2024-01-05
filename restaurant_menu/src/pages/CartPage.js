@@ -118,7 +118,7 @@ const CartPage = () => {
     updateCartWithAvailableItems();
   }
  
- },[fetchedItem])
+ },[])
   return (
     <main className="container" style={{ backgroundColor: "whitesmoke" }}>
       <section className="shopping-cart">

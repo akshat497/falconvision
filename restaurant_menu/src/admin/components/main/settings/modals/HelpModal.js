@@ -15,7 +15,7 @@ export default function HelpModal() {
               <div className="contact-item">
                 <FaPhone className="contact-icon" />
                 <span className="contact-label"> Phone: </span>
-                <b className="contact-value">7056275526</b>
+                <b className="contact-value">+91 81686-41371</b>
               </div>
               <div className="contact-item">
                 <FaEnvelope className="contact-icon" />

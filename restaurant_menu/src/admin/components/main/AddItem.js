@@ -34,6 +34,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
   const [image, setimage] = useState('');
   const [DisplayImage, setDisplayImage] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
+  const [disabled, setdisabled] = useState(true);
   const steps = [0, 1, 2];
 
   const goToNextStep = () => {
@@ -187,6 +188,20 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
     setSelectedCategory(clickedItem?.Category?.categoryId);
     setimage(clickedItem?.imageUrl);
   }, [clickedItem]);
+  useEffect(() => {
+    if (
+      itemData.name !== clickedItem?.name ||
+      itemData.price !== clickedItem?.price ||
+      itemData.dishType !== clickedItem?.type ||
+      (itemData.veg === "veg" && !clickedItem?.veg) ||
+      (itemData.veg === "Non-Veg" && clickedItem?.veg) ||
+      itemData.description !== clickedItem?.description
+    ) {
+      setdisabled(false);
+    } else {
+      setdisabled(true);
+    }
+  }, [itemData, clickedItem]);
 
   const convertImage = (e) => {
     const file = e.target.files[0];
@@ -363,11 +378,16 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     <option value={""}>
                       {preview ? clickedItem?.type : "Select Dish Type"}
                     </option>
-                    <option value="BreakFast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
+                    <option value="Starters">Appetizers/Starters</option>
+                    <option value="Main Course">Main Course</option>
+                    <option value="Side Dish">Side Dish</option>
+                    <option value="Soup">Soup</option>
+                    <option value="Salad">Salad</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Beverages">Beverages</option>
                     <option value="Snacks">Snacks</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Others">Others</option>
+                    <option value="Bread">Bread</option>
+                    
                   </select>
                 </div>
                 <div className="form-group">
@@ -432,7 +452,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                    
                     selectedCategory?.trim() === "" ||
                     updateLoading ||
-                    loading
+                    loading||disabled
                   }
                 >
                   {preview === "preview"

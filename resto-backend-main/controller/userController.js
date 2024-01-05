@@ -206,12 +206,12 @@ const userController = {
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }
-        for (let tableNumber = start; tableNumber <= end; tableNumber++) {
+        for (let tableNumber = Number(start); tableNumber <= Number(end); tableNumber++) {
           const url = `${URL}/${userId}/${tableNumber}`;
           const qr = QRCode(0, "L");
           qr.addData(url);
           qr.make();
-          console.log(URL)
+          
           qrCodes.push(qr.createDataURL(4));
         }
         res.json(qrCodes);

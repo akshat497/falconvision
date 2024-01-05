@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {  FaBackward } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { createOrder } from '../redux/orders/orderThunk';
 import { useEffect } from 'react';
 import { sendOtp, } from '../redux/auth/authThunks';
@@ -13,6 +13,7 @@ import { showToast } from '../services/ToastInstance';
 
 const CheckoutPage = () => {
     const dispatch=useDispatch();
+    const navigate=useNavigate()
     const loadingCreateOrder=useSelector((state)=>state.createorder.createorderloading)
     const sendingOtp=useSelector((state)=>state.otpsend.otploading)
     let OtpResponse=useSelector((state)=>state.otpsend.otp)
@@ -27,8 +28,9 @@ const CheckoutPage = () => {
        
         showToast("Order Placed!","success")
          localStorage.removeItem("coupen");
-         localStorage.setItem("previous Order",localStorage.getItem('cart'));
-         localStorage.removeItem('cart')
+        //  localStorage.setItem("previous Order",localStorage.getItem('cart'));
+        //  localStorage.removeItem('cart')
+        navigate('/customer')
          window.location.reload();
           
          

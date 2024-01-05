@@ -9,6 +9,7 @@ import { updateCoupon } from '../../../redux/coupon/couponCodeThunk';
 export default function UpdateCouponModel({row}) {
     const [name, setname] = useState('')
     const [discount, setdiscount] = useState('');
+    const [disabled, setdisabled] = useState(true);
     const closeUpdateCoupen=useRef()
     const dispatch=useDispatch()
     // const restroDetails = useSelector((state) => state.restrodetail.restro);
@@ -26,6 +27,16 @@ export default function UpdateCouponModel({row}) {
         setdiscount(row?.discount)
         setname(row?.name)
     },[row])
+
+    useEffect(()=>{
+      if(name!==row?.name){
+        setdisabled(false)
+      }else if(Number(discount)!==Number(row?.discount)){
+        setdisabled(false)
+      }else{
+        setdisabled(true)
+      }
+    },[name,discount])
     const handleUpdate=()=>{
         if (!name.trim()) {
             toast.warn("Please enter a valid coupon name.", {
@@ -72,7 +83,7 @@ export default function UpdateCouponModel({row}) {
          id="name"
          placeholder="Enter coupon name"
          value={name}
-         onChange={(e) => setname(e.target.value)}
+         onChange={(e) => {setname(e.target.value);if(row?.name!==name){setdisabled(false)}else{setdisabled(true)}}}
        />
      </div>
      <div className="mb-3">
@@ -83,14 +94,14 @@ export default function UpdateCouponModel({row}) {
          id="discount"
          placeholder="Enter Discount"
          value={discount}
-         onChange={(e) => setdiscount(e.target.value)}
+         onChange={(e) => {setdiscount(e.target.value);if(Number(row?.discount)!==Number(discount)){setdisabled(false)}else{setdisabled(true)}}}
        />
      </div>
      
     </div>
           </div>
           <div className="modal-footer">
-          <button className='btn text-light' style={{background:"purple"}} onClick={handleUpdate} disabled={updatingCoupon}>{updatingCoupon?"Updating...":"Update"}</button>
+          <button className='btn text-light' style={{background:"purple"}} onClick={handleUpdate} disabled={updatingCoupon||disabled}>{updatingCoupon?"Updating...":"Update"}</button>
           </div>
         </div>
       </div>

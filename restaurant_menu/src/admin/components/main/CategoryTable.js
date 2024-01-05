@@ -23,6 +23,7 @@ const CategoryTable = ({ categories, onUpdate, searchedText }) => {
   const [searchText, setSearchText] = useState("");
   const [categoryCopy, setcategoryCopy] = useState("");
   const [selectedRows, setselectedRows] = useState([]);
+  const [disabled, setdisabled] = useState(true);
   useEffect(() => {
     setcategoryCopy(categories);
   }, [categories]);
@@ -71,8 +72,16 @@ useEffect(()=>{
       ...itemData,
       [name]: value,
     });
+    
   };
-
+  useEffect(()=>{
+    console.log(itemData.name,clickedRow.name)
+    if(itemData?.name!==clickedRow?.name){
+      setdisabled(false)
+    }else{
+      setdisabled(true)
+    }
+  },[clickedRow,itemData])
   useEffect(() => {
     setItemData({ name: clickedRow.name });
   }, [clickedRow]);
@@ -259,6 +268,7 @@ useEffect(()=>{
                   className="btn text-light pl-3 pr-3 pt-2 pb-2"
                   style={{backgroundColor:"purple"}}
                   data-bs-dismiss="modal"
+                  disabled={disabled===true}
                   onClick={() => onUpdate(clickedRow, itemData)}
                 >
                   Save

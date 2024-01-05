@@ -5,7 +5,7 @@ import { deleteCategory, deleteItem } from "../../../../redux/items/itemThunk";
 import { deleteCoupon } from "../../../../redux/coupon/couponCodeThunk";
 import iconstrash from "../../../../images/icons8-trash.gif"
 import { deleteContact } from "../../../../redux/contactus/contactusthunk";
-export default function AlertBox({ selectedRows }) {
+export default function AlertBox({ selectedRows ,setselectedRows}) {
   const dispatch = useDispatch();
   const restroDetails = useSelector((state) => state.restrodetail.restro);
   const deleteLoading=useSelector((state)=>state.deletecoupon.deletecouponLoading);
@@ -51,6 +51,8 @@ export default function AlertBox({ selectedRows }) {
       userId: restroDetails?.userId,
     };
     dispatch(deleteCoupon(obj));
+    setselectedRows([])
+   
   };
   const deleteFeedbacks=()=>{
     const obj={

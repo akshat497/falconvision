@@ -82,11 +82,11 @@ function ContactUs() {
         <p>Email: <a href=""><b>contact@falcon-vision.in</b></a></p>
 
         <h4>Phone</h4>
-        <p>Phone: +91 70562-75526</p>
+        <p>Phone: +91 81686-41371</p>
       </div>
     </div>
     <div className="col-md-6 contact-form" style={contactFormStyles}>
-      <h2 className="mb-4">Contact Us</h2>
+      {/* <h2 className="mb-4">Contact Us</h2> */}
       <form onSubmit={handleFormSubmit}>
         <div className="mb-3">
           <input

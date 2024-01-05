@@ -150,35 +150,9 @@ export default function CoupenDataTable() {
     },
   };
 
-  //   const DarkStyledDataTable = styled(DataTable)`
-  //   background-color: #333; /* Dark background color */
-  //   color: white; /* Text color */
 
-  //   .rdt_TableHead {
-  //   background-color: #333; /* Dark background color */
-  //   color: white; /* Text color */
-  // }
 
-  //   .rdt_TableRow {
-  //     background-color: #444; /* Dark background color for rows */
-  //   }
 
-  //   .rdt_TableRow:hover {
-  //     background-color: #555; /* Dark background color for hover */
-  //   }
-
-  //   .rdt_TableRow.selected {
-  //     background-color: #666; /* Dark background color for selected row */
-  //   }
-
-  //   .rdt_Table_Pagination {
-  //     background-color: #333; /* Dark background color for pagination */
-  //   }
-
-  //   .rdt_Search input {
-  //     background-color: #444; /* Dark background color for search input */
-  //   }
-  // `;
   const CustomTableSkeleton = () => {
     return (
       <div className="youtube-skeleton-loader my-5">
@@ -215,10 +189,10 @@ export default function CoupenDataTable() {
         />
 
         {selectedRows.length > 0 && (
-          <AlertBox selectedRows={selectedRows}/>
+          <AlertBox selectedRows={selectedRows} setselectedRows={setselectedRows}/>
         )}
       </div>
-      {couponCodes?.length === 0 || couponCodes === null ? (
+      {fetchedCoupens?.length === 0 || fetchedCoupens === null ? (
         <NoDatComponent />
       ) : (
         <div

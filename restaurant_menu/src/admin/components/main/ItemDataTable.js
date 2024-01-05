@@ -206,7 +206,7 @@ export default function ItemDatatable({
         />
         {selectedRows.length > 0 && <AlertBox selectedRows={selectedRows} />}
       </div>
-      {allFetchedItems?.length === 0 || allFetchedItems === null ? (
+      {fetcheditems?.length === 0 || fetcheditems === null ? (
         <NoDatComponent />
       ) : (
         <div

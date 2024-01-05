@@ -42,7 +42,7 @@ export default function QrGenerator() {
               ${Qrcodes.map(
                 (data, index) => `
                 <div class="  my-5">
-                <h3 class="text-center mb-4">Table No :${index + 1}</h3>
+                <h3 class="text-center mb-4">Table No : ${Number(startNumber) + Number(index)}</h3>
                   <img src="${data}" alt="QR Code" class="img-fluid" />
                 </div>
               `
@@ -72,7 +72,7 @@ export default function QrGenerator() {
   >
     <option value="" disabled>Start table/room number</option>
     {Array.from({ length: 1000 }, (_, index) => (
-      <option key={index} value={index + 1}>
+      <option key={index} value={index + 1} disabled={endNumber<=index+1} style={{opacity:endNumber<=index+1?"0.5":"1"}}>
         {index + 1}
       </option>
     ))}
@@ -87,7 +87,7 @@ export default function QrGenerator() {
   >
     <option value="" disabled>End table/room number </option>
     {Array.from({ length: 1000 }, (_, index) => (
-      <option key={index} value={index + 1} >
+      <option key={index} value={index + 1} disabled={startNumber>=index+1} style={{opacity:startNumber>=index+1?"0.5":"1"}}>
         {index + 1}
       </option>
     ))}
