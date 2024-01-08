@@ -4,7 +4,7 @@ import { FaPen, FaPenNib } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { createContact } from '../../../../../redux/contactus/contactusthunk';
-
+import feedbackImage from "../../../../../images/feedback-removebg-preview black.png"
 export default function Feedback() {
     const dispatch=useDispatch();
     const restroDetais=useSelector((state)=>state.restrodetail.restro)
@@ -32,7 +32,7 @@ export default function Feedback() {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Feedback form <FaPen/></h5>
+            <h5 className="modal-title mx-2">Feedback form <img src={feedbackImage} height={40} width={40}/></h5>
             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div className="modal-body">

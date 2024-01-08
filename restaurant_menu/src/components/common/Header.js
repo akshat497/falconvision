@@ -257,10 +257,10 @@ useEffect(() => {
  
 
     <div
-        className="d-flex  mt-4 p-2"
+        className="d-flex-main  mt-4 p-2"
         style={{ justifyContent: "space-between" }}
       >
-        <div className="d-flex">
+        <div className="d-flex-main">
           {nonvegOnly === true ? (
             <>
               <div
@@ -283,7 +283,7 @@ useEffect(() => {
           ) : (
             <>
               <div
-                className="d-flex btn mr-2"
+                className="d-flex-main btn mr-2"
                 style={{
                   maxHeight: "100px",
                   cursor: nonvegOnly===true?"not-allowed":"pointer",
@@ -300,14 +300,14 @@ useEffect(() => {
                 <div>
                   <FaRegDotCircle className="text-success mx-1" size={20} />
                 </div>
-                <div>veg</div>
+                <div className="responsiveText">veg</div>
               </div>
             </>
           )}
           {vegOnly === true ? (
             <>
               <div
-                className="d-flex btn"
+                className="d-flex-main btn"
                 style={{
                   maxHeight: "100px",
                   cursor: "not-allowed",
@@ -320,13 +320,13 @@ useEffect(() => {
                 <div>
                   <FaRegDotCircle className="text-danger mx-1" size={20} />
                 </div>
-                <div>non veg</div>
+                <div className="responsiveText">non veg</div>
               </div>
             </>
           ) : (
             <>
               <div
-                className="d-flex btn"
+                className="d-flex-main btn"
                 style={{
                   maxHeight: "100px",
                   cursor: "pointer",
@@ -344,12 +344,12 @@ useEffect(() => {
                 <div>
                   <FaRegDotCircle className="text-danger mx-1" size={20} />
                 </div>
-                <div>non veg</div>
+                <div className="responsiveText">non veg</div>
               </div>
             </>
           )}
         </div>
-        <div className="d-flex ">
+        <div className="d-flex-main ">
           <div
             className="mx-2"
             style={{
@@ -368,7 +368,7 @@ useEffect(() => {
               style={{ color: "purple" }}
             
             />
-            Filter
+           <span className="responsiveText">Filter</span> 
           </div>
           <div
             style={{
@@ -389,7 +389,7 @@ useEffect(() => {
               <FaSortUp  size={20} style={{ color: "purple" }} />
             )}
             
-            Sort
+            <span className="responsiveText">Sort</span>
           </div>
         </div>
       </div>

@@ -22,6 +22,8 @@ export default function Tables() {
     (state) => state.deletecategory.d_categoryLoading
   );
   const restroDetails = useSelector((state) => state.restrodetail.restro);
+  const UpdateItemReponse=useSelector((state)=>state?.updateitem?.u_Item);
+  
   const { expanded, isDarkMode } = useContext(RestaurantContext);
   const ref = useRef();
   const dispatch = useDispatch();
@@ -42,10 +44,10 @@ export default function Tables() {
 
   // Log the item to check if it's correctly received
   useEffect(()=>{
-    if(response?.success===true){
+    if(UpdateItemReponse?.success===true){
       closeItemRef.current.click()
     }
-  },[response])
+  },[UpdateItemReponse])
   useEffect(() => {
     const data = location?.state?.item;
    

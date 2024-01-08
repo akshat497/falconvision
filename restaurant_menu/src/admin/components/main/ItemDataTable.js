@@ -71,22 +71,22 @@ export default function ItemDatatable({
   const columns = [
     {
       name: "Name",
-      selector: "name",
+      selector:(row)=>row.name,
       sortable: true,
     },
     {
       name: "Category",
-      selector: "Category.name", // Use nested object property
+      selector:(row)=>row.Category.name, // Use nested object property
       sortable: true,
     },
     {
       name: "Price",
-      selector: "price",
+      selector:(row)=>row.price,
       sortable: true,
     },
     {
       name: "Status",
-      selector: "isActive",
+      selector:(row)=>row.isActive,
       cell: (row) => (
         <div>
           {/* {(row)} */}
@@ -142,36 +142,7 @@ export default function ItemDatatable({
       },
     },
   };
-
-  //   const DarkStyledDataTable = styled(DataTable)`
-  //   background-color: #333; /* Dark background color */
-  //   color: white; /* Text color */
-
-  //   .rdt_TableHead {
-  //   background-color: #333; /* Dark background color */
-  //   color: white; /* Text color */
-  // }
-
-  //   .rdt_TableRow {
-  //     background-color: #444; /* Dark background color for rows */
-  //   }
-
-  //   .rdt_TableRow:hover {
-  //     background-color: #555; /* Dark background color for hover */
-  //   }
-
-  //   .rdt_TableRow.selected {
-  //     background-color: #666; /* Dark background color for selected row */
-  //   }
-
-  //   .rdt_Table_Pagination {
-  //     background-color: #333; /* Dark background color for pagination */
-  //   }
-
-  //   .rdt_Search input {
-  //     background-color: #444; /* Dark background color for search input */
-  //   }
-  // `;
+  
   const CustomTableSkeleton = () => {
     return (
       <div className="youtube-skeleton-loader my-5">

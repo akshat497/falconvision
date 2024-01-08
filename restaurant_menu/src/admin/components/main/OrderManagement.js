@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DataTable from "react-data-table-component";
 
-import { FaCheckCircle, FaRupeeSign } from "react-icons/fa";
+import { FaArrowAltCircleDown, FaCheckCircle, FaRedo, FaRupeeSign } from "react-icons/fa";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
@@ -32,25 +32,22 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
   const columns = [
     {
       name: "Customer Name",
-      selector: "username",
+      selector:(row)=>row.username,
       sortable: true,
     },
     {
       name: "Table-number",
-      selector: "tableNumber",
+      selector:(row)=>row.tableNumber,
       sortable: true,
     },
     {
       name: "Phone-number",
-      selector: "phoneNumber",
+      selector:(row)=>row.phoneNumber,
       sortable: true,
     },
     {
       name: "Message",
       selector: (row) => {
-        // Check if the message has been displayed, and if not, display it
-      
-
         return row?.Orders[0]?.message?.length < 1 ||
           row?.Orders[0]?.message === null ? (
           <b className="">No message</b>
@@ -98,7 +95,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     },
     {
       name: "Status",
-      selector: "isActive",
+      selector:(row)=>row.isActive,
       cell: (row) => (
         <div>
           {/* <ReactSwitch
@@ -160,12 +157,14 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                 Reject{" "}
               </button>
             ) : (
-              <button
+              <div
                 onClick={() => UndoOrder(row)}
-                className={"btn btn-sm btn-outline-danger mx-2 "}
+                className={"text-danger ml-5 cursor-pointer"}
+                style={{cursor:"pointer"}}
+                
               >
-                undo{" "}
-              </button>
+                <FaRedo size={22} title="undo"/>
+              </div>
             )}
 
             <button
@@ -250,116 +249,105 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
   //   }
   //  },[isActiveUpdate])
 
+
+
   const expandableRow = (row) => {
-    // var obj = {
-    //   totalamount: row?.data?.Orders[0]?.totalAmount,
-    //   isActive: false,
-    //   orderId: row?.data?.Orders[0]?.orderId,
-    // };
-    // if (row?.data?.Orders[0]?.isActive === true) {
-    //   dispatch(updateIsActiveOrder(obj));
-    //   setseen(true)
-    //   // row.data.Orders[0].isActive = false
-
-    // }
-   
-
     if (row.data && row.data.Orders) {
       const orderItems = row.data.Orders.flatMap((order) => order.OrderItems);
-
+  
+      const discount = row.data.Orders[0].couponDiscountPercentage !== 0
+        ? row.data.Orders[0].totalAmount * (row.data.Orders[0].couponDiscountPercentage / 100)
+        : row.data.Orders[0].couponDiscountPercentage;
+  
+      const total = row.data.Orders[0].couponDiscountPercentage !== 0
+        ? row.data.Orders[0].totalAmount - (row.data.Orders[0].totalAmount * (row.data.Orders[0].couponDiscountPercentage / 100))
+        : row.data.Orders[0].totalAmount;
+  
+      const discountRow = {
+        item_name: "Discount",
+        price: "",
+        quantity: "",
+        total: <><FaRupeeSign size={17} /> {discount}</>,
+      };
+  
+      const totalRow = {
+        item_name: "Total",
+        price: "",
+        quantity: "",
+        total: <><FaRupeeSign size={17} /> {total}</>,
+      };
+  
       const columns = [
         {
           name: "Name",
-          selector: "item_name",
+          selector:(row)=>row.item_name,
           sortable: true,
         },
         {
           name: "Price",
-          selector: "price",
+          selector:(row)=>row.price,
           sortable: true,
         },
         {
           name: "Quantity",
-          selector: "quantity",
+          selector:(row)=>row.quantity,
           sortable: true,
         },
-
         {
-          name: "total",
-          selector: (row) => (
-            <>
-              <small>
-                <FaRupeeSign size={17} />
-              </small>{" "}
-              {row.quantity * row.price}
-            </>
-          ),
+          name: "Total",
+          selector: (rowData) => {
+            if (rowData === discountRow || rowData === totalRow) {
+              return rowData.total;
+            }
+            return (
+              <>
+                <small>
+                  <FaRupeeSign size={17} />
+                </small>{" "}
+                {rowData.quantity * rowData.price}
+              </>
+            );
+          },
           sortable: true,
         },
       ];
-
+  
+      // Apply different styles for discount and total rows
+      const conditionalRowStyles = [
+        {
+          when: (row) => row === discountRow,
+          style: {
+            backgroundColor: '#ffcccb', // Light red for discount row
+          },
+        },
+        {
+          when: (row) => row === totalRow,
+          style: {
+            backgroundColor: '#c3e6cb', // Light green for total row
+          },
+        },
+      ];
+  
       return (
         <>
           <DataTable
             columns={columns}
-            data={orderItems}
+            data={[...orderItems, discountRow, totalRow]}
             noHeader
             dense
             striped
             highlightOnHover
             responsive
+            conditionalRowStyles={conditionalRowStyles}
           />
-          <table border={1} className="table " style={{ padding: "0px" }}>
-            <tbody>
-              <thead></thead>
-              <tr className="text-success ">
-                <td>
-                  <b>Discount</b>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-
-                <td>
-                  <b>
-                    <FaRupeeSign />{" "}
-                    {row.data.Orders[0].couponDiscountPercentage !== 0
-                      ? row.data.Orders[0].totalAmount *
-                        (row.data.Orders[0].couponDiscountPercentage / 100)
-                      : row.data.Orders[0].couponDiscountPercentage}
-                  </b>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <b>Total</b>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-
-                <td></td>
-
-                <td className="ml-4">
-                  <FaRupeeSign />
-                  {row.data.Orders[0].couponDiscountPercentage !== 0
-                    ? row.data.Orders[0].totalAmount -
-                      row.data.Orders[0].totalAmount *
-                        (row.data.Orders[0].couponDiscountPercentage / 100)
-                    : row.data.Orders[0].totalAmount}
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </>
       );
     } else {
       return <div>No items found.</div>;
     }
   };
+  
+  
 
   const CustomTableSkeleton = () => {
     return (

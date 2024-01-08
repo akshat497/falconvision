@@ -22,11 +22,13 @@ const FeedbackTable = () => {
   const columns = [
     {
       name: "Name",
-      selector: "name",
+      selector:(row)=>row.name,
+      sortable:true
     },
     {
       name: "Email",
-      selector: "email",
+      selector:(row)=>row.email,
+      sortable:true
     },
   ];
 
@@ -56,7 +58,7 @@ const FeedbackTable = () => {
     });
 
     setfetchedFeedbacksCopy(filteredOrders);
-  }, [searchText, fetchedFeedbacksCopy, fetchedFeedbacks]);
+  }, [searchText, fetchedFeedbacks]);
   return (
     <>
       <div className="my-3">

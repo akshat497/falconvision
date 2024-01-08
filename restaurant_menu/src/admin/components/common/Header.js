@@ -32,6 +32,7 @@ import HelpModal from "../main/settings/modals/HelpModal";
 import Feedback from "../main/settings/modals/Feedback";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
 import NotificationBell from "../../../images/Notification-Bell.png";
+
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -354,6 +355,7 @@ export default function Header() {
   return (
     <>
       <PasswordResetModal />
+      
       <UserProfile />
       <HelpModal />
       <Feedback />
@@ -594,7 +596,7 @@ export default function Header() {
                             (order) => order?.Orders?.[0]?.isActive === true
                           ) ? (
                             orders.map((order, index) => (
-                              <div className="" type="">
+                              <div className="" type="" key={index}>
                                 {handleNotification(order)}
                               </div>
                             ))

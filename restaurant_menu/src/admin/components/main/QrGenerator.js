@@ -41,7 +41,7 @@ export default function QrGenerator() {
             <div id="" class="container">
               ${Qrcodes.map(
                 (data, index) => `
-                <div class="  my-5">
+                <div class="  my-5" >
                 <h3 class="text-center mb-4">Table No : ${Number(startNumber) + Number(index)}</h3>
                   <img src="${data}" alt="QR Code" class="img-fluid" />
                 </div>
@@ -119,7 +119,7 @@ export default function QrGenerator() {
               ) : (
                 Qrcodes?.map((data, index) => (
                   <>
-                    <div key={index} className="qr-code mx-5 my-5">
+                    <div key={data} className="qr-code mx-5 my-5">
                       <img
                         src={data}
                         alt="QR Code"

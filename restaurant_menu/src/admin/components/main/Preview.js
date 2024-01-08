@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 // import RestaurantContext from '../../context/RestaurantContext'
-import { FaInfoCircle, FaRupeeSign } from "react-icons/fa";
+import {
+  FaEdit,
+  FaInfoCircle,
+  FaRegDotCircle,
+  FaRupeeSign,
+  FaTrashAlt,
+} from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { deleteItem, updateItem } from "../../../redux/items/itemThunk";
@@ -116,30 +122,21 @@ export default function Preview() {
     </div>
   );
   const handleToggleActive = (row) => {
-   
-   
-   
-    const formdata = new FormData(); 
-    
+    const formdata = new FormData();
+
     // Assuming `itemData` and `restroDetails` are defined
-    
+
     formdata.append("name", row.name);
     formdata.append("userId", row?.userId);
     formdata.append("categoryId", row?.categoryId);
     formdata.append("menuItemId", row?.menuItemId);
     formdata.append("isActive", !row?.isActive);
-   
-  
 
-   
-       dispatch(updateItem({formdata,userId:row?.userId}));
-      
-    
+    dispatch(updateItem({ formdata, userId: row?.userId }));
   };
+
   return (
     <>
-      {/* <Header/> */}
-
       {fetchLoading || deleteLoading || updateLoading ? (
         <div className="overlay"></div>
       ) : null}
@@ -174,141 +171,185 @@ export default function Preview() {
               <NoDatComponent />
             </>
           )}
-          {/* <Switch
-   onChange={handleView}
-        checked={showDataTable}
-/> */}
-          {/* {showDataTable?<span className='mx-2 my-2'>table view activated</span>:<span className='mx-2 my-2'>table view deActivated</span>} */}
 
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {!fetchLoading
-              ? fetcheditems?.map((data) => (
+              ? fetcheditems?.map((data, index) => (
                   <div
-                    className={
-                      isDarkMode
-                        ? "card mx-4 my-2 bg-dark text-secondary"
-                        : "card mx-4 my-2"
-                    }
-                    style={{ width: "17rem" }}
+                    className="card mx-4 my-4"
+                    key={index}
+                    style={{
+                      width: "100%",
+                      maxWidth: "350px",
+                      borderRadius: "8px",
+                      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                      opacity:
+                        data?.isActive || data?.Category?.isActive
+                          ? "1"
+                          : "0.5",
+                      transition: "opacity 0.3s ease-in-out",
+                    }}
                   >
-                   
-                    <img
-                      src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
-                      className="card-img-top"
-                      alt="..."
-                      style={{ width: "100%", height: "200px" }}
-                    />
-
-                    <div className="card-body">
-                      <h5 className="card-title">{data?.name}</h5>
-
-                      <h7 className="card-text">{data?.Category?.name}</h7>
-                      <span
-                        className={
-                          data?.veg
-                            ? "badge bg-success mx-2"
-                            : "badge bg-danger mx-2"
-                        }
-                      >
-                        {data?.veg ? "veg" : "nonveg"}
-                      </span>
-                      <p>
-                        <FaRupeeSign />
-                        {data.price}
-                      </p>
-                      <button
-                        className="btn text-light mx-2"
-                        disabled={!data?.isActive}
-                        onClick={() => {
-                          handleUpdate(data);
+                    <div
+                      style={{
+                        display: "flex",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <img
+                        src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
+                        className="card-img-left"
+                        alt="FoodImage"
+                        style={{
+                          width: "40%",
+                          height: "200px",
+                          objectFit: "cover",
+                          borderTopLeftRadius: "8px",
+                          borderBottomLeftRadius: "8px",
                         }}
-                        value={data?.menuItemId}
-                        style={{ backgroundColor: "purple" }}
-                      >
-                        Update
-                      </button>
-                      <button
-                        className="btn btn-danger "
-                        onClick={() => {
-                          setItemToDelete(data);
-                        }}
-                        data-bs-toggle="modal"
-                        data-bs-target="#deleteModel"
-                        disabled={!data?.isActive}
-                        value={data?.menuItemId}
-                      >
-                        Delete
-                      </button>
+                      />
                       <div
-                        className="d-flex mt-3 "
-                        style={{ justifyContent: "space-between" }}
+                        className="card-body"
+                        style={{ width: "60%", padding: "1rem" }}
                       >
-                        <div className="">
-                          <ReactSwitch
-                            onChange={() => handleToggleActive(data)}
-                            checked={data?.isActive}
-                            id={`switch-${data?.categoryId}`}
-                            onColor="#800080" // Set the color when the switch is on (purple)
-                            offColor="#d3d3d3"
-                          />
-                        </div>
-                        <div
-                          className=" "
-                          style={{
-                            position: "relative",
-                            display: "inline-block",
-                          }}
-                        >
-                          <FaInfoCircle
-                            size={22}
-                            onClick={() => handlePopoverToggle(data.menuItemId)}
-                            style={{ cursor: "pointer", color: "purple" }}
-                          />
-
-                          {popoverVisible[data.menuItemId] && (
-                            <div
-                              className="popover"
-                              style={{
-                                position: "absolute",
-                                // Adjust the top position as needed
-                                left: "auto",
-                                minWidth: "200px",
-                                maxWidth: "400px",
-                                right: "120%", // Adjust the right position as needed
-                                transform: "translateY(-50%)", // Center vertically
-                                // backgroundColor: "#fff",
-                                boxShadow: "2px 2px 2px 2px purple",
-                                padding: "10px",
-                                borderColor: "purple",
-                                borderRadius: "10px",
-                                zIndex: "999",
-                                visibility: popoverVisible[data.menuItemId]
-                                  ? "visible"
-                                  : "hidden",
-                                opacity: popoverVisible[data.menuItemId]
-                                  ? 1
-                                  : 0,
-                                transition: "opacity 0.3s, visibility 0.3s",
-                                backgroundColor: "whiteSmoke",
-                              }}
-                            >
-                              {/* Popover content goes here */}
-
-                              <div>{data.description}</div>
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: "50%",
-                                  left: "100%",
-                                  width: 0,
-                                  height: 0,
-                                  borderTop: "8px solid transparent",
-                                  borderBottom: "8px solid transparent",
-                                  borderLeft: "8px solid #fff", // Same as background color of the popover
-                                }}
-                              />
+                        <div className="card-title d-flex  ">
+                          <div
+                            className="d-flex justify-content-between"
+                            style={{ width: "120%" }}
+                          >
+                            <div className="card-title">
+                              <h5>
+                                {data?.name &&
+                                  data.name
+                                    .split("")
+                                    .map((char, index) => {
+                                      return index % 5 === 0 && index !== 0
+                                        ? " " + char
+                                        : char;
+                                    })
+                                    .join("")}
+                              </h5>
                             </div>
-                          )}
+
+                            <div className="d-flex">
+                              <div className="badge-container  ">
+                                {data?.veg ? (
+                                  <div
+                                    className="badge "
+                                    style={{ fontSize: "0.7rem" }}
+                                  >
+                                    <FaRegDotCircle
+                                      className="text-success"
+                                      size={20}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div
+                                    className="badge "
+                                    style={{ fontSize: "0.7rem" }}
+                                  >
+                                    <FaRegDotCircle
+                                      className="text-danger"
+                                      size={20}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              <div
+                                className=""
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <FaInfoCircle
+                                  size={22}
+                                  onClick={() =>
+                                    handlePopoverToggle(data.menuItemId)
+                                  }
+                                  style={{ cursor: "pointer", color: "purple" }}
+                                />
+
+                                {popoverVisible[data.menuItemId] && (
+                                  <div
+                                    className="popover"
+                                    style={{
+                                      visibility: popoverVisible[
+                                        data.menuItemId
+                                      ]
+                                        ? "visible"
+                                        : "hidden",
+                                      opacity: popoverVisible[data.menuItemId]
+                                        ? 1
+                                        : 0,
+                                      // "auto" may be used depending on the browser
+                                    }}
+                                  >
+                                    {/* Popover content goes here */}
+
+                                    <div>{data.description}</div>
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "100%",
+                                        width: 0,
+                                        height: 0,
+                                        borderTop: "8px solid transparent",
+                                        borderBottom: "8px solid transparent",
+                                        borderLeft: "8px solid #fff", // Same as background color of the popover
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <p className="card-rating">{data?.rating}</p>
+                        </div>
+                        <p
+                          className="card-price d-flex"
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          <div>
+                            <FaRupeeSign /> {data.price}
+                          </div>
+
+                          <div className="">
+                            <ReactSwitch
+                              onChange={() => handleToggleActive(data)}
+                              checked={data?.isActive}
+                              id={`switch-${data?.categoryId}`}
+                              onColor="#800080" // Set the color when the switch is on (purple)
+                              offColor="#d3d3d3"
+                            />
+                          </div>
+                        </p>
+                        <div className="card-buttons d-flex justify-content-between mt-4">
+                          <span
+                            disabled={!data?.isActive}
+                            onClick={() => {
+                              handleUpdate(data);
+                            }}
+                            value={data?.menuItemId}
+                            style={{ color: "purple", cursor: "pointer" }}
+                          >
+                            <FaEdit size={34} />
+                          </span>
+                          <span
+                            className="text-danger"
+                            onClick={() => {
+                              setItemToDelete(data);
+                            }}
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModel"
+                            disabled={!data?.isActive}
+                            value={data?.menuItemId}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <FaTrashAlt size={32} />
+                          </span>
                         </div>
                       </div>
                     </div>

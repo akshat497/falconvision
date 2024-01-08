@@ -75,7 +75,7 @@ useEffect(()=>{
     
   };
   useEffect(()=>{
-    console.log(itemData.name,clickedRow.name)
+    
     if(itemData?.name!==clickedRow?.name){
       setdisabled(false)
     }else{
@@ -89,17 +89,17 @@ useEffect(()=>{
   const columns = [
     {
       name: "Name",
-      selector: "name",
+      selector: (row) => row.name,
       sortable: true,
     },
     {
       name: "",
-      selector: "",
+     
     },
     {
       name: "Status",
-      selector: "isActive",
-
+      selector: (row) => row.isActive,
+      
       cell: (row) => (
         <div>
           <Switch
@@ -114,7 +114,7 @@ useEffect(()=>{
     },
     {
       name: "",
-      selector: "",
+      
     },
     {
       name: "Actions",
@@ -202,7 +202,7 @@ useEffect(()=>{
           ) : (
             <DataTable
             
-              columns={columns}
+              columns={columns||''}
               data={categoryCopy}
               highlightOnHover
               pagination

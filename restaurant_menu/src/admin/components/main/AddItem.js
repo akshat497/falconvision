@@ -15,12 +15,13 @@ export default function AddItem({ preview, clickedItem }) {
   // (clickedItem);
   // const {restroDetails}=useContext(RestaurantContext)
   const restroDetails = useSelector((state) => state.restrodetail.restro);
-const addItemReponse=useSelector((state)=>state?.addItem?.item)
+const addItemReponse=useSelector((state)=>state?.addItem?.item);
   const loading = useSelector((state) => state.addItem.itemloading);
   const updateLoading = useSelector((state) => state.updateitem.u_Itemloading);
   const fullFilled = useSelector(
     (state) => state.fetchcategory.fetchedcategory
   );
+  
   const [itemData, setItemData] = useState({
     name: "",
     price: "",
@@ -156,9 +157,15 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
       dispatch(addItem({formdata,userId:restroDetails?.userId}));
     }
-    resetForm();
+    
   
   };
+  useEffect(()=>{
+    if(addItemReponse?.success===true){
+      resetForm();
+    }
+   
+  },[addItemReponse])
   const resetForm = () => {
     setItemData({
       name: "",
@@ -176,6 +183,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
 
   useEffect(() => {
     if (preview) {
+    
       setItemData({
         name: clickedItem?.name,
         price: clickedItem?.price,
@@ -188,21 +196,8 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
     setSelectedCategory(clickedItem?.Category?.categoryId);
     setimage(clickedItem?.imageUrl);
   }, [clickedItem]);
-  useEffect(() => {
-    if (
-      itemData.name !== clickedItem?.name ||
-      itemData.price !== clickedItem?.price ||
-      itemData.dishType !== clickedItem?.type ||
-      (itemData.veg === "veg" && !clickedItem?.veg) ||
-      (itemData.veg === "Non-Veg" && clickedItem?.veg) ||
-      itemData.description !== clickedItem?.description
-    ) {
-      setdisabled(false);
-    } else {
-      setdisabled(true);
-    }
-  }, [itemData, clickedItem]);
 
+  
   const convertImage = (e) => {
     const file = e.target.files[0];
   
@@ -258,7 +253,8 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     id="name"
                     className="form-control"
                     name="name"
-                    value={itemData?.name}
+                    value={itemData?.name || ''}
+
                     placeholder="Enter Dish Name"
                     onChange={handleInputChange}
                     required
@@ -274,7 +270,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     className="form-control"
                     name="price"
                     placeholder="Enter Price"
-                    value={itemData?.price}
+                    value={itemData?.price|| ''}
                     onChange={handleInputChange}
                     required
                   />
@@ -324,6 +320,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     name="category"
                     className="form-control"
                     onChange={handleCategoryChange}
+                   
                   >
                     <option value={""}>
                       {preview
@@ -396,7 +393,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                     rows={6}
                     id="description"
                     name="description"
-                    value={itemData?.description}
+                    value={itemData?.description|| ''}
                     className="form-control"
                     placeholder="Enter Description"
                     onChange={handleInputChange}
@@ -452,7 +449,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item)
                    
                     selectedCategory?.trim() === "" ||
                     updateLoading ||
-                    loading||disabled
+                    loading
                   }
                 >
                   {preview === "preview"

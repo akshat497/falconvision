@@ -478,10 +478,10 @@ const authController = {
       //   });
       // }
 
-      return res.json({ message: "Password reset link sent" });
+      return res.status(200).json(CustomResponseHandler.positiveResponse( "Password reset link sent",[] ));
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.status(500).json(CustomResponseHandler.negativeResponse( "Internal server error",[] ));
     }
   },
 

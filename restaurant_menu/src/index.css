@@ -633,6 +633,7 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
   margin-top: 15px;
   font-weight: bold;
   font-size: 22px;
+  float: right;
 }
 
 .shopping-cart .summary {
@@ -827,7 +828,7 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
     position: absolute;
     top: 10px;
     right: 10px; */
-  position: absolute;
+  position: relative;
   bottom: 0;
   right: 0;
 
@@ -1410,6 +1411,7 @@ p {
   -webkit-overflow-scrolling: touch;
   /* For smoother scrolling on iOS devices */
   white-space: nowrap;
+ 
   /* Prevent items from wrapping to the next line */
 }
 
@@ -1420,6 +1422,7 @@ p {
   margin-right: 10px;
   /* Adjust the margin between cards as needed */
   scroll-snap-align: start;
+
 }
 
 /* Add additional styles as needed */
@@ -1445,9 +1448,7 @@ p {
   opacity: 0;
   transition: opacity 0.5s, visibility 0.5s;
   background-color: whiteSmoke;
-  margin-top: 20px;
-
-
+  margin-top: 45px;
   left: auto;
   /* Hide the scrollbar but enable scrolling */
   overflow: scroll;
@@ -1525,15 +1526,41 @@ h3 {
 
 
 @media screen and (max-width: 384px) {
-  .d-flex {
+  .d-flex-main {
     font-size: small;
   }
 
 }
 @media screen and (max-width: 353px) {
-  .d-flex {
+  .d-flex-main{
     font-size: smaller;
   }
 
 }
+@media screen and (max-width: 280px) {
+  .d-flex-main{
+    font-size: smaller;
+  }
+  .responsiveText{
+    display: none;
+  }
+
+}
+@media screen and (max-width: 1448px) {
+
+.items{
+  max-height: 500px;
+  overflow: scroll;
+}
+ 
+
+}
+
 /* ... add more styles ... */
+.d-flex-main{
+  display: flex;
+}
+.Cartrow{
+  display: inline;
+  justify-content: center !important;
+}

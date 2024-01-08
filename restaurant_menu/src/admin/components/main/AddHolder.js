@@ -36,7 +36,7 @@ export default function AddHolder() {
                     </button>
                    
                 </div>
-                <div className="content-container">
+                <div className="content-container mt-5">
                     <div className="content">
                         
                         {displayCategory && <AddCategory />}

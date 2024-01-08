@@ -20,10 +20,12 @@ import {
   FaAdjust,
   FaChartLine,
   FaDatabase,
-  FaMoneyBillWave,
-  FaRegCompass,
+
 } from "react-icons/fa";
 import { salesSummery } from "../../../redux/orders/orderThunk";
+
+
+
 
 const Dashboard = () => {
   const allOrders = useSelector((state) => state.salessummery.sales);
@@ -192,7 +194,7 @@ const Dashboard = () => {
       {
         label: "Sales Amount",
         data: data,
-        fill: true,
+        
         borderColor: "black",
       },
     ],

@@ -211,220 +211,280 @@ export default function Card({ veg, nonVeg }) {
 
   return (
     <>
-    <div style={{height:"100vh",overflow:"",paddingTop:"10%"}}>
-       {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
-      {fetchLoading ? <div className="overlay"></div> : null}
-      <FeedbackModal />
-     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-  {!fetchLoading &&
-    fetcheditemsCopy?.map((data) => (
-      <div
-        className="card mx-4 my-4"
-        style={{
-          width: "100%",
-          maxWidth: "350px",
-          borderRadius: "8px",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          opacity: data?.isActive || data?.Category?.isActive ? "1" : "0.5",
-          transition: "opacity 0.3s ease-in-out",
-        }}
-      >
-        <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden" }}>
-          <img
-            src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
-            className="card-img-left"
-            alt="FoodImage"
-            style={{
-              width: "40%",
-              height: "200px",
-              objectFit: "cover",
-              borderTopLeftRadius: "8px",
-              borderBottomLeftRadius: "8px",
-            }}
-          />
-          <div className="card-body" style={{ width: "60%", padding: "1rem" }}>
-            <div className="card-title d-flex  ">
-              <div className="d-flex justify-content-between" style={{width:"120%"}}>
-             
-             
-              <div className="">
-              <h5 className="card-title">{data?.name}</h5>
-               
-              
-              </div>
-             
-                
-               <div className="d-flex">
-               <div className="badge-container  ">
-                  {data?.veg ? (
-                    <div className="badge " style={{ fontSize: "0.7rem" }}>
-                      <FaRegDotCircle className="text-success" size={20}/>
-                    </div>
-                  ) : (
-                    <div className="badge " style={{ fontSize: "0.7rem" }}>
-                    <FaRegDotCircle className="text-danger" size={20}/>
-                    </div>
-                  )}
-                </div>
+      <div style={{ height: "100vh", overflow: "", paddingTop: "2%" }}>
+        {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
+        {fetchLoading ? <div className="overlay"></div> : null}
+        <FeedbackModal />
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          {!fetchLoading &&
+            fetcheditemsCopy?.map((data) => (
+              <div
+                className="card mx-4 my-4"
+                style={{
+                  width: "100%",
+                  maxWidth: "350px",
+                  borderRadius: "8px",
+                  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                  opacity:
+                    data?.isActive || data?.Category?.isActive ? "1" : "0.5",
+                  transition: "opacity 0.3s ease-in-out",
+                }}
+              >
                 <div
-                       className=""
-                        style={{
-                          position: "relative",
-                          display: "inline-block",
-                        }}
+                  style={{
+                    display: "flex",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${data?.imageUrl}`}
+                    className="card-img-left"
+                    alt="FoodImage"
+                    style={{
+                      width: "40%",
+                      height: "auto",
+                      objectFit: "cover",
+                      borderTopLeftRadius: "8px",
+                      borderBottomLeftRadius: "8px",
+                    }}
+                  />
+                  <div
+                    className="card-body"
+                    style={{ width: "60%", padding: "1rem" }}
+                  >
+                    <div className="card-title d-flex  ">
+                      <div
+                        className="d-flex justify-content-between"
+                        style={{ width: "120%" }}
                       >
-                        <FaInfoCircle
-                          size={22}
-                          onClick={() => handlePopoverToggle(data.menuItemId)}
-                          style={{ cursor: "pointer", color: "purple" }}
-                        />
+                        <div className="card-title">
+                          <h5>
+                            {data?.name &&
+                              data.name
+                                .split("")
+                                .map((char, index) => {
+                                  return index % 5 === 0 && index !== 0
+                                    ? " " + char
+                                    : char;
+                                })
+                                .join("")}
+                          </h5>
+                        </div>
 
-                        {popoverVisible[data.menuItemId] && (
+                        <div className="d-flex">
+                          <div className="badge-container  ">
+                            {data?.veg ? (
+                              <div
+                                className="badge "
+                                style={{ fontSize: "0.7rem" }}
+                              >
+                                <FaRegDotCircle
+                                  className="text-success"
+                                  size={20}
+                                />
+                              </div>
+                            ) : (
+                              <div
+                                className="badge "
+                                style={{ fontSize: "0.7rem" }}
+                              >
+                                <FaRegDotCircle
+                                  className="text-danger"
+                                  size={20}
+                                />
+                              </div>
+                            )}
+                          </div>
                           <div
-                            className="popover"
+                            className=""
                             style={{
-                              visibility: popoverVisible[data.menuItemId]
-                                ? "visible"
-                                : "hidden",
-                              opacity: popoverVisible[data.menuItemId] ? 1 : 0,
-                              // "auto" may be used depending on the browser
+                              position: "relative",
+                              display: "inline-block",
                             }}
                           >
-                            {/* Popover content goes here */}
-
-                            <div>{data.description}</div>
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "100%",
-                                width: 0,
-                                height: 0,
-                                borderTop: "8px solid transparent",
-                                borderBottom: "8px solid transparent",
-                                borderLeft: "8px solid #fff", // Same as background color of the popover
-                              }}
+                            <FaInfoCircle
+                              size={22}
+                              onClick={() =>
+                                handlePopoverToggle(data.menuItemId)
+                              }
+                              style={{ cursor: "pointer", color: "purple" }}
                             />
+
+                            {popoverVisible[data.menuItemId] && (
+                              <div
+                                className="popover"
+                                style={{
+                                  visibility: popoverVisible[data.menuItemId]
+                                    ? "visible"
+                                    : "hidden",
+                                  opacity: popoverVisible[data.menuItemId]
+                                    ? 1
+                                    : 0,
+                                  // "auto" may be used depending on the browser
+                                }}
+                              >
+                                {/* Popover content goes here */}
+
+                                <div>{data.description}</div>
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "100%",
+                                    width: 0,
+                                    height: 0,
+                                    borderTop: "8px solid transparent",
+                                    borderBottom: "8px solid transparent",
+                                    borderLeft: "8px solid #fff", // Same as background color of the popover
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
-               </div>
-              
-              </div>
-              <p className="card-rating">{data?.rating}</p>
-            </div>
-            <p className="card-price">
-              <FaRupeeSign /> {data.price}
-            </p>
-            <div className="card-buttons">
-              {cart?.find((item) => item.menuItemId === data.menuItemId) ? (
-                <>
-                  {!data?.isActive || !data?.Category?.isActive ? (
-                    <button
-                      className="btn btn-secondary"
-                      disabled
-                      style={{
-                        cursor: "not-allowed",
-                        padding: "12px",
-                        borderRadius: "8px",
-                        width: "100%",
-                        fontWeight: "750",
-                        backgroundColor: "#eee",
-                        color: "#666",
-                        border: "none",
-                      }}
-                    >
-                      Not Available
-                    </button>
-                  ) : (
-                    <div className="quantity-controls d-flex align-items-center mt-4" style={{
-                        padding: "8px",
-                        borderRadius: "8px",
-                        width: "80%",
-                        fontWeight: "750",
-                        
-                       
-                      }}>
-                      <button
-                        className="btn btn-sm "
-                        onClick={() => removeFromCart(data)}
-                        style={{ fontSize: "1.5rem",borderColor:"purple" ,color:"purple"}}
-                      >
-                        <FaMinus />
-                      </button>
-                      <span className="mx-3 quantity-value " style={{ fontSize: "1.25rem" ,color:"purple"}}>
-                        {cart?.find((item) => item.menuItemId === data.menuItemId)?.quantity || 0}
-                      </span>
-                      <button
-                        className="btn btn-sm  add-to-cart-btn"
-                        onClick={() => addToCart(data)}
-                        style={{ fontSize: "1.5rem",borderColor:"purple" ,color:"purple" }}
-                      >
-                        <FaPlus />
-                      </button>
+                      <p className="card-rating">{data?.rating}</p>
                     </div>
-                  )}
-                </>
-              ) : (
-                <div>
-                  {!data?.isActive || !data?.Category?.isActive ? (
-                    <button
-                      className="btn btn-secondary"
-                      disabled
-                      style={{
-                        cursor: "not-allowed",
-                        padding: "12px",
-                        borderRadius: "8px",
-                        width: "100%",
-                        fontWeight: "750",
-                        backgroundColor: "#eee",
-                        color: "#666",
-                        border: "none",
-                      }}
-                    >
-                      Not Available
-                    </button>
-                  ) : (
-                    <button
-                      className="btn  mt-4"
-                      style={{
-                        padding: "10px",
-                        borderRadius: "8px",
-                        width: "100%",
-                        fontWeight: "750",
-                        // backgroundColor: "purple",
-                        borderColor:"purple",
-                        color:"purple"
-                      }}
-                      onClick={() => addToCart(data)}
-                    >
-                      Add
-                    </button>
-                  )}
+                    <p className="card-price">
+                      <FaRupeeSign /> {data.price}
+                    </p>
+                    <div className="card-buttons">
+                      {cart?.find(
+                        (item) => item.menuItemId === data.menuItemId
+                      ) ? (
+                        <>
+                          {!data?.isActive || !data?.Category?.isActive ? (
+                            <button
+                              className="btn btn-secondary"
+                              disabled
+                              style={{
+                                cursor: "not-allowed",
+                                padding: "12px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                backgroundColor: "#eee",
+                                color: "#666",
+                                border: "none",
+                              }}
+                            >
+                              Not Available
+                            </button>
+                          ) : (
+                            <div
+                              className="quantity-controls d-flex align-items-center mt-4"
+                              style={{
+                                padding: "8px",
+                                borderRadius: "8px",
+                                width: "80%",
+                                fontWeight: "750",
+                              }}
+                            >
+                              <button
+                                className="btn btn-sm "
+                                onClick={() => removeFromCart(data)}
+                                style={{
+                                  fontSize: "1.5rem",
+                                  borderColor: "purple",
+                                  color: "purple",
+                                }}
+                              >
+                                <FaMinus />
+                              </button>
+                              <span
+                                className="mx-3 quantity-value "
+                                style={{ fontSize: "1.25rem", color: "purple" }}
+                              >
+                                {cart?.find(
+                                  (item) => item.menuItemId === data.menuItemId
+                                )?.quantity || 0}
+                              </span>
+                              <button
+                                className="btn btn-sm  add-to-cart-btn"
+                                onClick={() => addToCart(data)}
+                                style={{
+                                  fontSize: "1.5rem",
+                                  borderColor: "purple",
+                                  color: "purple",
+                                }}
+                              >
+                                <FaPlus />
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div>
+                          {!data?.isActive || !data?.Category?.isActive ? (
+                            <button
+                              className="btn btn-secondary"
+                              disabled
+                              style={{
+                                cursor: "not-allowed",
+                                padding: "12px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                backgroundColor: "#eee",
+                                color: "#666",
+                                border: "none",
+                              }}
+                            >
+                              Not Available
+                            </button>
+                          ) : (
+                            <button
+                              className="btn  mt-4"
+                              style={{
+                                padding: "10px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                fontWeight: "750",
+                                // backgroundColor: "purple",
+                                borderColor: "purple",
+                                color: "purple",
+                              }}
+                              onClick={() => addToCart(data)}
+                            >
+                              Add
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
-             
-            </div>
-          </div>
+              </div>
+            ))}
+          {fetchLoading || restroLoading
+            ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((index) => (
+                <SkeletonItem key={index} />
+              ))
+            : null}
         </div>
       </div>
-    ))}
-  {fetchLoading || restroLoading
-    ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((index) => <SkeletonItem key={index} />)
-    : null}
-</div>
-    </div>
-     
-
 
       <div className="d-flex">
         <div
           className="floating-cart-icon "
-          style={{ right: "80px" ,backgroundColor:"purple",color:"purple"}}
+          style={{ right: "80px", backgroundColor: "purple", color: "purple" }}
           data-bs-toggle="modal"
           data-bs-target="#FeedbackModal"
         >
-          <img src={feedback} alt="Feedback-icon" height={40} width={40} style={{color:"purple"}}/>
+          <img
+            src={feedback}
+            alt="Feedback-icon"
+            height={40}
+            width={40}
+            style={{ color: "purple" }}
+          />
         </div>
         <div
           className="floating-cart-icon"

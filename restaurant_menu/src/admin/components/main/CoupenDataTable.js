@@ -72,8 +72,7 @@ export default function CoupenDataTable() {
   const columns = [
     {
       name: "Name",
-      selector: "name",
-
+      selector:(row)=>row.name,
       sortable: true,
     },
 
@@ -86,7 +85,7 @@ export default function CoupenDataTable() {
     },
     {
       name: "Status",
-      selector: "isActive",
+      selector:(row)=>row.isActive,
 
       cell: (row) => (
         <div>
@@ -203,7 +202,7 @@ export default function CoupenDataTable() {
           ) : (
             <>
               <DataTable
-                columns={columns}
+                columns={columns ||''}
                 data={fetchedCoupens || []}
                 customStyles={customStyles}
                 highlightOnHover

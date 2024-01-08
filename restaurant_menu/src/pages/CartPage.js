@@ -5,7 +5,7 @@ import {
   FaMinus,
   FaTrash,
   FaPlusCircle,
-
+  FaRegDotCircle,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
@@ -19,29 +19,28 @@ const CartPage = () => {
   const [discount, setDiscount] = useState(0);
   const [coupenDisplay, setcoupenDisplay] = useState(false);
   const discountedAmount = useSelector((state) => state.couponcodes.couponcode);
-  const applyingCoupon = useSelector((state) => state.couponcodes.couponcodeloading);
+  const applyingCoupon = useSelector(
+    (state) => state.couponcodes.couponcodeloading
+  );
   const fetchedItem = useSelector((state) => state.fetchitem.f_item);
-  const fetchedCategory = useSelector((state) => state.fetchcategory.fetchedcategory);
+  const fetchedCategory = useSelector(
+    (state) => state.fetchcategory.fetchedcategory
+  );
 
-  
-  
-  
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-   
 
-      // Find and remove the item with the given id from the cart
-      const updatedCart = storedCart.filter((item) => item?.isActive===true);
+    // Find and remove the item with the given id from the cart
+    const updatedCart = storedCart.filter((item) => item?.isActive === true);
 
-      // Update the local storage with the modified cart data
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    // Update the local storage with the modified cart data
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
     setCart(updatedCart);
     updateTotalPrice(updatedCart);
-  }, [fetchedItem,fetchedCategory]);
+  }, [fetchedItem, fetchedCategory]);
 
   useEffect(() => {
-    
-    if (discountedAmount !== null&&cart&&cart.length!==0) {
+    if (discountedAmount !== null && cart && cart.length !== 0) {
       setDiscount(discountedAmount?.discountedAmount);
     }
   }, [discountedAmount]);
@@ -71,16 +70,15 @@ const CartPage = () => {
       name: couponCode,
       userId: params?.userId,
       totalAmount: totalPrice,
-      items:JSON.parse(localStorage.getItem("cart"))
+      items: JSON.parse(localStorage.getItem("cart")),
     };
     dispatch(applyCoupon(obj));
-    
   };
- 
+
   const handleDeleteFromCart = (id) => {
     // Find the product element to delete
-    
-    setDiscount(0)
+
+    setDiscount(0);
     const productElement = document.getElementById(`product-${id}`);
 
     // Apply the fade-out effect
@@ -103,22 +101,25 @@ const CartPage = () => {
     }, 300); // Adjust the delay (300ms) to match your transition duration
   };
 
- useEffect(()=>{
-  const params = JSON.parse(localStorage.getItem("params"));
-  dispatch(fetchItem(params?.userId));
-  if(fetchedItem!==null){
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    function updateCartWithAvailableItems() {
-      cart = cart.filter(cartItem => fetchedItem.some(menuItem => menuItem.menuItemId === cartItem.menuItemId));
-      saveCartToLocalStorage();
+  useEffect(() => {
+    const params = JSON.parse(localStorage.getItem("params"));
+    dispatch(fetchItem(params?.userId));
+    if (fetchedItem !== null) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      function updateCartWithAvailableItems() {
+        cart = cart.filter((cartItem) =>
+          fetchedItem.some(
+            (menuItem) => menuItem.menuItemId === cartItem.menuItemId
+          )
+        );
+        saveCartToLocalStorage();
+      }
+      function saveCartToLocalStorage() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+      updateCartWithAvailableItems();
     }
-    function saveCartToLocalStorage() {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-    updateCartWithAvailableItems();
-  }
- 
- },[])
+  }, []);
   return (
     <main className="container" style={{ backgroundColor: "whitesmoke" }}>
       <section className="shopping-cart">
@@ -140,28 +141,53 @@ const CartPage = () => {
                 ) : (
                   cart?.map((data) => (
                     <div
-                      className={`product`}
+                      className={`product` }
+
+                     
                       id={`product-${data.menuItemId}`}
                       key={data.menuItemId}
                     >
-                      <div className="row">
-                        <div className="col-md-3 col-4">
+                      <div className="Cartrow">
+                        <div className="">
                           <img
                             className="img-fluid mx-auto d-block image"
-                            src={process.env.REACT_APP_BASE_URL_FOR_IMAGES +data?.imageUrl}
+                            src={
+                              process.env.REACT_APP_BASE_URL_FOR_IMAGES +
+                              data?.imageUrl
+                            }
                             alt={data?.name}
                           />
                         </div>
-                        <div className="col-md-9 col-8">
+                        <div className="">
                           <div className="info">
-                          
                             <div className="product-name">
-                            
-                              <div className="name">
-                              {data?.name}
-                              <small className={data?.veg ? "badge bg-success mx-2 " : "badge bg-danger mx-2"} style={{ fontSize: "0.7rem",}}>
-          {data?.veg ? "veg" : "nonveg"}
-        </small></div>
+                              <div className=" name">
+                                <div className="card-title d-flex justify-content-center align-items-center" style={{position:"relative"}}>
+                                 
+                                    <div className="text-center">
+                                      {data?.name &&
+                                        data.name
+                                          .split("")
+                                          .map((char, index) => {
+                                            return index % 5 === 0 &&
+                                              index !== 0
+                                              ? " " + char
+                                              : char;
+                                          })
+                                          .join("")}
+                                    </div>
+                                    <div className="icon" style={{right:"0",position:"absolute"}}>
+                                      <div>
+                                        {data?.veg ? (
+                                          <FaRegDotCircle className="text-success" />
+                                        ) : (
+                                          <FaRegDotCircle className="text-danger" />
+                                        )}
+                                     
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                               <div className="product-info">
                                 <div className="price-info">
                                   Price:{" "}
@@ -268,8 +294,7 @@ const CartPage = () => {
                         onClick={handleApplyCoupon}
                         disabled={applyingCoupon}
                       >
-                      {applyingCoupon?"Applying..":"Apply"}
-                        
+                        {applyingCoupon ? "Applying.." : "Apply"}
                       </button>
                     </div>
                   )}
