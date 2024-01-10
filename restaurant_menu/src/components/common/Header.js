@@ -18,7 +18,7 @@ import FilterModal from "../main/FilterModal";
 export default function Header({ id }) {
   // const{fetcheditems}=useContext(RestaurantContext);
   const [searchInput, setsearchInput] = useState("");
-  const [sortOrder, setsortOrder] = useState("");
+  const [sortOrder, setsortOrder] = useState("asc");
   const [categoryName, setcategoryName] = useState(false);
 
   // const [allItemaCopy, setallItemaCopy] = useState([]);
@@ -124,36 +124,29 @@ useEffect(() => {
   };
 
   const sort = () => {
-    if (categoryName) {
-      const sortedData = [...fetcheditems]?.sort((a, b) => {
-        const priceA = Number(a?.price);
-        const priceB = Number(b?.price);
-
-        if (sortOrder === "" || sortOrder === "ace") {
-          setsortOrder("dec");
-          return priceA - priceB;
-        } else {
-          setsortOrder("ace");
-          return priceB - priceA;
-        }
-      });
+   
+    
+      let sortedData;
+  
+      if (sortOrder === "asc") {
+        sortedData = [...fetcheditems].sort((a, b) => Number(a?.price) - Number(b?.price));
+        setsortOrder("dec");
+      } else if (sortOrder === "dec") {
+        sortedData = [...fetcheditems].sort((a, b) => Number(b?.price) - Number(a?.price));
+        setsortOrder("");
+      } else {
+        sortedData = [...fetcheditems];
+        setsortOrder("asc");
+      }
+  
       setFetcheditemsCopy(sortedData);
-    } else {
-      const sortedData = [...fetcheditems]?.sort((a, b) => {
-        const priceA = Number(a?.price);
-        const priceB = Number(b?.price);
-
-        if (sortOrder === "" || sortOrder === "ace") {
-          setsortOrder("dec");
-          return priceA - priceB;
-        } else {
-          setsortOrder("ace");
-          return priceB - priceA;
-        }
-      });
-      setFetcheditemsCopy(sortedData);
-    }
+    
   };
+  
+  
+  
+  
+  
   const handleAllClick = () => {
     setFetcheditemsCopy(fetcheditems);
     setActiveCategoryId(null); // Set activeCategoryId to null to deactivate all buttons
@@ -377,16 +370,17 @@ useEffect(() => {
               border: "1px solid #ccc",
               padding: "5px 10px 5px 10px",
               borderRadius: "30px",
-            
+             
             }}
-            onClick={()=>{sort()}}
+            onClick={sort}
           >
-           {sortOrder === "" ? (
-            <FaSort size={20} style={{ color: "purple" }} />
-            ) : sortOrder === "ace" ? (
-              <FaSortDown  size={20} style={{ color: "purple" }}/>
+           {sortOrder === "asc" ? (
+            <FaSort size={20} style={{ color: "purple" }}  />
+            ) : sortOrder === "" ? (
+              <FaSortDown  size={20} style={{ color: "purple" }} />
             ) : (
-              <FaSortUp  size={20} style={{ color: "purple" }} />
+              <FaSortUp size={20} style={{ color: "purple" }}  />
+
             )}
             
             <span className="responsiveText">Sort</span>

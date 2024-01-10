@@ -110,11 +110,12 @@ export default function RestaurantContextState(props) {
 
           break;
         case "newMenu":
+          // dispatch(setFetchedItem(dataFromServer?.data));
           setFetcheditems([...fetcheditems, dataFromServer?.data]);
           setFetcheditemsCopy([...fetcheditemsCopy, dataFromServer?.data]);
 
           // dispatch(setFetchedItem(fetcheditems));
-          // dispatch(fetchItem(userData?.userId))
+          dispatch(fetchItem(userData?.userId))
 
           break;
           case "newCategory":

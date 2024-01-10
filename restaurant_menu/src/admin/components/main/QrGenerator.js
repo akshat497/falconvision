@@ -70,9 +70,9 @@ export default function QrGenerator() {
     value={startNumber}
     onChange={(e) => setStartNumber(e.target.value)}
   >
-    <option value="" disabled>Start table/room number</option>
+    <option value="" >Start table/room number</option>
     {Array.from({ length: 1000 }, (_, index) => (
-      <option key={index} value={index + 1} disabled={endNumber<=index+1} style={{opacity:endNumber<=index+1?"0.5":"1"}}>
+      <option key={index} value={index + 1} disabled={endNumber!==""&&endNumber<=index+1} style={{opacity:endNumber<=index+1?"0.5":"1"}}>
         {index + 1}
       </option>
     ))}
@@ -85,7 +85,7 @@ export default function QrGenerator() {
     value={endNumber}
     onChange={(e) => setEndNumber(e.target.value)}
   >
-    <option value="" disabled>End table/room number </option>
+    <option value="" >End table/room number </option>
     {Array.from({ length: 1000 }, (_, index) => (
       <option key={index} value={index + 1} disabled={startNumber>=index+1} style={{opacity:startNumber>=index+1?"0.5":"1"}}>
         {index + 1}

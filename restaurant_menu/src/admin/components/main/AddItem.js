@@ -7,6 +7,7 @@ import { addItem, fetchItem, updateItem } from "../../../redux/items/itemThunk";
 import RestaurantContext from "../../../context/RestaurantContext";
 import { toast } from "react-toastify";
 import { showToast } from "../../../services/ToastInstance";
+import NoImage from "../../../images/no-image.png"
 
 export default function AddItem({ preview, clickedItem }) {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
   const [image, setimage] = useState('');
-  const [DisplayImage, setDisplayImage] = useState('');
+  const [DisplayImage, setDisplayImage] = useState(NoImage);
   const [currentStep, setCurrentStep] = useState(0);
   const [disabled, setdisabled] = useState(true);
   const steps = [0, 1, 2];
@@ -163,6 +164,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
   useEffect(()=>{
     if(addItemReponse?.success===true){
       resetForm();
+      setCurrentStep(0);
     }
    
   },[addItemReponse])
@@ -203,22 +205,28 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
   
     // Check if the selected file is an image
     if (file && file.type.startsWith("image/")) {
-      setimage(file);
-      
-      const reader = new FileReader();
+      // Check if the image size is less than or equal to 500KB
+      if (file.size <= 500 * 1024) {
+        setimage(file);
   
-      // Define the onLoad callback function
-      reader.onload = (event) => {
-        // Set the data URL to the state
-        setDisplayImage(event.target.result);
-      };
+        const reader = new FileReader();
   
-      // Read the file as a data URL
-      reader.readAsDataURL(file);
+        // Define the onLoad callback function
+        reader.onload = (event) => {
+          // Set the data URL to the state
+          setDisplayImage(event.target.result);
+        };
+  
+        // Read the file as a data URL
+        reader.readAsDataURL(file);
+      } else {
+        showToast("Please select an image with a size less than or equal to 500KB.");
+      }
     } else {
       showToast("Please select an image.");
     }
   };
+  
   
   
 
@@ -281,12 +289,18 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
               <>
                 <div className="form-group">
                   <div className="d-flex">
-                    <div>
+                    <div >
                       {" "}
+                      <div className="d-flex justify-content-between">
                       <label htmlFor="category">Upload Image:</label>
-                    </div>
-                  
+                      {/* <small className="mb-0"><b>max-size=500kb</b></small> */}
+                      </div>
+                     
+            </div>
+            
+        
                   </div>
+                  <small>Capture an image with a transparent background for enhanced visual representation.</small>
                   <div style={{ display: "flex" }}>
                     <div
                       onClick={() => {
@@ -296,7 +310,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
                     >
                       <FaUpload />
                     </div>
-                    <div className="mt-2" style={{ marginLeft: "50%" }}>
+                    <div className="" style={{ marginLeft: "50%" }}>
                       <img
                         src={preview ? DisplayImage?DisplayImage:`${process.env.REACT_APP_BASE_URL_FOR_IMAGES}${image}` : DisplayImage}
                         alt="..."

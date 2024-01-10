@@ -204,7 +204,7 @@ export default function Preview() {
                         style={{
                           width: "40%",
                           height: "200px",
-                          objectFit: "cover",
+                          objectFit: "contain",
                           borderTopLeftRadius: "8px",
                           borderBottomLeftRadius: "8px",
                         }}
@@ -219,17 +219,22 @@ export default function Preview() {
                             style={{ width: "120%" }}
                           >
                             <div className="card-title">
-                              <h5>
-                                {data?.name &&
-                                  data.name
-                                    .split("")
-                                    .map((char, index) => {
-                                      return index % 5 === 0 && index !== 0
-                                        ? " " + char
-                                        : char;
-                                    })
-                                    .join("")}
-                              </h5>
+                            <h5>
+                            {data?.name &&
+                              data.name
+                                .split("")
+                                .map((char, index) => {
+                                  return index % 8 === 0 &&
+                                    index !== 0 &&
+                                    char !== " " &&
+                                    data.name
+                                      .slice(index - 8, index)
+                                      .indexOf(" ") === -1
+                                    ? " " + char
+                                    : char;
+                                })
+                                .join("")}
+                          </h5>
                             </div>
 
                             <div className="d-flex">

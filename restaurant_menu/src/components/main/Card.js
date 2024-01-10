@@ -211,7 +211,7 @@ export default function Card({ veg, nonVeg }) {
 
   return (
     <>
-      <div style={{ height: "100vh", overflow: "", paddingTop: "2%" }}>
+      <div style={{  overflow: "", paddingTop: "2%" }}>
         {fetcheditemsCopy?.length < 1 && <NoDatComponent />}
         {fetchLoading ? <div className="overlay"></div> : null}
         <FeedbackModal />
@@ -241,6 +241,7 @@ export default function Card({ veg, nonVeg }) {
                     display: "flex",
                     borderRadius: "8px",
                     overflow: "hidden",
+                    
                   }}
                 >
                   <img
@@ -250,9 +251,10 @@ export default function Card({ veg, nonVeg }) {
                     style={{
                       width: "40%",
                       height: "auto",
-                      objectFit: "cover",
+                      objectFit: "contain",
                       borderTopLeftRadius: "8px",
                       borderBottomLeftRadius: "8px",
+                     borderColor:"black"
                     }}
                   />
                   <div
@@ -264,13 +266,18 @@ export default function Card({ veg, nonVeg }) {
                         className="d-flex justify-content-between"
                         style={{ width: "120%" }}
                       >
-                        <div className="card-title">
+                        <div className="card-title ">
                           <h5>
                             {data?.name &&
                               data.name
                                 .split("")
                                 .map((char, index) => {
-                                  return index % 5 === 0 && index !== 0
+                                  return index % 8 === 0 &&
+                                    index !== 0 &&
+                                    char !== " " &&
+                                    data.name
+                                      .slice(index - 8, index)
+                                      .indexOf(" ") === -1
                                     ? " " + char
                                     : char;
                                 })
