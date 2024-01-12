@@ -17,7 +17,7 @@ import RestaurantContext from "../../context/RestaurantContext";
 import NoDatComponent from "../common/NoDatComponent";
 import FeedbackModal from "../modals/FeedbackModal";
 import feedback from "../../images/feedback-removebg-preview.png";
-export default function Card({ veg, nonVeg }) {
+export default function Card({veg,nonVeg}) {
   const navigate = useNavigate();
   const {
     fetcheditemsCopy,
@@ -56,6 +56,8 @@ export default function Card({ veg, nonVeg }) {
 
   // Load the cart from localStorage when the component mounts
 
+ 
+
   useEffect(() => {
     let filteredItems = originalItems;
 
@@ -78,23 +80,6 @@ export default function Card({ veg, nonVeg }) {
 
     setFetcheditemsCopy(filteredItems);
   }, [activeCategoryId, veg, nonVeg, originalItems, setFetcheditemsCopy]);
-
-  // useEffect(() => {
-  //   activeCategoryId
-  //   let filteredItems = fetcheditems; // Initialize with the original list
-
-  //   if (veg) {
-  //     filteredItems = filteredItems.filter((data) => data.veg === veg);
-  //   }
-
-  //   if (nonVeg) {
-  //     filteredItems = filteredItems.filter((data) => data.veg !== nonVeg);
-  //   }
-
-  //   // Update the state with the filtered items
-  //   setFetcheditemsCopy(filteredItems);
-  //   // setFetcheditems(filteredItems);
-  // }, [veg, nonVeg, originalItems, setFetcheditemsCopy]);
   const savedCart = JSON.parse(localStorage.getItem("cart"));
   useEffect(() => {
     if (savedCart) {
@@ -223,7 +208,7 @@ export default function Card({ veg, nonVeg }) {
           }}
         >
           {!fetchLoading &&
-            fetcheditemsCopy?.map((data) => (
+            fetcheditemsCopy?.map((data,index) => (
               <div
                 className="card mx-4 my-4"
                 style={{
@@ -235,6 +220,7 @@ export default function Card({ veg, nonVeg }) {
                     data?.isActive || data?.Category?.isActive ? "1" : "0.5",
                   transition: "opacity 0.3s ease-in-out",
                 }}
+                key={index}
               >
                 <div
                   style={{
@@ -375,7 +361,7 @@ export default function Card({ veg, nonVeg }) {
                                 cursor: "not-allowed",
                                 padding: "12px",
                                 borderRadius: "8px",
-                                width: "100%",
+                                width: "80%",
                                 fontWeight: "750",
                                 backgroundColor: "#eee",
                                 color: "#666",
@@ -437,7 +423,7 @@ export default function Card({ veg, nonVeg }) {
                                 cursor: "not-allowed",
                                 padding: "12px",
                                 borderRadius: "8px",
-                                width: "100%",
+                                width: "80%",
                                 fontWeight: "750",
                                 backgroundColor: "#eee",
                                 color: "#666",
@@ -452,7 +438,7 @@ export default function Card({ veg, nonVeg }) {
                               style={{
                                 padding: "10px",
                                 borderRadius: "8px",
-                                width: "100%",
+                                width: "80%",
                                 fontWeight: "750",
                                 // backgroundColor: "purple",
                                 borderColor: "purple",

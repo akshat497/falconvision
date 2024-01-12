@@ -26,6 +26,7 @@ export default function RestaurantContextState(props) {
   const [notification, setnotification] = useState([]);
   const [vegOnly, setVegOnly] = useState(false);
   const [nonvegOnly, setnontVegOnly] = useState(false);
+  const [filterActive, setFilterActive] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const allorders = useSelector((state) => state.getOrder.order);
   const allFetchedItems = useSelector((state) => state.fetchitem.f_item);
@@ -286,7 +287,9 @@ export default function RestaurantContextState(props) {
         nonvegOnly, 
         setnontVegOnly,
         activeCategoryId,
-         setActiveCategoryId
+         setActiveCategoryId,
+         filterActive, 
+         setFilterActive
       }}
     >
       {props.children}

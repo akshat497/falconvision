@@ -4,7 +4,7 @@ import OrderManagement from "./OrderManagement";
 import RestaurantContext from "../../../context/RestaurantContext";
 import { useContext } from "react";
 import { useLocation } from "react-router-dom";
-import { FaListAlt, FaRegLemon, FaSync, FaSyncAlt } from "react-icons/fa";
+import { FaListAlt, FaRedo, FaRegLemon, FaSync, FaSyncAlt } from "react-icons/fa";
 import { fetchOrders } from "../../../redux/orders/orderThunk";
 
 export default function OrderManagementHolder() {
@@ -17,7 +17,7 @@ export default function OrderManagementHolder() {
   const [searchText, setSearchText] = useState("");
   const [page, setpage] = useState(100);
   const location = useLocation();
-
+  const restroDetails = useSelector((state) => state.restrodetail.restro);
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
   };
@@ -83,7 +83,8 @@ export default function OrderManagementHolder() {
   return (
     <div className={expanded ? "dashboard" : "dashboardcollapsed"}>
       
-      <div className="container-fluid">
+     <div className="d-flex ">
+     <div className="container-fluid">
         <button
           onClick={() => handleFilterChange("new")}
           className={activeFilter === "new" ? "btn-active mr-2" : "btn mr-2"}
@@ -108,6 +109,10 @@ export default function OrderManagementHolder() {
           Completed Orders
         </button>
       </div>
+      <div onClick={() => dispatch(fetchOrders({userId:restroDetails?.userId,page:100}))} className="mr-4">
+        <button className="btn btn-active" disabled={allordersLoading} style={{height:"50px",width:"100%"}}>{allordersLoading?"":<FaRedo size={15} title="undo" className="mx-2"/>}{allordersLoading?"Refreshing...": "Refresh"}</button>
+      </div>
+     </div>
       <OrderManagement
         ordersCopy={filteredOrders}
         searchText={searchText}

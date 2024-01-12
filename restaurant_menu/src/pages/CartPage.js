@@ -77,12 +77,12 @@ const CartPage = () => {
 
   const handleDeleteFromCart = (id) => {
     // Find the product element to delete
-
+    //  debugger;
     setDiscount(0);
-    const productElement = document.getElementById(`product-${id}`);
+    // const productElement = document.getElementById(`product-${id}`);
 
     // Apply the fade-out effect
-    productElement.classList.add("fade-out");
+    // productElement.classList.add("fade-out");
 
     // Delay the actual removal after the animation
     setTimeout(() => {
@@ -98,7 +98,7 @@ const CartPage = () => {
       // Remove the item from the cart state
       setCart(updatedCart);
       updateTotalPrice(updatedCart);
-    }, 300); // Adjust the delay (300ms) to match your transition duration
+    }, 0); // Adjust the delay (300ms) to match your transition duration
   };
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const CartPage = () => {
     <main className="container" style={{ backgroundColor: "whitesmoke" }}>
       <section className="shopping-cart">
         <h1 className="cart-heading">
-          {cart.length < 1 ? "Add items in cart" : "Your Cart"}
+          {cart?.length < 1 ? "Add items in cart" : "Your Cart"}
         </h1>
         <div className="cart-container">
           <div className="row">
@@ -133,20 +133,14 @@ const CartPage = () => {
                 {cart?.length < 1 ? (
                   <div className="empty-cart-message">
                     <Link to={`/customer`}>
-                      <div className="fs-2 text-center">
+                      <div className="fs-2">
                         Start adding <FaPlusCircle />
                       </div>
                     </Link>
                   </div>
                 ) : (
-                  cart?.map((data) => (
-                    <div
-                      className={`product` }
-
-                     
-                      id={`product-${data.menuItemId}`}
-                      key={data.menuItemId}
-                    >
+                  cart?.map((data, index) => (
+                    <div className={`product`} key={index}>
                       <div className="Cartrow">
                         <div className="">
                           <img
@@ -158,92 +152,82 @@ const CartPage = () => {
                             alt={data?.name}
                           />
                         </div>
-                        <div className="">
-                          <div className="info">
-                            <div className="product-name">
-                              <div className=" name">
-                                <div className="card-title d-flex justify-content-center align-items-center" style={{position:"relative"}}>
-                                 
-                                    <div className="text-center">
-                                      {data?.name &&
+                        <div className="product-details">
+                          <div className="product-name">
+                            <div className="card-title">
+                              <div className="text-center">
+                                {data?.name &&
+                                  data.name
+                                    .split("")
+                                    .map((char, index) => {
+                                      return index % 8 === 0 &&
+                                        index !== 0 &&
+                                        char !== " " &&
                                         data.name
-                                          .split("")
-                                          .map((char, index) => {
-                                            return index % 5 === 0 &&
-                                              index !== 0
-                                              ? " " + char
-                                              : char;
-                                          })
-                                          .join("")}
-                                    </div>
-                                    <div className="icon" style={{right:"0",position:"absolute"}}>
-                                      <div>
-                                        {data?.veg ? (
-                                          <FaRegDotCircle className="text-success" />
-                                        ) : (
-                                          <FaRegDotCircle className="text-danger" />
-                                        )}
-                                     
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="product-info">
-                                <div className="price-info">
-                                  Price:{" "}
-                                  <span className="">
-                                    <FaRupeeSign />
-                                    {data?.price * data?.quantity}
-                                  </span>
-                                </div>
+                                          .slice(index - 8, index)
+                                          .indexOf(" ") === -1
+                                        ? " " + char
+                                        : char;
+                                    })
+                                    .join("")}
                               </div>
                             </div>
-                            <div className="quantity-input">
-                              <button
-                                className="btn btn-danger my-3 p-1"
-                                onClick={() => {
-                                  handleQuantityChange(
-                                    data.menuItemId,
-                                    data.quantity - 1
-                                  );
-                                  setDiscount(0);
-                                }}
-                                disabled={data.quantity <= 1}
-                              >
-                                <FaMinus />
-                              </button>
-                              <span
-                                className="quantity-value"
-                                id={`quantity-${data.id}`}
-                              >
-                                {data?.quantity}
-                              </span>
-                              <button
-                                className="btn btn-success p-1"
-                                onClick={() => {
-                                  handleQuantityChange(
-                                    data.menuItemId,
-                                    data.quantity + 1
-                                  );
-                                  setDiscount(0);
-                                }}
-                              >
-                                <FaPlus />
-                              </button>
-                            </div>
-                            <div className="price">
-                              {/* <span>Total:</span>
-                            <span><FaRupeeSign/>{data?.price * data?.quantity}</span> */}
-                              <span
-                                className="delete-icon"
-                                onClick={() =>
-                                  handleDeleteFromCart(data.menuItemId)
-                                }
-                              >
-                                <FaTrash />
-                              </span>
+                            <div className="product-info">
+                              <div className="price-info">
+                                Price:{" "}
+                                <span className="price">
+                                  <FaRupeeSign />
+                                  {data?.price * data?.quantity}
+                                </span>
+                              </div>
                             </div>
                           </div>
+                        </div>
+                        <div className="quantity-input">
+                          <button
+                            className="btn btn-danger my-3 p-1"
+                            onClick={() => {
+                              handleQuantityChange(
+                                data.menuItemId,
+                                data.quantity - 1
+                              );
+                            }}
+                            disabled={data.quantity <= 1}
+                          >
+                            <FaMinus />
+                          </button>
+                          <span className="quantity-value">
+                            {data?.quantity}
+                          </span>
+                          <button
+                            className="btn btn-success p-1"
+                            onClick={() => {
+                              handleQuantityChange(
+                                data.menuItemId,
+                                data.quantity + 1
+                              );
+                            }}
+                          >
+                            <FaPlus />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="symboles">
+                        <div className="veg-icon">
+                          {data?.veg ? (
+                            <FaRegDotCircle className="text-success" />
+                          ) : (
+                            <FaRegDotCircle className="text-danger" />
+                          )}
+                        </div>
+                        <div className="delete-icon">
+                          <span
+                            onClick={() =>
+                              handleDeleteFromCart(data?.menuItemId)
+                            }
+                          >
+                            <FaTrash />
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -306,22 +290,41 @@ const CartPage = () => {
                     {totalPrice - discount}
                   </span>
                 </div>
-                <Link to="/checkoutpage">
-                  <button
-                    type="button"
-                    className="btn  btn-lg btn-block checkout-button"
-                  >
-                    Checkout
-                  </button>
-                </Link>
-                <Link to={`/customer`}>
-                  <button
-                    type="button"
-                    className="btn btn-success btn-lg btn-block "
-                  >
-                    Continue Shopping
-                  </button>
-                </Link>
+
+                <div className="justify-content-center align-items-center">
+                  <div className="text-center">
+                    {cart?.length === 0 ? (
+                      <button
+                        type="button"
+                        className="btn btn-lg btn-block checkout-button"
+                        disabled
+                      >
+                        Checkout
+                      </button>
+                    ) : (
+                      <Link to="/checkoutpage">
+                        <button
+                          type="button"
+                          className="checkout-button"
+                          disabled={cart?.length === 0}
+                        >
+                          Checkout
+                        </button>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="text-center">
+                    <Link to="/customer">
+                      <button
+                        type="button"
+                        className="checkout-button bg-success"
+                      >
+                        Continue Shopping
+                      </button>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

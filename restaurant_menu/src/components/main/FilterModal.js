@@ -4,19 +4,18 @@ import { useSelector } from "react-redux";
 import RestaurantContext from "../../context/RestaurantContext";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import { setFetchedItem } from "../../redux/items/fetchItemSlice";
 
 const FilterModal = ({ visible, onClose, onApplyFilter }) => {
   const category = useSelector((state) => state.fetchcategory.fetchedcategory);
   const allItems = useSelector((state) => state.fetchitem.f_item);
   const {
     fetcheditems,
-    setFetcheditems,
-    fetcheditemsCopy,
     setFetcheditemsCopy,
-    vegOnly,
     setVegOnly,
-    nonvegOnly,
     setnontVegOnly,
+    filterActive,
+    setFilterActive,
   } = useContext(RestaurantContext);
   const [rangeValue, setRangeValue] = useState([20, 800]);
   const [categoryName, setcategoryName] = useState("");
@@ -33,27 +32,39 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
     setRangeValue(newValue);
   };
   const handleApplyFilter = () => {
-    const minPrice = Number(rangeValue[0]); // Set your desired minimum price
-    const maxPrice = Number(rangeValue[1]); // Set your desired maximum price
-
+    // Reset Veg and Non-Veg filters
+    setVegOnly(false);
+    setnontVegOnly(false);
+    setFilterActive(true);
+    
+    const minPrice = Number(rangeValue[0]);
+    const maxPrice = Number(rangeValue[1]);
+  
     const filteredData = allItems?.filter((data) => {
       const isCategoryMatch =
-        categoryName === "all" ? data : data?.Category?.name === categoryName;
+        categoryName === "all" ? true : data?.Category?.name === categoryName;
       const isPriceInRange = data?.price >= minPrice && data?.price <= maxPrice;
-      const isType = type === "Both" ? data : data?.veg === type;
-      const isDishTypeMatch =
-        dishType === "All" ? data : data?.type === dishType;
-      return isCategoryMatch && isPriceInRange && isType&&isDishTypeMatch;
+      const isType = type === "Both" ? true : data?.veg === type;
+      const isDishTypeMatch = dishType === "All" ? true : data?.type === dishType;
+  
+      return isCategoryMatch && isPriceInRange && isType && isDishTypeMatch;
     });
-    filteredData?.sort((a, b) => {
-      return a?.price - b?.price;
-    });
-    setFetcheditemsCopy(filteredData);
-    setVegOnly(null);
-    setnontVegOnly(null);
-    // onClose();
+  
+    // Sort the filtered data
+    filteredData?.sort((a, b) => a?.price - b?.price);
+  
+    // Delay the update to make sure the state is updated before filtering
+    setTimeout(() => {
+      // Update fetchedItemsCopy state
+      setFetcheditemsCopy(filteredData || []);
+    }, 100);
   };
-
+  
+  useEffect(() => {
+    if (filterActive === false) {
+      resetFunction();
+    }
+  }, [filterActive]);
   const handleCategoryFilter = (e) => {
     const categoryname = e.target.value;
     // setCategoryId(categoryId);
@@ -76,14 +87,15 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
 
   const resetFunction = () => {
     setcategoryName("all");
-    setdishType("All")
+    setdishType("All");
+    setFilterActive(false);
     setRangeValue([20, 800]);
     // setcategoryName(false);
     setFetcheditemsCopy(fetcheditems);
   };
-  const handleTypeFilter=(e)=>{
-    setdishType(e.target.value)
-  }
+  const handleTypeFilter = (e) => {
+    setdishType(e.target.value);
+  };
   return (
     <>
       <div
@@ -117,7 +129,7 @@ const FilterModal = ({ visible, onClose, onApplyFilter }) => {
                   onChange={handleTypeFilter}
                   value={dishType}
                 >
-                <option value="All">All</option>
+                  <option value="All">All</option>
                   <option value="Starters">Appetizers/Starters</option>
                   <option value="Main Course">Main Course</option>
                   <option value="Side Dish">Side Dish</option>

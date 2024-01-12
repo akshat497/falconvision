@@ -178,7 +178,7 @@ const addItemReponse=useSelector((state)=>state?.addItem?.item);
     });
 
     setimage('');
-    setDisplayImage('')
+    setDisplayImage(NoImage)
     setSelectedCategory('');
     setValidationErrors({});
   };

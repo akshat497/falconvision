@@ -604,6 +604,7 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
   margin-bottom: 20px;
   padding-top: 20px;
   padding-bottom: 20px;
+  align-items: center;
 }
 
 .shopping-cart .items .product .info {
@@ -954,9 +955,11 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
   background-color: purple;
   /* Dark gray */
   color: #fff;
+  text-decoration: none;
   /* White */
   font-size: 24px;
   border: none;
+  width: 210px;
   border-radius: 10px;
   cursor: pointer;
   margin-top: 20px;
@@ -1029,8 +1032,9 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
   justify-content: center;
   /* Center horizontally */
   align-items: center;
+  text-decoration: none;
   /* Center vertically */
-  height: 100vh;
+  height: 50vh;
   /* Adjust the height as needed to center it within the viewport */
   text-align: center;
   /* To center text within the div */
@@ -1411,7 +1415,7 @@ p {
   -webkit-overflow-scrolling: touch;
   /* For smoother scrolling on iOS devices */
   white-space: nowrap;
- 
+
   /* Prevent items from wrapping to the next line */
 }
 
@@ -1531,36 +1535,45 @@ h3 {
   }
 
 }
+
 @media screen and (max-width: 353px) {
-  .d-flex-main{
+  .d-flex-main {
     font-size: smaller;
   }
 
 }
+
 @media screen and (max-width: 280px) {
-  .d-flex-main{
+  .d-flex-main {
     font-size: smaller;
   }
-  .responsiveText{
+
+  .responsiveText {
     display: none;
   }
 
 }
+
 @media screen and (max-width: 1448px) {
 
-.items{
-  max-height: 500px;
-  overflow: scroll;
-}
- 
+  .items {
+    max-height: 500px;
+    overflow: scroll;
+  }
+
 
 }
 
 /* ... add more styles ... */
-.d-flex-main{
+.d-flex-main {
   display: flex;
 }
-.Cartrow{
+
+.Cartrow {
   display: inline;
   justify-content: center !important;
+}
+.symboles{
+  margin-left: auto;
+  /* right: 0; */
 }

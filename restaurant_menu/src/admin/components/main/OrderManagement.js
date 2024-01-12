@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DataTable from "react-data-table-component";
 
-import { FaArrowAltCircleDown, FaCheckCircle, FaRedo, FaRupeeSign } from "react-icons/fa";
+import { FaArrowAltCircleDown, FaCheckCircle, FaInfoCircle, FaRedo, FaRupeeSign } from "react-icons/fa";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
@@ -59,6 +59,8 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               cursor: "pointer",
               border: "1px solid #ccc",
               padding: "8px",
+              width:"150px",
+             minWidth:"100px",
               borderRadius: "4px",
             }}
             onClick={() => {
@@ -73,7 +75,8 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               <textarea
                 disabled
                 style={{
-                  width: "100%",
+                  
+                  minWidth:"100px",
                   minHeight: "60px",
                   border: "none",
                   outline: "none",
@@ -91,7 +94,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
           </div>
         );
       },
-      sortable: true,
+  
     },
     {
       name: "Status",
@@ -117,6 +120,12 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               ) : (
                 ""
               )}
+              <FaInfoCircle
+                              size={18}
+                             className="ml-2"
+                             title={row?.createdAt ? new Date(row.createdAt).toLocaleString() : ''}
+                             style={{ cursor: "help", color: "purple" }}
+                            />
             </b>
           </span>
         </div>
@@ -126,9 +135,10 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     {
       name: "Operations",
       cell: (row) => (
-        <div className="d-flex  " style={{ marginLeft: "-30%" }}>
+        <div className="d-flex fs-8 " style={{ marginLeft:row.Orders[0]?.isActive? "-80%":"" }}>
           <>
-            {row.Orders[0]?.isActive ? (
+           <div>
+           {row.Orders[0]?.isActive ? (
               <button
                 className="btn btn-sm btn-outline-success"
                 disabled={row.Orders[0]?.isAccepted === true}
@@ -177,6 +187,8 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             >
               complete
             </button>
+           </div>
+          
           </>
         </div>
       ),
@@ -338,6 +350,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             striped
             highlightOnHover
             responsive
+            
             conditionalRowStyles={conditionalRowStyles}
           />
         </>

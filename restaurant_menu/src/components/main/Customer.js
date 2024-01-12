@@ -29,31 +29,6 @@ export default function Customer() {
   }, [fetchdItem]);
 
   const sort = () => {
-    const neutralCase=fetcheditems;
-    const sortedData = [...fetcheditems]?.sort((a, b) => {
-      const priceA = Number(a?.price);
-      const priceB = Number(b?.price);
-  
-      if (sortOrder === "ace") {
-        
-        setsortOrder("dec");
-        return priceA - priceB;
-      } else if (sortOrder === "dec") {
-        setsortOrder("");
-        return neutralCase
-        
-      } else if(sortOrder===""){
-        setsortOrder("ace");
-        return priceB - priceA;
-       
-      
-      }
-    });
-  
-    // If sortOrder is not "ace" or "dec", set it to an empty string (neutral state)
-   
-  
-    setFetcheditemsCopy(sortedData);
   };
   
   
