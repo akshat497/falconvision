@@ -20,7 +20,7 @@ export default function HelpModal() {
               <div className="contact-item">
                 <FaEnvelope className="contact-icon" />
                 <span className="contact-label"> Email: </span>
-                <b className="contact-value">contact@falcon-vision.in</b>
+                <b className="contact-value">support@falcon-vision.online</b>
               </div>
             </div>
           </div>
