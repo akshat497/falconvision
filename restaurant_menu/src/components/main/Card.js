@@ -80,6 +80,7 @@ export default function Card({veg,nonVeg}) {
 
     setFetcheditemsCopy(filteredItems);
   }, [activeCategoryId, veg, nonVeg, originalItems, setFetcheditemsCopy]);
+  
   const savedCart = JSON.parse(localStorage.getItem("cart"));
   useEffect(() => {
     if (savedCart) {

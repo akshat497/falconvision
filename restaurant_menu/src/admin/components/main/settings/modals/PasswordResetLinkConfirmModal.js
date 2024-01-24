@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { forgetPassword } from '../../../../../redux/auth/authThunks'
 
@@ -6,7 +6,8 @@ export default function PasswordResetLinkConfirmModal() {
     const dispatch=useDispatch()
     const restroDetails=useSelector((state)=>state.restrodetail.restro) 
     const loadingForgetPassword=useSelector((state)=>state.forgetpassword.forgetpasswordloading) 
-   
+    
+    
     const sendEmail=()=>{
         var obj={
           email:restroDetails.email,
@@ -15,6 +16,7 @@ export default function PasswordResetLinkConfirmModal() {
         }
         dispatch(forgetPassword(obj))
           }
+          
   return (
     <div className="alert alert-danger " role="alert">
     <div className="flex-grow-1">

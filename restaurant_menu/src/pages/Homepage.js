@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import Card from "../components/main/Card";
 import Header from "../components/common/Header";
 import { useNavigate, useParams } from "react-router-dom";
-import ReactSwitch from "react-switch";
+
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategory, fetchItem } from "../redux/items/itemThunk";
 import RestaurantContext from "../context/RestaurantContext";
 import { useContext } from "react";
 import NoDatComponent from "../components/common/NoDatComponent";
-import { FaCommentDots, FaShoppingCart } from "react-icons/fa";
+
 
 export default function Homepage() {
   const navigate=useNavigate()

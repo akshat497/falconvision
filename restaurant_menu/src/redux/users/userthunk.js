@@ -9,7 +9,9 @@ export const extendMembership = (userData) => async (dispatch) => {
     try {
       dispatch(setextendmembershiploading(true));
       const response = await ExtendMembership(userData);  
-      
+      if(response?.success===true){
+        showToast("Membership extended.","success")
+      }
       dispatch(setextendmembership(response));
       dispatch(setextendmembershiploading(false));
     } catch (error) {
@@ -25,6 +27,7 @@ export const extendMembership = (userData) => async (dispatch) => {
       if(response.message==="Record has been successfully updated."){
         
         dispatch(fetchRestraurantDetails(userData?.userId))
+        dispatch(fetchAllUsers(userData?.userId))
         showToast("Profile Updated","success")
 
       }

@@ -2,6 +2,8 @@ import React from "react";
 import {
   FaCogs,
   FaEdit,
+  FaExclamationTriangle,
+  FaHourglassEnd,
   FaLink,
   FaRegSave,
   FaUndo,
@@ -30,6 +32,7 @@ export default function UserProfile() {
   const [editedName, setEditedName] = useState(restroDetails?.name);
   const [editedArea, setEditedArea] = useState(restroDetails?.area);
   const [editedAddress, setEditedAddress] = useState(restroDetails?.address);
+  const [DaysLeft, setDaysLeft] = useState(0);
   const handleEditClick = () => {
     setIsEditing(true);
   };
@@ -85,15 +88,33 @@ export default function UserProfile() {
     }
   }, [editedAddress, editedName, editedArea, restroDetails]);
   
-  const date = new Date();
-  const trialdate = new Date(restroDetails?.trialExpirationDate);
-
-  // Calculate the difference in milliseconds
-  const timeDifference = trialdate.getTime() - date.getTime();
+ 
 
   // Convert the difference to days
-  const daysRemain = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
+  
+  useEffect(() => {
+    const currentDate = new Date();
+    const trialDate = new Date(restroDetails?.trialExpirationDate);
+  
+    // Set the time to midnight for both dates
+    currentDate.setHours(0, 0, 0, 0);
+    trialDate.setHours(0, 0, 0, 0);
+  
+    // Calculate the difference in milliseconds
+    const timeDifference = trialDate.getTime() - currentDate.getTime();
+    const daysRemain = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  
+    if (trialDate.getTime() === currentDate.getTime()) {
+      setDaysLeft(<div className="text-warning"><b>Today <FaHourglassEnd/></b></div>);
+    } else if (trialDate.getTime() < currentDate.getTime()) {
+      setDaysLeft(<div className="text-danger"><b>Expired <FaExclamationTriangle/></b></div>);
+    } else {
+      setDaysLeft(<div>{daysRemain} days left </div>);
+    }
+  
+  }, [restroDetails]);
+  
+  
   return (
     <div
       className="modal fade"
@@ -160,7 +181,8 @@ export default function UserProfile() {
                   <div className="col-md-4"><strong>Email:</strong></div>  {restroDetails?.email}
                   </p>
                   <p  className="d-flex ">
-                  <div className="col-md-4"><strong>Expire-In:</strong></div>  {daysRemain} Days
+                  <div className="col-md-4"><strong>Expire:</strong></div>  {DaysLeft}
+
                   </p>
                   <p  className="d-flex ">
                   <div className="col-md-4"><strong>Account Is:</strong></div> 

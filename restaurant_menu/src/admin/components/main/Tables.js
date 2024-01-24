@@ -39,7 +39,7 @@ export default function Tables() {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const [disabled, setdisabled] = useState(true);
+
   const location = useLocation();
 
   // Log the item to check if it's correctly received

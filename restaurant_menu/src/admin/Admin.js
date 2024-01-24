@@ -22,14 +22,12 @@ export default function Admin() {
     useEffect(() => {
     dispatch(fetchRestraurantDetails());
   }, []);
+
   return (
     <>
-
-
     <Header/>
     {restroLoading?<div className='overlay'></div>:null}
-   <Routes>
-        
+   <Routes>     
             <Route path="/" element={ <ProtectedRoute Component={<Dashbord/>}/>}/>
             <Route path="/additem" element={<ProtectedRoute Component={<AddItem/>}/>}/>
             <Route path="/addcategory" element={ <ProtectedRoute Component={<AddCategory/>}/>}/>

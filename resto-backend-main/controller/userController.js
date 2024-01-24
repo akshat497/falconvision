@@ -5,14 +5,14 @@ const CustomErrorHandler = require("../services/CustomErrorHandler");
 const jwt = require("jsonwebtoken");
 const WebSocketServer = require("../webSoketConnect");
 const QRCode = require("qrcode-generator");
+const CustomResponseHandler = require("../services/CustomResponseHandler");
 const jwtsecreat = process.env.JWT_SECRET;
 const userController = {
   getAllUsers: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
-        if(req.user.role!=="superadmin"){
-          return next(CustomErrorHandler.forbiddden())
-
+        if (req.user.role !== "superadmin") {
+          return next(CustomErrorHandler.forbiddden());
         }
         const users = await User.findAll();
 
@@ -62,7 +62,7 @@ const userController = {
         isActive: user.isActive,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        trialExpirationDate:user.trialExpirationDate
+        trialExpirationDate: user.trialExpirationDate,
       };
 
       res.json(userDetails);
@@ -74,7 +74,7 @@ const userController = {
     try {
       authentication(req, res, async () => {
         const { name, address, area, zip, userId, isActive, role } = req.body;
-  
+
         if (req.user.role === "superadmin") {
           var obj = {
             name,
@@ -94,19 +94,26 @@ const userController = {
           };
         } else {
           // Handle other roles or return an error if needed
-          return next(CustomErrorHandler.MenuItemError("Invalid role",404,[]));
+          return next(
+            CustomErrorHandler.MenuItemError("Invalid role", 404, [])
+          );
         }
-  
+
         // Additional validation for certain fields
-        if (req.user.role !== "superadmin" && (isActive || role || obj.isManuallyActivated)) {
-          return next(CustomErrorHandler.MenuItemError("Access Denied.",400,[]));
+        if (
+          req.user.role !== "superadmin" &&
+          (isActive || role || obj.isManuallyActivated)
+        ) {
+          return next(
+            CustomErrorHandler.MenuItemError("Access Denied.", 400, [])
+          );
         }
-  
+
         let newUser = await User.update(obj, { where: { userId: userId } });
         if (!newUser) {
           return next(CustomErrorHandler.UserNotFound());
         }
-  
+
         // WebSocketServer.broadUpdate(newUser,"userUpdated")
         WebSocketServer.broadUpdate(userId, newUser, "userUpdated");
         return res.send({ message: `Record has been successfully updated.` });
@@ -117,30 +124,41 @@ const userController = {
       return next(CustomErrorHandler.InternalServerError());
     }
   },
-  
+
   extendTrial: async (req, res, next) => {
     try {
       authentication(req, res, async () => {
         const { userId, trialExtensionDays } = req.body;
-        
+
         // hashedPassword = await bcrypt.hash(password, 10);
-        if (!Number.isInteger(trialExtensionDays) || trialExtensionDays <= 0) {
-          return res.status(400).json({ message: 'Invalid trialExtensionDays value' });
+        if (!Number.isInteger(trialExtensionDays) ) {
+          return res
+            .status(400)
+            .json({ message: "Invalid trialExtensionDays value" });
         }
         if (req.user.role !== "superadmin") {
           return next(CustomErrorHandler.forbiddden());
         }
-        const user = await User.findByPk(userId);
+        const user = await User.findOne({ where: { userId: userId } });
         if (!user) {
-          return next(CustomErrorHandler.userNotFound());
+          return next(CustomErrorHandler.UserNotFound());
         }
-       
+
         const newTrialExpirationDate = new Date(user.trialExpirationDate);
-      newTrialExpirationDate.setDate(newTrialExpirationDate.getDate() + trialExtensionDays);
-      await user.update({ trialExpirationDate: newTrialExpirationDate ,isManuallyActivated:false});
+        newTrialExpirationDate.setDate(
+          newTrialExpirationDate.getDate() + trialExtensionDays
+        );
+        await user.update({ trialExpirationDate: newTrialExpirationDate });
         // WebSocketServer.broadUpdate(newUser,"userUpdated")
         WebSocketServer.broadUpdate(userId, user, "userUpdated");
-        res.send(`${user.name} record has been successfully updated.`);
+        return res
+          .status(200)
+          .send(
+            CustomResponseHandler.positiveResponse(
+              `${user.name} record has been successfully updated.`,
+              []
+            )
+          );
       });
     } catch (error) {}
   },
@@ -199,19 +217,23 @@ const userController = {
   },
   qrgeneratorL: (req, res, next) => {
     try {
-      const {start,end, userId, URL } = req.body;
+      const { start, end, userId, URL } = req.body;
       authentication(req, res, async () => {
         const qrCodes = [];
-       
+
         if (req.user.userId !== userId) {
           return next(CustomErrorHandler.UnAuthorised());
         }
-        for (let tableNumber = Number(start); tableNumber <= Number(end); tableNumber++) {
+        for (
+          let tableNumber = Number(start);
+          tableNumber <= Number(end);
+          tableNumber++
+        ) {
           const url = `${URL}/${userId}/${tableNumber}`;
           const qr = QRCode(0, "L");
           qr.addData(url);
           qr.make();
-          
+
           qrCodes.push(qr.createDataURL(4));
         }
         res.json(qrCodes);
@@ -219,33 +241,29 @@ const userController = {
     } catch (error) {
       return next(error);
     }
+  },
+  // qrgeneratorL:(req,res,next)=>{
+  //   try {
+  //     const {tableCount,userId,URL} = req.body
+  //     authentication(req,res,async()=>{
 
-},
-// qrgeneratorL:(req,res,next)=>{
-//   try {
-//     const {tableCount,userId,URL} = req.body
-//     authentication(req,res,async()=>{
-      
-//     const qrCodes = [];
-//     if(req.user.userId!==userId){
-//       return next(CustomErrorHandler.UnAuthorised());
-//     }
-//     for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
-//       const url = `https://ordermanagementbyfalconvesion.netlify.app/${userId}/${tableNumber}`;
-//       const qr = QRCode(0, 'L');
-//       qr.addData(url);
-//       qr.make();
-//       qrCodes.push(qr.createDataURL(4));
-//     }
-//     res.json(qrCodes);
-//     })
-//   } catch (error) {
-//     return next(error)
-//   }
-// },
-
-
-  }
-
+  //     const qrCodes = [];
+  //     if(req.user.userId!==userId){
+  //       return next(CustomErrorHandler.UnAuthorised());
+  //     }
+  //     for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
+  //       const url = `https://ordermanagementbyfalconvesion.netlify.app/${userId}/${tableNumber}`;
+  //       const qr = QRCode(0, 'L');
+  //       qr.addData(url);
+  //       qr.make();
+  //       qrCodes.push(qr.createDataURL(4));
+  //     }
+  //     res.json(qrCodes);
+  //     })
+  //   } catch (error) {
+  //     return next(error)
+  //   }
+  // },
+};
 
 module.exports = userController;

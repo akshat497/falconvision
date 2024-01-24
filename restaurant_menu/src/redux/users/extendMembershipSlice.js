@@ -1,7 +1,7 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
-const updateextendmembershipSlice = createSlice({
+const extendMembershipSlice = createSlice({
   name: "extendmembership",
   initialState: {
     extendmembership: null,
@@ -21,5 +21,5 @@ const updateextendmembershipSlice = createSlice({
   },
 });
 
-export const { setextendmembership, setextendmembershiploading, setextendmembershiperror } = updateextendmembershipSlice.actions;
-export default updateextendmembershipSlice.reducer;
+export const { setextendmembership, setextendmembershiploading, setextendmembershiperror } = extendMembershipSlice.actions;
+export default extendMembershipSlice.reducer;

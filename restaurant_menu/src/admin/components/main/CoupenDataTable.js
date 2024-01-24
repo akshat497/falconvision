@@ -202,7 +202,7 @@ export default function CoupenDataTable() {
           ) : (
             <>
               <DataTable
-                columns={columns ||''}
+                columns={columns || ''}
                 data={fetchedCoupens || []}
                 customStyles={customStyles}
                 highlightOnHover

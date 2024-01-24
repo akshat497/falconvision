@@ -13,7 +13,6 @@ const authentication = async (req, res, next) => {
 
     // Fetch user information based on data from the token
     const user = await User.findOne({ where: { userId: data.userId } });
-   
     if (!user) {
       return res.status(401).send({ message: "User not found" });
     }
@@ -21,17 +20,19 @@ const authentication = async (req, res, next) => {
       // Super admins can bypass all security checks, so they can proceed
       req.user = user; // Store user object in req.user
       return next();
-    }
-    if (user.isActive && user.trialExpirationDate && user.trialExpirationDate <= new Date()&&user.isManuallyActivated===false) {
+    }    
+    if (new Date(user.trialExpirationDate) < new Date()) {
       // If the trial period has ended, deactivate the user
       user.isActive = false;
       await user.save();
       return res.status(401).json({ message: "Membership is expired. Contact support to continue." });
-    }
-   
+    
+  }
+    
     if (user.isActive===false) {
       return res.status(401).send({ message: "forbidden" });
     }
+   
 
     req.user = user; // Store user object in req.user
     next();
@@ -42,21 +43,4 @@ const authentication = async (req, res, next) => {
 
 module.exports = authentication;
 
-// const jwt = require("jsonwebtoken");
-// const JwtService = require("../services/JwtService");
-// const jwtsecreat = "bookingbyrohit";
-// const authentication = (req, res, next) => {
-//   const token = req.header("Authorization");
-//   if (!token) {
-//     res.status(401).send({ error: "plz authenticate using valid token" });
-//   }
-//   try {
-//     const data = jwt.verify(token,jwtsecreat)
-//     req.user = data;
-//     next();
-//   } catch (error) {
-//     res.status(401).json(error);
-//   }
-// };
 
-// module.exports = authentication;
