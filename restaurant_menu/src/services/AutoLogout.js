@@ -4,6 +4,7 @@ import { createAxiosInstance } from "./ApiInstance";
 const AutoLogout = () => {
   const logout = () => {
     // Implement your logout logic here, e.g., redirect to login page
+    localStorage.removeItem('token')
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("tokenExpirationTimer");
     window.location.reload();

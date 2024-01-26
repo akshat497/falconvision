@@ -21,7 +21,13 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
     isExpanded: false,
     customerId: "",
   });
-
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const handlePopoverToggle = (orderId) => {
+    setPopoverVisible((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
   // const isActiveUpdate=useSelector((state)=> state.updateisactiveorder.isActiveOrder)
 
   // useEffect(()=>{if(isUpdated!==null){setseen(true)}},[isUpdated])
@@ -123,9 +129,35 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               <FaInfoCircle
                               size={18}
                              className="ml-2"
-                             title={row?.createdAt ? new Date(row.createdAt).toLocaleString() : ''}
-                             style={{ cursor: "help", color: "purple" }}
+                             onClick={() =>
+                                handlePopoverToggle(row.Orders[0].orderId)
+                              }
+                            //  title={row?.createdAt ? new Date(row.createdAt).toLocaleString() : ''}
+                             style={{ cursor: "pointer", color: "purple" }}
                             />
+                             {popoverVisible[row.Orders[0].orderId] && (
+                              <div
+                                className="popover"
+                                
+                                style={{
+                                  visibility: popoverVisible[row.Orders[0].orderId]
+                                    ? "visible"
+                                    : "hidden",
+                                  opacity: popoverVisible[row.Orders[0].orderId]
+                                    ? 1
+                                    : 0,
+                                    // right:120
+                                  // "auto" may be used depending on the browser
+                                }}
+                              >
+                                {/* Popover content goes here */}
+
+                                <div
+                                 
+                                ><b>Time:</b> { new Date(row.createdAt).toLocaleString() }</div>
+                              
+                              </div>
+                            )}
             </b>
           </span>
         </div>
@@ -169,7 +201,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
             ) : (
               <div
                 onClick={() => UndoOrder(row)}
-                className={"text-danger ml-5 cursor-pointer"}
+                className={"text-danger ml-5 cursor-pointer "}
                 style={{cursor:"pointer"}}
                 
               >
@@ -181,7 +213,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
               onClick={() => completedOrder(row)}
               className={
                 row.Orders[0]?.isActive
-                  ? "btn btn-outline-info btn-sm  mr-3"
+                  ? "btn btn-outline-info btn-sm  mr-3 mt-1"
                   : "btn btn-info mr-3 d-none"
               }
             >

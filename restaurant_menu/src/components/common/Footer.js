@@ -16,12 +16,12 @@ const Footer = () => {
           <div className="footer-social">
             <a href="#" style={{color:"#1877F2"}}><FaFacebook /></a>
             <a href="#" style={{color:"#1DA1F2"}}><FaTwitter /></a>
-            <a href="#" style={{color:" #E4405f"}}><FaInstagram /></a>
+            <a href="https://www.instagram.com/falcon.vision.in/" style={{color:" #E4405f"}}><FaInstagram /></a>
             <a href="#" style={{color:"#0A66C2"}}><FaLinkedin /></a>
           </div>
         </div>
         <div className="footer-contact">
-          <p><FaEnvelope /> Email: <b>contact@falcon-vision.in</b></p>
+          <p><FaEnvelope /> Email: <b>support@falcon-vision.online</b></p>
           <p>Phone: +91 81686-41371</p>
           <p>Address: 205/14 Chunnipura, Rohtak, India</p>
         </div>
