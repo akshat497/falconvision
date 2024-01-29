@@ -1329,5 +1329,25 @@ input[type="checkbox"]:checked::before {
   z-index: 1;
 }
 
+.popoverAdmin {
+  position: absolute;
+  right: 120%;
+  height: 2px;
+  width: 150px;
+  transform: translateY(-50%);
+  box-shadow: 1px 1px 1px 1px purple;
+  border-color: black;
+  border-radius: 10px;
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: all .5s ease-in-out;
+  transition: opacity 0.5s, visibility 0.5s;
+  background-color: whiteSmoke;
+  margin-top: 35px;
+  left: 0;
+  /* Hide the scrollbar but enable scrolling */
 
+
+}
 

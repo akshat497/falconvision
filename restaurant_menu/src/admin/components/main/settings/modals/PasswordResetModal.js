@@ -7,6 +7,7 @@ import {
 } from "../../../../../redux/auth/authThunks";
 import { toast } from "react-toastify";
 import PasswordResetLinkConfirmModal from "./PasswordResetLinkConfirmModal";
+import { showToast } from "../../../../../services/ToastInstance";
 
 export default function PasswordResetModal() {
   const dispatch = useDispatch();
@@ -20,20 +21,29 @@ export default function PasswordResetModal() {
   const loadingForgetPassword = useSelector(
     (state) => state.forgetpassword.forgetpasswordloading
   );
-
+  const ResetPasswordResponse = useSelector(
+    (state) => state.reset.reset
+  );
+  const ResetPasswordLoading = useSelector(
+    (state) => state.reset.resetloading
+  );
+  
   const handleReset = () => {
     if (
       oldPassword.trim() === "" ||
       newPassword.trim() === "" ||
       confirmPassword.trim() === ""
     ) {
-      return toast.warn("Fill All Fields");
+      return showToast("Fill All Fields","warn")
+      
     }
     if (newPassword !== confirmPassword) {
-      return toast.warn("Passwords Don't Match");
+      return showToast("Passwords Does't Match","warn")
+      
     }
     if (newPassword === oldPassword) {
-      return toast.warn("New password should be different than old one.");
+      return  showToast("New password should be different.","warn")
+     
     }
     const body = {
       oldPassword: oldPassword,
@@ -41,10 +51,15 @@ export default function PasswordResetModal() {
       confirmPassword: confirmPassword,
     };
     dispatch(resetPassword(body));
-    setOldPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+   
   };
+  useEffect(()=>{
+    if(ResetPasswordResponse!==null){
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  },[ResetPasswordResponse])
   useEffect(()=>{
     if(ForgetPasswordResponse!==null){
         if(ForgetPasswordResponse?.success===true){
@@ -143,8 +158,10 @@ export default function PasswordResetModal() {
                 className="btn btn-primary"
                 onClick={handleReset}
                 style={{ backgroundColor: "purple" }}
+                disabled={ResetPasswordLoading}
               >
-                Reset Password
+              {ResetPasswordLoading?" Processing":" Reset Password"}
+               
               </button>
             </div>
           </div>

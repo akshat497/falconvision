@@ -1,74 +1,57 @@
 import React from "react";
 import ClientHeader from "../common/ClientHeader";
-import menLogo from '../../images/2men logo.png'
-const aboutUsStyles = {
-  container: {
-    padding: "20px",
-    background: "#f5f5f5",
-    marginTop:"3%",
-    height:"auto"
-  },
-  heading: {
-    fontSize: "2.5rem",
-    color: "#333",
-  },
-  content: {
-    fontSize: "1.2rem",
-    color: "#555",
-    lineHeight: "1.6",
-  },
-  image: {
-    maxWidth: "100%",
-    height: "auto",
-  },
-};
+import aboutUsLogo from '../../images/aboutus_image-removebg-preview.png'
+import Footer from "../common/Footer";
+
 
 function AboutUs() {
   return (
-    <div>
+    <>
       <ClientHeader />
-      <section style={aboutUsStyles.container} className="about-us">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-6">
-              <h2 style={aboutUsStyles.heading} className="display-4 mb-4">
-                Our Story 
-              </h2>
-              <p style={aboutUsStyles.content}>
-                Welcome to FalconVision, where excellence meets innovation.
-                Founded in 2023, we have been on a remarkable journey to
-                redefine the IT industry.
-              </p>
-              <p style={aboutUsStyles.content}>
-                Our relentless commitment to quality and customer
-                satisfaction has made us a leader in the field. At FalconVision,
-                we specialize in developing user-friendly web applications to
-                streamline the order-making process for restaurants. Our flagship
-                product is a restaurant web application that simplifies
-                the entire ordering experience for both customers and restaurant
-                owners.
-              </p>
-              <p style={aboutUsStyles.content}>
-                In addition to our restaurant web application, we also provide
-                a range of services for other web applications. Our mission is to
-                deliver top-notch web applications at prices that make technology
-                accessible to everyone. We strive to achieve this mission every day.
-                We are more than just a company; we are a community of like-minded
-                individuals passionate about the technology industry.
+   
+
+      <section className="about-us" style={{minHeight:"100vh"}}>
+      <div className="" style={{ width: "95%", paddingLeft: "10%" }}>
+        <div className="row">
+          <div className="col-lg-6">
+            <h2 className="about-us-heading">
+              Elevate Your Dining Experience with Smart_Dine
+            </h2>
+
+            <p className="about-us-content">
+              Welcome to the forefront of restaurant management technology. At Smart_Dine, crafted by Falcon Vision, we are dedicated to revolutionizing the dining experience for both restaurateurs and patrons through innovative solutions.
+            </p>
+
+            <div className="about-us-feature">
+              <h3 className="about-us-sub-heading">Transformative Technology 🚀</h3>
+              <p className="about-us-feature-content">
+                Smart_Dine is a state-of-the-art web application meticulously crafted for restaurant owners seeking efficiency, control, and a seamless dining experience for their customers.
               </p>
             </div>
-            <div className="col-lg-6">
-              <img
-                src={menLogo}
-                alt="About Us"
-                style={aboutUsStyles.image}
-              />
+
+            <div className="about-us-feature">
+              <h3 className="about-us-sub-heading">Complimentary One-Month Trial 💼</h3>
+              <p className="about-us-feature-content">
+                In our unwavering commitment to excellence, Smart_Dine extends an exclusive one-month trial, providing restaurants an opportunity to experience the full suite of features without any initial financial commitment.
+              </p>
             </div>
+
+            {/* Add more feature sections as needed */}
+
+            <p className="about-us-content">
+              Join the Smart_Dine revolution and witness firsthand how Falcon Vision is reshaping the future of dining experiences. Sign up today for your complimentary trial and embark on a journey toward unparalleled restaurant management!
+            </p>
+          </div>
+
+          <div className="col-lg-6">
+            <img src={aboutUsLogo} alt="About Smart_Dine" className="about-us-image img-fluid" />
           </div>
         </div>
-      </section>
-    
-    </div>
+      </div>
+    </section>
+
+    <Footer/>
+    </>
   );
 }
 

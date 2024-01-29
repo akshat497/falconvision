@@ -76,117 +76,106 @@ export default function Login() {
       <ClientHeader />
       <ForgetPassword />
 
-      <div className="container d-flex flex-column justify-content-center align-items-center vh-100 ">
-        <section
-          className="card "
-          style={{
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-            borderRadius: "10px",
-            width: "70%",
-            height: "auto",
-            display: "flex",
-          }}
-        >
-          <div className="row g-0 d-flex align-items-center">
-            <div className="col-lg-4 d-none d-lg-flex ">
-              <img
-                src={waiterImage}
-                alt="waiter  img"
-                className="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5"
-                height="390vh"
+      <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
+  <section className="card" style={{
+      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+      borderRadius: "10px",
+      width: "70%",
+      height: "auto",
+      display: "flex",
+      flexDirection: "column",
+    }}
+  >
+    <div className="row g-0 d-flex align-items-center">
+      <div className="col-lg-4 d-none d-lg-flex">
+        <img
+          src={waiterImage}
+          alt="waiter img"
+          className="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5"
+          height="390vh"
+        />
+      </div>
+      <div className="col-lg-8">
+        <div className="card-body">
+          <form className="d-flex flex-column">
+            {/* Email input */}
+            <div className="form-outline  my-4">
+              <input
+                type="email"
+                id="form2Example1"
+                className="form-control"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="Enter Email"
               />
+              {/* <label className="form-label" htmlFor="form2Example1">Email address</label> */}
             </div>
-            <div className="col-lg-8">
-              <div className="card-body ">
-                <form className="d-flex flex-column ">
-                  {/* Email input */}
-                  <div className="form-outline ">
-                    <label className="form-label" htmlFor="form2Example1">
-                      Email address
-                    </label>
-                    <input
-                      type="email"
-                      id="form2Example1"
-                      className="form-control"
-                      value={email}
-                      onChange={handleEmailChange}
-                    />
-                  </div>
-                  {/* Password input */}
-                  <div className="form-outline mb-4">
-                    <label className="form-label" htmlFor="form2Example2">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      id="form2Example2"
-                      className="form-control"
-                      value={password}
-                      onChange={handlePasswordChange}
-                    />
-                  </div>
-                  {/* 2 column grid layout for inline styling */}
-                  <div className="d-flex justify-content-between my-3">
-                    <div className="">
-                      {/* Checkbox */}
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          defaultValue
-                          id="form2Example31"
-                          onChange={() => setRememberMe(!rememberMe)}
-                          checked={rememberMe}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="form2Example31"
-                        >
-                          Remember me{" "}
-                        </label>
-                      </div>
-                    </div>
-                    <Link
-                      style={{ textDecoration: "none", color: "purple" }}
-                      data-bs-toggle="modal"
-                      data-bs-target="#forgetpassword"
-                    >
-                      <div className="mt-2">Forgot password?</div>
-                    </Link>
-                  </div>
-                  {/* Submit button */}
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-block mb-4"
-                      style={{
-                        backgroundColor: "purple",
-                        borderRadius: "10px",
-                      }}
-                      onClick={handleLogin}
-                      disabled={loading}
-                    >
-                      {loading ? "Signing in..." : "Sign in"}
-                    </button>
-                  </div>
-                </form>
-                {/* {error !== null && (
-            <div
-              className="alert alert-danger mx-1"
-              role="alert"
-              id="alertBox"
-            >
+            {/* Password input */}
+            <div className="form-outline  ">
+              <input
+                type="password"
+                id="form2Example2"
+                className="form-control"
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="Enter Password"
+              />
+              {/* <label className="form-label" htmlFor="form2Example2">Password</label> */}
+            </div>
+            {/* 2 column grid layout for inline styling */}
+            <div className="d-flex justify-content-between my-4">
+              <div className="">
+                {/* Checkbox */}
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    defaultValue
+                    id="form2Example31"
+                    onChange={() => setRememberMe(!rememberMe)}
+                    checked={rememberMe}
+                  />
+                  <label className="form-check-label" htmlFor="form2Example31">Remember me</label>
+                </div>
+              </div>
+              <Link
+                style={{ textDecoration: "none", color: "purple" }}
+                data-bs-toggle="modal"
+                data-bs-target="#forgetpassword"
+              >
+                <div className="mt-2">Forgot password?</div>
+              </Link>
+            </div>
+            {/* Submit button */}
+            <div className="mt-5">
+              <button
+                type="button"
+                className="btn btn-primary btn-block mb-4"
+                style={{
+                  backgroundColor: "purple",
+                  borderRadius: "10px",
+                }}
+                onClick={handleLogin}
+                disabled={loading}
+              >
+                {loading ? "Signing in..." : "Sign in"}
+              </button>
+            </div>
+          </form>
+          {/* {error !== null && (
+            <div className="alert alert-danger mx-1" role="alert" id="alertBox">
               <b className="mr-4">
-                <FaExclamationTriangle /> Error:{" "}
-                {error?.response?.data?.message}
+                <FaExclamationTriangle /> Error: {error?.response?.data?.message}
               </b>
             </div>
           )} */}
-              </div>
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
+    </div>
+  </section>
+</div>
+
+
 
       <Footer />
     </>

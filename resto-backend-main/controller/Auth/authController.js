@@ -532,10 +532,10 @@ const authController = {
 
       await user.save();
 
-      return res.json({ message: "Password reset successful" });
+      return res.status(200).json(CustomResponseHandler.positiveResponse("Password reset successfull.",[]));
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.status(200).json(CustomResponseHandler.negativeResponse("Internal server error.",[]));
     }
   },
 

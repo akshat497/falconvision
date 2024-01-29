@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import ClientHeader from "./ClientHeader";
 import Footer from "./Footer";
 import { showToast } from "../../services/ToastInstance";
-import waiterImage from "../../images/waiter-wearing-face-mask-serving_23-2148592573-removebg-preview.png"
+import waiterImage from "../../images/waiter-wearing-face-mask-serving_23-2148592573-removebg-preview.png";
 
 function Signup() {
   const sendingOtp = useSelector((state) => state.otpsend.otploading);
@@ -29,7 +29,7 @@ function Signup() {
     pincode: "",
     password: "",
     confirmPassword: "",
-    referralCode:""
+    referralCode: "",
   });
   const [otpSendAttempts, setOtpSendAttempts] = useState(0);
   const [showResendButton, setShowResendButton] = useState(false);
@@ -56,8 +56,7 @@ function Signup() {
       !formData.password ||
       !formData.confirmPassword
     ) {
-   
-      showToast("Field missing!","warn")
+      showToast("Field missing!", "warn");
       return;
     }
 
@@ -70,8 +69,7 @@ function Signup() {
 
     // Check if password and confirm password match
     if (formData.password !== formData.confirmPassword) {
-     
-      showToast("Password and confirm password do not match.","warn")
+      showToast("Password and confirm password do not match.", "warn");
       return;
     }
     const body = {
@@ -84,7 +82,7 @@ function Signup() {
       password: formData.password,
       confirmPassword: formData.confirmPassword,
       enteredOTP: formData.otp,
-      referralCode:formData.referralCode
+      referralCode: formData.referralCode,
     };
     dispatch(signupUser(body));
     // dispatch(verifyOtp(formData))
@@ -109,9 +107,9 @@ function Signup() {
   // },[OtpVerifyResponse])
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     // Check if the field is phoneNumber and restrict its length to 10 characters
-    if (name === 'phoneNumber') {
+    if (name === "phoneNumber") {
       if (value.length <= 10) {
         setFormData({ ...formData, [name]: value });
       }
@@ -120,14 +118,18 @@ function Signup() {
       setFormData({ ...formData, [name]: value });
     }
   };
-  
-  useEffect(()=>{
-    if (formData.password === formData.confirmPassword&&formData.password?.length >0&&formData.confirmPassword?.length>0 ) {
-      setmatched(true)
-    }else{
-      setmatched(false)
+
+  useEffect(() => {
+    if (
+      formData.password === formData.confirmPassword &&
+      formData.password?.length > 0 &&
+      formData.confirmPassword?.length > 0
+    ) {
+      setmatched(true);
+    } else {
+      setmatched(false);
     }
-  },[formData])
+  }, [formData]);
   useEffect(() => {
     const passwordScore = calculatePasswordStrength(formData.password);
     setPasswordStrength(passwordScore);
@@ -172,7 +174,7 @@ function Signup() {
 
   const SendOtp = () => {
     if (formData.phoneNumber.length < 10) {
-     showToast("Invalid phone number")
+      showToast("Invalid phone number");
     }
     const obj = {
       email: formData.email,
@@ -211,7 +213,6 @@ function Signup() {
             width: "70%",
             height: "auto",
             display: "flex",
-            
           }}
         >
           {/* Form section */}
@@ -220,12 +221,11 @@ function Signup() {
               <img
                 src={waiterImage}
                 alt="waiter  img"
-                                                
                 className="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5"
                 height="390vh"
               />
             </div>
-            <div className="col-lg-8" >
+            <div className="col-lg-8">
               <div className="card-body ">
                 {/* Render different form sections based on the current step */}
                 {step === 0 && (
@@ -301,7 +301,7 @@ function Signup() {
                           onChange={handleChange}
                           placeholder="Street"
                         />
-                       
+
                         {/* <label className="form-label" htmlFor="street">
                         Street
                       </label> */}
@@ -313,9 +313,7 @@ function Signup() {
                 {step === 1 && (
                   <div className="col-lg-12">
                     <form onSubmit={handleSubmit}>
-                      
-                        
-                        <div className="form-outline ">
+                      <div className="form-outline ">
                         <input
                           type="text"
                           id="pincode"
@@ -325,38 +323,50 @@ function Signup() {
                           onChange={handleChange}
                           placeholder="Pincode"
                         />
-                        
-                            
-                          
-                          {/* Password strength indicator */}
-                          <div classname="form-outline">
-                        <input
+
+                        {/* Password strength indicator */}
+                        <div classname="form-outline">
+                          <input
                             type="password"
                             id="password"
-                            className={passwordStrength<90?"form-control-validate-week":"form-control"}
+                            className={
+                              passwordStrength < 90
+                                ? "form-control-validate-week"
+                                : "form-control"
+                            }
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="password"
                           />
-                        
-                         
-                          </div>
+                        </div>
                         {/* Confirm Password input */}
-                       
+
                         <div className="form-outline ">
                           <input
                             type="password"
                             id="confirmPassword"
-                            className={matched===false?"form-control-validate-week":"form-control"}
+                            className={
+                              matched === false
+                                ? "form-control-validate-week"
+                                : "form-control"
+                            }
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             placeholder="confirmPassword"
                           />
-                          {!displayReferCode&&( <small onClick={()=>{setdisplayReferCode(true)}} style={{cursor:"pointer"}}>Have a referal code?</small>
-                         )}
-                           {/* <label className="form-label" htmlFor="confirmPassword">
+                          {!displayReferCode && (
+                            <small
+                              onClick={() => {
+                                setdisplayReferCode(true);
+                              }}
+                              style={{ cursor: "pointer" }}
+                            >
+                              Have a referal code?
+                            </small>
+                          )}
+                          {/* <label className="form-label" htmlFor="confirmPassword">
                         Confirm Password
                       </label> */}
                         </div>
@@ -364,8 +374,8 @@ function Signup() {
                         Pincode
                       </label> */}
                       </div>
-                     {displayReferCode&&(
-                      <div className="form-outline ">
+                      {displayReferCode && (
+                        <div className="form-outline ">
                           <input
                             type="text"
                             id="referCode"
@@ -375,8 +385,8 @@ function Signup() {
                             onChange={handleChange}
                             placeholder="Enter refercode"
                           />
-                          </div>
-                     )}
+                        </div>
+                      )}
                       <div className="col-lg-12">
                         <form onSubmit={handleSubmit}>
                           {/* Password input */}
@@ -428,7 +438,7 @@ function Signup() {
                             placeholder="enter otp"
                             required
                           />
-                         
+
                           {showResendButton ? (
                             <div>
                               <button
@@ -466,71 +476,82 @@ function Signup() {
             </div>
           </div>
 
-          
-          <section className="d-flex" style={{ marginLeft:"36%" ,borderRadius: "10px", width: "64%", marginTop: "auto", display: "flex", flexDirection: "column", alignItems: "right" ,}}>
-  <div className="d-flex justify-content-between w-100">
-    <div>
-      <button
-        type="button"
-        className={step===0?`btn btn-secondary d-none`:"btn btn-secondary"}
-        onClick={handlePrevious}
-        disabled={step === 0}
-      >
-        <FaArrowLeft />
-      </button>
-      
-    </div>
+          <section
+            className="d-flex"
+            style={{
+              marginLeft: "36%",
+              borderRadius: "10px",
+              width: "64%",
+              marginTop: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "right",
+            }}
+          >
+            <div className="d-flex justify-content-between w-100">
+              <div>
+                <button
+                  type="button"
+                  className={
+                    step === 0
+                      ? `btn btn-secondary d-none`
+                      : "btn btn-secondary"
+                  }
+                  onClick={handlePrevious}
+                  disabled={step === 0}
+                >
+                  <FaArrowLeft />
+                </button>
+              </div>
 
-    <div>
-    {step !== 1 && (
-        <button
-          type="button"
-          className="btn"
-          onClick={handleNext}
-          style={{
-            backgroundColor: "purple",
-            color: "white",
-            transition: "background-color 0.3s",
-            
-          }}
-        
-        >
-          <FaArrowRight />
-        </button>
-      )}
-      {step === 1 && (
-        <button
-          type="submit"
-          className={OtpResponse !== null ? "btn " : "btn btn-primary d-none"}
-          style={{ backgroundColor: "purple", color: "white" }}
-          onClick={Registeruser}
-          disabled={loading}
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
-      )}
-      {step === 1 && (
-        <button
-          type="submit"
-          style={{ backgroundColor: "purple" }}
-          className={
-            OtpResponse === null ? "btn text-light" : "btn btn-primary d-none"
-          }
-          disabled={sendingOtp}
-          onClick={() => {
-            SendOtp();
-          }}
-        >
-          {sendingOtp ? "Sending Otp..." : "Send Otp"}
-        </button>
-      )}
-    </div>
-  </div>
-</section>
-
-           
-           
-          
+              <div>
+                {step !== 1 && (
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={handleNext}
+                    style={{
+                      backgroundColor: "purple",
+                      color: "white",
+                      transition: "background-color 0.3s",
+                    }}
+                  >
+                    <FaArrowRight />
+                  </button>
+                )}
+                {step === 1 && (
+                  <button
+                    type="submit"
+                    className={
+                      OtpResponse !== null ? "btn " : "btn btn-primary d-none"
+                    }
+                    style={{ backgroundColor: "purple", color: "white" }}
+                    onClick={Registeruser}
+                    disabled={loading}
+                  >
+                    {loading ? "Signing up..." : "Sign Up"}
+                  </button>
+                )}
+                {step === 1 && (
+                  <button
+                    type="submit"
+                    style={{ backgroundColor: "purple" }}
+                    className={
+                      OtpResponse === null
+                        ? "btn text-light"
+                        : "btn btn-primary d-none"
+                    }
+                    disabled={sendingOtp}
+                    onClick={() => {
+                      SendOtp();
+                    }}
+                  >
+                    {sendingOtp ? "Sending Otp..." : "Send Otp"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
         </section>
       </div>
       <Footer />

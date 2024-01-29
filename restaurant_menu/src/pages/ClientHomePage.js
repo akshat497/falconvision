@@ -12,7 +12,7 @@ export default function ClientHomePage() {
    <AboutUs/>
   
    
-    <Footer/>
+   
  </>
   )
 }

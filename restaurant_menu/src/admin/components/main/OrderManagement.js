@@ -137,7 +137,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
                             />
                              {popoverVisible[row.Orders[0].orderId] && (
                               <div
-                                className="popover"
+                                className="popoverAdmin"
                                 
                                 style={{
                                   visibility: popoverVisible[row.Orders[0].orderId]
@@ -154,7 +154,7 @@ const OrderManagement = ({ ordersCopy, searchText, handleSearch }) => {
 
                                 <div
                                  
-                                ><b>Time:</b> { new Date(row.createdAt).toLocaleString() }</div>
+                                ><small><b>Time:</b> { new Date(row.createdAt).toLocaleString() }</small></div>
                               
                               </div>
                             )}
