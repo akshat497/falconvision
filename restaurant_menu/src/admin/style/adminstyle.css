@@ -1331,8 +1331,10 @@ input[type="checkbox"]:checked::before {
 
 .popoverAdmin {
   position: absolute;
-  right: 120%;
-  height: 2px;
+  right: 150%;
+  margin-top: 7%;
+  padding: 4px;
+  
   width: 150px;
   transform: translateY(-50%);
   box-shadow: 1px 1px 1px 1px purple;
@@ -1344,10 +1346,19 @@ input[type="checkbox"]:checked::before {
   transition: all .5s ease-in-out;
   transition: opacity 0.5s, visibility 0.5s;
   background-color: whiteSmoke;
-  margin-top: 35px;
+  
   left: 0;
   /* Hide the scrollbar but enable scrolling */
 
 
 }
-
+@media screen and (max-width: 1024px) {
+  .popoverAdmin {
+    margin-top: 10%;
+  }
+}
+@media screen and (max-width:1180px) {
+  .popoverAdmin {
+    margin-top: 10%;
+  }
+}
