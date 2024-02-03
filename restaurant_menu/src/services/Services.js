@@ -387,3 +387,14 @@ export const DeleteFeedback = async (obj) => {
     throw error;
   }
 }
+export const WaiterCall = async (obj) => {
+ 
+  try {
+ 
+    const response = await axios.post(process.env.REACT_APP_BASE_URL+`waiterCall`,obj);
+ 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

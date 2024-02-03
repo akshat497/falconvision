@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const WebSocketServer = require("../webSoketConnect");
 const QRCode = require("qrcode-generator");
 const CustomResponseHandler = require("../services/CustomResponseHandler");
+const { where } = require("sequelize");
 const jwtsecreat = process.env.JWT_SECRET;
 const userController = {
   getAllUsers: async (req, res, next) => {
@@ -70,6 +71,37 @@ const userController = {
       return next(err);
     }
   },
+  waiterCall: async (req, res, next) => {
+    try {
+        const { userId, tableNumber } = req.body;
+
+        // Manual validation
+        if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+            return res.status(400).json(CustomErrorHandler.BadRequest("Invalid userId!"));
+        }
+
+        if (!tableNumber || typeof tableNumber !== 'number' || tableNumber < 1) {
+            return res.status(400).json(
+              CustomErrorHandler.BadRequest("Invalid number!")
+            );
+        }
+
+        // Check if the user exists in the database
+        const user = await User.findOne({where:{ userId }});
+        if (!user) {
+            return res.status(404).json(
+              CustomErrorHandler.UserNotFound()
+            );
+        }
+
+        // Proceed with the logic if validation passes
+        WebSocketServer.broadUpdate(userId, ` Customer called Waiter from table number ${tableNumber}`, "waiterCall");
+        res.status(200).json(CustomResponseHandler.positiveResponse("Successful.", []));
+
+    } catch (err) {
+        return next(err);
+    }
+},
   updateUserDetails: async (req, res, next) => {
     try {
       authentication(req, res, async () => {

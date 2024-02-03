@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -21,6 +21,9 @@ import {
   FaClipboardList,
   FaTimesCircle,
   FaCheckCircle,
+  FaRegBell,
+  FaVolumeUp,
+  FaVolumeMute,
 } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -33,12 +36,10 @@ import Feedback from "../main/settings/modals/Feedback";
 import { updateIsActiveOrder } from "../../../redux/orders/orderThunk";
 import NotificationBell from "../../../images/Notification-Bell.png";
 
+
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const updatedOrder = useSelector(
-    (state) => state.updateisactiveorder.isActiveOrder
-  );
 
   const { pathname } = useLocation();
 
@@ -47,15 +48,17 @@ export default function Header() {
     setExpanded,
     isDarkMode,
     setIsDarkMode,
-
+    notification,
     fetcheditemsCopy,
     orders,
+    audioElement,enableSound,setenableSound
   } = useContext(RestaurantContext);
   const restroDetails = useSelector((state) => state.restrodetail.restro);
   const fetcheCategory = useSelector(
     (state) => state.fetchcategory.fetchedcategory
   );
-
+ 
+ 
   const restroLoading = useSelector((state) => state.restrodetail.loading);
   const allorders = useSelector((state) => state.getOrder.order);
   const couponCodes = useSelector((state) => state.getCoupon.getCoupon);
@@ -66,6 +69,9 @@ export default function Header() {
   const [isRotated, setIsRotated] = useState(false);
   const [isRotatedBell, setIsRotatedBell] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  const [showOrders, setshowOrders] = useState(true);
+  const [showCall, setshowCall] = useState(false);
   const [showNotificationDropdown, setshowNotificationDropdown] =
     useState(false);
 
@@ -89,13 +95,19 @@ export default function Header() {
   // Load mode and status from localStorage on component mount
   useEffect(() => {
     const getMode = localStorage.getItem("mode");
+
     if (getMode && getMode === "dark") {
       setIsDarkMode(true);
     }
 
     const getStatus = localStorage.getItem("status");
     if (getStatus && getStatus === "close") {
-      setIsSidebarClosed(true);
+      setIsSidebarClosed(getStatus);
+    }
+    const getSound=localStorage.getItem("enableSound")
+   
+    if(getSound&&getSound!==null){
+      setenableSound(getSound==='false'?false:true)
     }
   }, []);
 
@@ -351,16 +363,46 @@ export default function Header() {
     setIsRotated(!isRotated);
     setDropdownOpen(!isDropdownOpen);
   };
+  const NoNotificationComponent = (visible) => {
+    return (
+      <>
+        <div
+          className={showCall === visible ? "d-flex" : "d-none"}
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <img
+            src={NotificationBell}
+            height={200}
+            width={200}
+            alt="Notification-Bell"
+          />
+          <div>Notifications will appear here</div>
+        </div>
+      </>
+    );
+  };
+ 
+  const handleEnableSoundToggle = useCallback(() => {
+    setenableSound(prevEnableSound => {
+      const newEnableSound = !prevEnableSound;
+      localStorage.setItem("enableSound", newEnableSound);
+      return newEnableSound;
+    });
+  }, [enableSound]);
 
   return (
     <>
       <PasswordResetModal />
-      
       <UserProfile />
       <HelpModal />
       <Feedback />
-
-      {!restroLoading ? (
+     {!restroLoading ? (
         <>
           <nav
             className={
@@ -437,7 +479,10 @@ export default function Header() {
                       onClick={toggleDropdown}
                     />
                     {isDropdownOpen && (
-                      <div className="dropdown-content" style={{width:"180px"}}>
+                      <div
+                        className="dropdown-content"
+                        style={{ width: "180px" }}
+                      >
                         <div>
                           <div className="d-flex my-2 ">
                             <div className="col-md-1">
@@ -551,7 +596,8 @@ export default function Header() {
                     />
                     <span
                       className={
-                        notificationLengthState === 0
+                        notificationLengthState === 0 &&
+                        notification?.length === 0
                           ? `badge d-none`
                           : `badge `
                       }
@@ -566,89 +612,138 @@ export default function Header() {
                       }}
                     >
                       <b>
-                        {notificationLengthState === 0
+                        {notificationLengthState === 0 &&
+                        notification?.length === 0
                           ? ""
-                          : notificationLengthState}
+                          : notificationLengthState + notification?.length}
                       </b>
                     </span>
 
                     {showNotificationDropdown && (
-                      <div
-                        className="dropdown-content"
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          right: 0,
-                          zIndex: 1,
-                          maxHeight: "300px",
-                          overflowY: "auto",
-                          border: "1px solid #ddd",
-                          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-                          borderRadius: "4px",
-                          backgroundColor: "#fff",
-                          width: "350px",
-                        }}
-                      >
-                        {/* Your list items go here */}
-
-                        {Array.isArray(orders) && orders.length > 0 ? (
-                          orders.some(
-                            (order) => order?.Orders?.[0]?.isActive === true
-                          ) ? (
-                            orders.map((order, index) => (
-                              <div className="" type="" key={index}>
-                                {handleNotification(order)}
+                      <div>
+                        <div
+                          className="dropdown-content"
+                          style={{
+                            position: "absolute",
+                            top: "100%",
+                            right: 0,
+                            zIndex: 1,
+                            maxHeight: "300px",
+                            overflowY: "auto",
+                            border: "1px solid #ddd",
+                            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                            borderRadius: "4px",
+                            backgroundColor: "#fff",
+                            width: "350px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: "35px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              marginBottom: "2%",
+                            }}
+                            className="mt-2 sticky-top bg-light"
+                          >
+                            <div>
+                              <div
+                                className={
+                                  showOrders ? "mx-2 btn-active" : "btn mx-2"
+                                }
+                                onClick={() => {
+                                  setshowCall(false);
+                                  setshowOrders(true);
+                                }}
+                              >
+                                Orders <FaClipboardList />{" "}
+                                <small>
+                                  <b>{notificationLengthState}</b>
+                                </small>
                               </div>
-                            ))
-                          ) : (
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <div>
-                                <div
-                                  className=""
-                                  style={{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <img
-                                    src={NotificationBell}
-                                    height={200}
-                                    width={200}
-                                    alt="Notification-Bell"
-                                  />
-                                </div>
-                                <div>Notifications will appear here</div>
+                              <div
+                                className={
+                                  showCall === true
+                                    ? "mx-2 btn-active"
+                                    : "btn mx-2"
+                                }
+                                onClick={() => {
+                                  setshowCall(true);
+                                  setshowOrders(false);
+                                }}
+                              >
+                                Call <FaRegBell />{" "}
+                                <small>
+                                  <b>{notification?.length}</b>
+                                </small>
                               </div>
                             </div>
-                          )
-                        ) : (
-                          <div>
-                            <div
-                              className=""
-                              style={{
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <img
-                                src={NotificationBell}
-                                height={200}
-                                width={200}
-                                alt="Notification-Bell"
-                              />
+                            <div onClick={()=>{  handleEnableSoundToggle()}} className="pr-2">
+                              
+                              {enableSound===false?<FaVolumeMute size={30} />:<FaVolumeUp size={30} />}
                             </div>
-                            <div>Notifications will appear here</div>
                           </div>
-                        )}
+
+                          {showOrders === true &&
+                          showCall === false &&
+                          notificationLengthState > 0
+                              ? orders.map((order, index) => (
+                                  <div className="" type="" key={index}>
+                                    {handleNotification(order)}
+                                  </div>
+                                ))
+                            
+                            : // Rendered when showOrders is false, showCall is true, or notificationLengthState is 0
+                              NoNotificationComponent(false)
+                              }
+
+                          {showCall === true &&
+                          showOrders === false &&
+                          notification?.length > 0 ? (
+                            <>
+                              {notification?.map((data, index) => (
+                                <div
+                                  className="notification-container"
+                                  style={{
+                                    padding: "10px",
+                                    border: "1px solid #ddd",
+                                    marginBottom: "10px",
+                                    borderRadius: "5px",
+                                  }}
+                                  key={index}
+                                >
+                                  <div
+                                    className="notification-content"
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <div
+                                      className="icon-col"
+                                      style={{ marginRight: "10px" }}
+                                    >
+                                      <FaBell size={30} />
+                                    </div>
+                                    <div className="order-info-col">
+                                      {data}
+                                      
+                                    </div>
+                                  </div>
+                                  <small>
+                                    <b>Time</b>:{" "}
+                                    {new Date(data?.createdAt).toLocaleString()}
+                                  </small>
+                                </div>
+                              ))}
+                            </>
+                          ) : (
+                            NoNotificationComponent(true)
+                          )}
+                        </div>
                       </div>
                     )}
+                   
                   </div>
 
                   <div className="logo-image ml-4">

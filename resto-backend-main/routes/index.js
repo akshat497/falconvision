@@ -57,6 +57,7 @@ router.put("/updateUserDetails",userController.updateUserDetails )
 router.delete("/deleteUserDetails",userController.getUserDetails )
 router.post("/qrgenerator",userController.qrgeneratorL )
 router.put("/extendTrial",userController.extendTrial )
+router.post("/waiterCall",userController.waiterCall )
 
 
 //category Routes

@@ -1,9 +1,10 @@
-import {  ExtendMembership, FetchAllUsers, UpdateUser } from "../../services/Services";
+import {  ExtendMembership, FetchAllUsers, UpdateUser, WaiterCall } from "../../services/Services";
 import { showToast } from "../../services/ToastInstance";
 import { fetchRestraurantDetails } from "../items/itemThunk";
 import { setextendmembership, setextendmembershiperror, setextendmembershiploading } from "./extendMembershipSlice";
 import { setfetchAllUsers, setfetchAllUserserror, setfetchAllUsersloading } from "./fetchAllUsersSlice";
 import { setupdateUser, setupdateUsererror, setupdateUserloading } from "./updateUserSlice";
+import { setcallWaiter, setcallWaiterLoading, setcallWaiterError } from "./waiterCallSlice";
 
 export const extendMembership = (userData) => async (dispatch) => {
     try {
@@ -52,3 +53,18 @@ export const extendMembership = (userData) => async (dispatch) => {
      showToast(error?.response?.data?.message ||error.message)
     }
   };
+  export const waiterCall=(userdata)=>async(dispatch)=>{
+    try {
+      dispatch(setcallWaiterLoading(true))
+      const response=await WaiterCall(userdata)
+      if(response.success===true){
+        showToast("Notification sent","success")
+      }
+      dispatch(setcallWaiter(response))
+      dispatch(setcallWaiterLoading(false))
+    } catch (error) {
+      dispatch(setcallWaiterError(error.message))
+      dispatch(setfetchAllUsersloading(false));
+      showToast(error?.response?.data?.message ||error.message)
+    }
+  }

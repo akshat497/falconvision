@@ -1,6 +1,6 @@
 
 const WebSocket = require('websocket').server;
-const https = require('https');
+const https = require('http');
 const fs = require('fs');
 
 const options = {
@@ -9,7 +9,7 @@ const options = {
 };
 
 const server = https.createServer(options);
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 9090;
 const wsServer = new WebSocket({
   httpServer: server,
 });

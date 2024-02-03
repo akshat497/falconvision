@@ -32,6 +32,7 @@ import deletecontactusReducer from "../contactus/deleteFeedbackSlice"
 import updateUserReducer from "../users/updateUserSlice"
 import fetchAllUsersReducer from "../users/fetchAllUsersSlice"
 import resetReducer from "../auth/resetPasswordSlice"
+import waiterCallReducer from "../users/waiterCallSlice"
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -65,7 +66,8 @@ const store = configureStore({
     deletecontactus:deletecontactusReducer,
     updateUser:updateUserReducer,
     fetchAllUsers:fetchAllUsersReducer,
-    reset:resetReducer
+    reset:resetReducer,
+    waiterCall:waiterCallReducer
 
   },
   

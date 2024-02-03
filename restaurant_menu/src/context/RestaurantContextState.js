@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import RestaurantContext from "./RestaurantContext";
 import { useDispatch, useSelector } from "react-redux";
 import { w3cwebsocket as W3CWebSocket, client, w3cwebsocket } from "websocket";
-import { json, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { setorder } from "../redux/orders/getorderSlice";
 import { setFetchedItem } from "../redux/items/fetchItemSlice";
-import { toast } from "react-toastify";
 import { fetchCategory, fetchItem } from "../redux/items/itemThunk";
-import { setFetchedCategory } from "../redux/items/fetchCategorySlice";
-import { fetchOrders } from "../redux/orders/orderThunk";
 import { showToast } from "../services/ToastInstance";
+
 export default function RestaurantContextState(props) {
   const dispatch = useDispatch();
   // const token = useSelector((state) => state.login.user);
+  
   const allItems = useSelector((state) => state?.fetchitem?.f_item);
   const couponCodes = useSelector((state) => state.getCoupon.getCoupon);
   const [restroDetails] = useState({});
   const [fetcheditems, setFetcheditems] = useState([]);
   const [fetcheditemsCopy, setFetcheditemsCopy] = useState([]);
   const [fetchedCoupens, setfetchedCoupens] = useState([]);
+  const [enableSound, setenableSound] = useState(false);
   const [mode, setmode] = useState("light");
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -29,7 +29,7 @@ export default function RestaurantContextState(props) {
   const [filterActive, setFilterActive] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const allorders = useSelector((state) => state.getOrder.order);
-  const allFetchedItems = useSelector((state) => state.fetchitem.f_item);
+
   // const isActiveUpdate=useSelector((state)=> state.updateisactiveorder.isActiveOrder)
   const detailRestro = useSelector((state) => state.restrodetail.restro);
 
@@ -64,13 +64,27 @@ export default function RestaurantContextState(props) {
 
   //   };
   // },[detailRestro])
+  const [audioElement, setAudioElement] = useState(null);
+
+  useEffect(() => {
+    // Create an Audio element when the component mounts
+    const audio = new Audio('notification_1.mp3');
+    // Set the audio element in state
+    setAudioElement(audio);
+  }, []);
+  useEffect(() => {
+    // Update audio element source whenever notification sound changes
+    if (audioElement) {
+      audioElement.src = 'notification_1.mp3';
+    }
+  }, [audioElement]);
   useEffect(() => {
     // Create a WebSocket connection to the user's room
     const userData = JSON.parse(localStorage.getItem("params"));
     const userId = userData?.userId || detailRestro?.userId;
     // const serverAddress = `wss://falconvesionbackend.onrender.com:443/?room=${userId}`;
-    // const serverAddress = `ws://127.0.0.1:9090/?room=${userId}`;
-    const serverAddress=`wss://api.falcon-vision.in:9090/?room=${userId}`
+    const serverAddress = `ws://127.0.0.1:9090/?room=${userId}`;
+    // const serverAddress=`wss://api.falcon-vision.in:9090/?room=${userId}`
 
     const ws = new WebSocket(serverAddress);
 
@@ -84,10 +98,8 @@ export default function RestaurantContextState(props) {
       
       const { updateType, data } = dataFromServer;
       // setnotification([...notification, updateType]);
-       setnotification([
-            dataFromServer ,
-            ...notification
-          ]);
+      
+      
       // Handle different update types
       
       switch (updateType) {
@@ -129,6 +141,16 @@ export default function RestaurantContextState(props) {
           break;
         case "userUpdated":
           window.location.reload();
+          break;
+          case "waiterCall":
+          // setnotification(detailRestro)
+             setnotification([...notification,data])
+               notification.push(data)
+              if(localStorage.getItem("enableSound")==='true'){
+                audioElement.play()
+               
+              }
+              console.log(notification)
           break;
         case "updatedOrder":
           const userPhone = JSON.parse(localStorage.getItem("userPhone"));
@@ -289,7 +311,11 @@ export default function RestaurantContextState(props) {
         activeCategoryId,
          setActiveCategoryId,
          filterActive, 
-         setFilterActive
+         setFilterActive,
+         audioElement,
+         enableSound,
+          setenableSound
+         
       }}
     >
       {props.children}

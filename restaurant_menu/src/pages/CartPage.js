@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { applyCoupon } from "../redux/coupon/couponCodeThunk";
 import { fetchItem } from "../redux/items/itemThunk";
+import { waiterCall } from "../redux/users/userthunk";
 const CartPage = () => {
   const dispatch = useDispatch();
   const [cart, setCart] = useState([]);
@@ -26,7 +27,57 @@ const CartPage = () => {
   const fetchedCategory = useSelector(
     (state) => state.fetchcategory.fetchedcategory
   );
+  const localStorageKey = 'waiterCallTimestamp';
+  const [isWaiterCallDisabled, setIsWaiterCallDisabled] = useState(false);
+  const waiterCallResponse = useSelector(
+    (state) => state.waiterCall.callwaiter
+  );
+  useEffect(()=>{
+    if(waiterCallResponse?.success===true){
+      const lastClickTimestamp = localStorage.getItem(localStorageKey);
+      const currentTime = new Date().getTime();
+  
+      if (!lastClickTimestamp || currentTime - lastClickTimestamp > 60000) {
+        // Perform your waiter call logic here
+  
+        // Disable the button
+        setIsWaiterCallDisabled(true);
+  
+        // Save the current timestamp in localStorage
+        localStorage.setItem(localStorageKey, currentTime);
+  
+        // Enable the button after 1 minute (60,000 milliseconds)
+        setTimeout(() => {
+          setIsWaiterCallDisabled(false);
+        }, 60000);
+      }
+    }
+  },[waiterCallResponse])
+  const callWaiter = () => {
+    // Check if the button was clicked within the last minute
+     const params = JSON.parse(localStorage.getItem("params"));
+    let obj={
+      userId:params.userId,
+      tableNumber:Number(params.tableNumber)
+    }
+    dispatch(waiterCall(obj))
+    
+  };
 
+  useEffect(() => {
+    // Check if the button should be disabled on component mount
+    const lastClickTimestamp = localStorage.getItem(localStorageKey);
+    const currentTime = new Date().getTime();
+
+    if (lastClickTimestamp && currentTime - lastClickTimestamp <= 60000) {
+      setIsWaiterCallDisabled(true);
+
+      // Enable the button after the remaining time
+      setTimeout(() => {
+        setIsWaiterCallDisabled(false);
+      }, 60000 - (currentTime - lastClickTimestamp));
+    }
+  }, []);
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -120,6 +171,7 @@ const CartPage = () => {
       updateCartWithAvailableItems();
     }
   }, []);
+ 
   return (
     <main className="container" style={{ backgroundColor: "whitesmoke" }}>
       <section className="shopping-cart">
@@ -296,8 +348,9 @@ const CartPage = () => {
                     {cart?.length === 0 ? (
                       <button
                         type="button"
-                        className="btn btn-lg btn-block checkout-button"
-                        disabled
+                        className=" checkout-button "
+                        disabled={cart?.length === 0}
+                        style={{opacity:"0.5"}}
                       >
                         Checkout
                       </button>
@@ -313,7 +366,22 @@ const CartPage = () => {
                       </Link>
                     )}
                   </div>
-
+                  <div className="text-center">
+                   
+                      <button
+                        type="button"
+                        className="checkout-button bg-info"
+                        style={{
+                          opacity:isWaiterCallDisabled===true?"0.5":"2",
+                          cursor:isWaiterCallDisabled===true?"not-allowed":""
+                          }}
+                        onClick={callWaiter}
+                        disabled={isWaiterCallDisabled}
+                      >
+                        Call Waiter
+                      </button>
+                 
+                  </div>
                   <div className="text-center">
                     <Link to="/customer">
                       <button
