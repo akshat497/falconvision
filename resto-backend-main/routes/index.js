@@ -50,8 +50,8 @@ router.post("/verifyotp", authController.VerifyOtp)
 router.post("/forgetpassword", authController.forgetPassword)
 router.post("/authresetpassword", authController.authresetPassword)
 router.get("/generaterefercode/:userId", authController.generateReferCode)
-router.post("/CreateOrder", authController.CreateOrder)
-router.post("/PaymentSuccess/:userId/:membership", authController.PaymentSuccess)
+// router.post("/CreateOrder", authController.CreateOrder)
+// router.post("/PaymentSuccess/:userId/:membership", authController.PaymentSuccess)
 
 //user routes
 router.get("/getUserDetails",userController.getUserDetails )
