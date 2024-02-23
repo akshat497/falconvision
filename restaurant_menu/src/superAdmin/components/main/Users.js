@@ -142,7 +142,7 @@ export default function Users() {
           const currentDate = new Date();
 
           if (expirationDate < currentDate) {
-            return <div className="text-danger">Expired</div>;
+            return <div className="text-danger">{expirationDate.toLocaleDateString()} Expired</div>;
           } else {
             return expirationDate.toLocaleString();
           }

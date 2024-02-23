@@ -15,6 +15,7 @@ const authentication = require("../../middlewares/authentication");
 const otpExpiry = 7 * 60 * 1000; // 7 minutes in milliseconds
 const jwt = require("jsonwebtoken");
 const CustomResponseHandler = require("../../services/CustomResponseHandler");
+const Razorpay = require("razorpay");
 // const transporter = nodemailer.createTransport({
 //   service: "gmail",
 //   auth: {
@@ -31,10 +32,11 @@ const transporter = nodemailer.createTransport({
     pass: process.env.falcon_vision_Email_PASSWORD,
   },
 });
-
+const razorpay = new Razorpay({
+  key_id: process.env.key_id,
+  key_secret: process.env.key_secret,
+});
 const authController = {
-  // ...
-
   login: async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -69,7 +71,7 @@ const authController = {
     try {
       let user = await User.findOne({ where: { email: email } });
 
-      if (!user) {
+      if (!user) { 
         return next(CustomErrorHandler.wrongCredentials());
       }
 
@@ -532,10 +534,21 @@ const authController = {
 
       await user.save();
 
-      return res.status(200).json(CustomResponseHandler.positiveResponse("Password reset successfull.",[]));
+      return res
+        .status(200)
+        .json(
+          CustomResponseHandler.positiveResponse(
+            "Password reset successfull.",
+            []
+          )
+        );
     } catch (error) {
       console.error(error);
-      return res.status(200).json(CustomResponseHandler.negativeResponse("Internal server error.",[]));
+      return res
+        .status(200)
+        .json(
+          CustomResponseHandler.negativeResponse("Internal server error.", [])
+        );
     }
   },
 
@@ -557,14 +570,130 @@ const authController = {
           console.log("Generated Referral Code:", referralCode);
 
           // Send the referral code as a response
-          res.status(200).json({ referralCode });
+          return res.status(200).json({ referralCode });
         } else {
           // Handle the case where the user is not found
-          res.status(404).json({ message: "User not found" });
+          return res.status(404).json({ message: "User not found" });
         }
       } catch (error) {
         // Handle errors
         next(error);
+      }
+    });
+  },
+  CreateOrder: async (req, res, next) => {
+    authentication(req, res, async () => {
+      const { userId, membership } = req.body;
+      var amount;
+      switch (membership) {
+        case 3:
+          amount = 2500;
+          break;
+        case 6:
+          amount = 4000;
+          break;
+        case 12:
+          amount = 6000;
+          break;
+        default:
+          return res
+            .status(400)
+            .json(
+              CustomResponseHandler.negativeResponse(
+                "Invalid membership duration."
+              )
+            );
+      }
+      if (!userId || !membership) {
+        return res
+          .status(400)
+          .json(
+            CustomResponseHandler.negativeResponse(
+              "Missing required parameters."
+            )
+          );
+      }
+      const user = await User.findOne({ where: { userId: userId } });
+      if (!user) {
+        return res
+          .status(404)
+          .json(CustomResponseHandler.negativeResponse("User not found.", []));
+      }
+      if (user.userId !== userId) {
+        return next(CustomErrorHandler.UnAuthorised());
+      }
+      const options = {
+        amount: amount * 100, // amount in smallest currency unit (e.g., 10000 for ₹100)
+        currency: "INR",
+      };
+      try {
+        const order = await razorpay.orders.create(options);
+        return res
+          .status(200)
+          .json(CustomResponseHandler.positiveResponse("Success.", order));
+      } catch (error) {
+        console.error("Error creating order:", error);
+        return next(error);
+      }
+    });
+  },
+  PaymentSuccess: async (req, res, next) => {
+    authentication(req, res, async () => {
+      try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+          req.body;
+        const { userId, membership } = req.params;
+        const sign = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSign = crypto
+          .createHmac("sha256", process.env.KEY_SECRET)
+          .update(sign.toString())
+          .digest("hex");
+
+        if (razorpay_signature !== expectedSign) {
+          return res.status(400).json({ message: "Invalid signature sent!" });
+        }
+
+        // Extract userId and membership from req.params
+
+        // Find user by userId
+        const user = await User.findOne({
+          where: { userId },
+        });
+        console.log("user", user);
+        console.log("user", userId, membership);
+        // Check if user exists
+        if (!user) {
+          return next(CustomErrorHandler.UserNotFound())
+        }
+        // Get current date
+        const currentDate = new Date();
+
+        // Get trial expiration date from user data
+        let trialExpirationDate = new Date(user.trialExpirationDate);
+
+        // If trial expiration date has already passed, start from the current date
+        if (trialExpirationDate.getTime() < currentDate.getTime()) {
+          trialExpirationDate = currentDate;
+        }
+
+        // Extend trial expiration date based on membership
+        if (membership == "3") {
+          trialExpirationDate.setDate(trialExpirationDate.getDate() + 90);
+        } else if (membership == "6") {
+          trialExpirationDate.setDate(trialExpirationDate.getDate() + 180);
+        } else if (membership == "12") {
+          trialExpirationDate.setDate(trialExpirationDate.getDate() + 365);
+        }
+
+        // Update user's trial expiration date
+        await user.update({ trialExpirationDate });
+
+        return res
+          .status(200)
+          .json( CustomResponseHandler.positiveResponse("Payment verified successfully",[]));
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal Server Error!" });
       }
     });
   },

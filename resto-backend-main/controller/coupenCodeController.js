@@ -52,7 +52,7 @@ const coupenCodeController = {
           return next(CustomErrorHandler.UnAuthorised());
         }
         let coupon = await CoupenCode.findAll({
-          where: { name: name, discount: discount },
+          where: { name: name, discount: discount,userId:userId },
         });
         console.log(coupon)
         if (coupon.length>0) {

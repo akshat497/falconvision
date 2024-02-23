@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createAxiosInstance } from "./ApiInstance";
-
+import image from '../images/earlybirds_icon_195853.png'
 const SIGNUP_URL =
   process.env.REACT_APP_BASE_URL + process.env.REACT_APP_SIGNUP_ENDPOINT;
 const SIGNIN_URL =
@@ -394,6 +394,58 @@ export const WaiterCall = async (obj) => {
     const response = await axios.post(process.env.REACT_APP_BASE_URL+`waiterCall`,obj);
  
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+export const CreatePayment = async ( obj) => {
+  try {
+    const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+'CreateOrder', obj );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const VarifyPayment =async(obj)=>{
+  try {
+    const options = {
+			key: process.env.REACT_APP_RAZOR_PAY_KEY,
+			amount: obj.amount,
+			currency: obj.currency,
+			name: "Falcon-vision",
+			description: "Test Transaction",
+			image:image ,
+			order_id: obj.id,
+			handler: async (resp) => {
+				try {
+          debugger
+          const response = await createAxiosInstance().post(process.env.REACT_APP_BASE_URL+`PaymentSuccess/${obj?.userId}/${Number(obj?.membership)}`, resp );
+       debugger
+          if(response?.data?.success===true){
+            debugger
+          GetRestaurantDetails()
+         }
+          return response.data;
+					// const verifyUrl = `http://localhost:5000/api/PaymentSuccess/${userId}/${Number(membership)}`;
+					// const { data } = await axios.post(verifyUrl, response, {
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //     'Authorization': localStorage.getItem('token'), // Replace YOUR_TOKEN with your actual token
+          //   },  
+          // });
+          
+				
+				} catch (error) {
+					console.log(error);
+				}
+			},
+			theme: {
+				color: "#800080",
+			},
+		};
+		const rzp1 = new window.Razorpay(options);
+		rzp1.open();
   } catch (error) {
     throw error;
   }

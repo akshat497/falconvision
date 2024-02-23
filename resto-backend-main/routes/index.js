@@ -12,6 +12,7 @@ const multer = require('multer');
 const fs =require("fs")
 const crypto=require("crypto")
 const path=require("path")
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       const userId = req.body.userId; // Assuming you have user information in the request
@@ -49,6 +50,8 @@ router.post("/verifyotp", authController.VerifyOtp)
 router.post("/forgetpassword", authController.forgetPassword)
 router.post("/authresetpassword", authController.authresetPassword)
 router.get("/generaterefercode/:userId", authController.generateReferCode)
+router.post("/CreateOrder", authController.CreateOrder)
+router.post("/PaymentSuccess/:userId/:membership", authController.PaymentSuccess)
 
 //user routes
 router.get("/getUserDetails",userController.getUserDetails )

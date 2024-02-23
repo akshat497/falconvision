@@ -1,6 +1,6 @@
 // authThunks.js
 import { toast } from "react-toastify";
-import { AuthResetPassword, Forgetpassword, GenerateReferCode, LoginUser, OtpSend, OtpVerify, QrGenerator, RegisterUser, ResetPassword } from "../../services/Services";
+import { AuthResetPassword, CreatePayment, Forgetpassword, GenerateReferCode, GetRestaurantDetails, LoginUser, OtpSend, OtpVerify, QrGenerator, RegisterUser, ResetPassword, VarifyPayment } from "../../services/Services";
 import { fetchRestraurantDetails } from "../items/itemThunk";
 import { setUser, setLoading, setError } from "./authSlice";
 import { setUserLogin, setLoadingLogin, setErrorLogin } from "./loginSlice";
@@ -14,6 +14,8 @@ import ForgetPassword from "../../components/modals/ForgetPassword";
 import { setAuthResetPassword, setAuthResetPasswordError, setAuthResetPasswordLoading } from "./authResetPasswordSlice";
 import { showToast } from "../../services/ToastInstance";
 import { setgenerateReferCode, setgenerateReferCodeError, setgenerateReferCodeLoading } from "./generateReferSlice";
+import { setPayment, setPaymentError, setPaymentLoading } from "./CreatePaymentSlice";
+import { setVerifyPayment, setVerifyPaymentError, setVerifyPaymentLoading } from "./verifyPaymentSlice";
 export const signupUser = (userData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -169,5 +171,44 @@ export const loginUser = (userData) => async (dispatch) => {
       // toast.error("something went wrong")
       dispatch(setgenerateReferCodeError(error.message));
       dispatch(setgenerateReferCodeLoading(false));
+    }
+  };
+  export const createPayment = (userData) => async (dispatch) => {
+    try {
+      
+      dispatch(setPaymentLoading(true));
+      const response = await CreatePayment(userData); // Call your API function here
+      if(response?.success===true){
+        const obj={
+          ...userData,
+          ...response?.data
+        }
+        console.log(obj)
+        dispatch(verifyPayment(obj))
+      }
+      dispatch(setPayment(response));
+      dispatch(setPaymentLoading(false));
+    } catch (error) {
+      
+     showToast(error?.response?.data?.message ||error.message)
+      // toast.error("something went wrong")
+      dispatch(setPaymentError(error.message));
+      dispatch(setPaymentLoading(false));
+    }
+  };
+  export const verifyPayment = (userData) => async (dispatch) => {
+    try {
+      
+      dispatch(setVerifyPaymentLoading(true));
+      const response = await VarifyPayment(userData); // Call your API function here
+      
+      dispatch(setVerifyPayment(response));
+      dispatch(setVerifyPaymentLoading(false));
+    } catch (error) {
+      
+     showToast(error?.response?.data?.message ||error.message)
+      // toast.error("something went wrong")
+      dispatch(setVerifyPaymentError(error.message));
+      dispatch(setVerifyPaymentLoading(false));
     }
   };

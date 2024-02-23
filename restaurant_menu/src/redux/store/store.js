@@ -33,6 +33,8 @@ import updateUserReducer from "../users/updateUserSlice"
 import fetchAllUsersReducer from "../users/fetchAllUsersSlice"
 import resetReducer from "../auth/resetPasswordSlice"
 import waiterCallReducer from "../users/waiterCallSlice"
+import createpaymentReducer from "../auth/CreatePaymentSlice"
+import verifypaymentReducer from '../auth/verifyPaymentSlice'
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -67,8 +69,9 @@ const store = configureStore({
     updateUser:updateUserReducer,
     fetchAllUsers:fetchAllUsersReducer,
     reset:resetReducer,
-    waiterCall:waiterCallReducer
-
+    waiterCall:waiterCallReducer,
+    createpayment:createpaymentReducer,
+    verifypayment:verifypaymentReducer
   },
   
 });
